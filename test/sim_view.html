@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!-- Visual test: IEC gates + orthogonal wires + counter + open timeline.
+     Screenshot via headless browser. -->
+<html><head><meta charset="UTF-8"><title>sim test</title>
+<link rel="stylesheet" href="../style.css"></head>
+<body>
+<header id="toolbar">
+  <div class="brand">⚡ Logic Lab</div>
+  <button id="modeBtn" class="primary">▶ Simulate</button>
+  <div class="group" id="editTools">
+    <button id="newBtn">New</button><button id="saveBtn">Save</button><button id="loadBtn">Load</button>
+    <button id="makeICBtn">Create IC</button><button id="exportBtn">Export</button><button id="importBtn">Import</button>
+    <input type="file" id="importFile" hidden>
+  </div>
+  <div class="group hidden" id="simTools">
+    <button id="playBtn">▶ Run</button><button id="prevBtn">⏮</button><button id="nextBtn">⏭</button>
+    <label class="freq"><input type="range" id="freqSlider" min="-2" max="6" step="1" value="1"><span id="freqLabel"></span></label>
+    <span id="clkIndicator" class="clk"></span><button id="resetBtn">Reset</button>
+    <button id="inputsBtn">Inputs ▾</button><button id="ttBtn">TT ▾</button><button id="boolBtn">Bool ▾</button>
+    <button id="timelineBtn">Timeline ▾</button>
+  </div>
+  <div class="spacer"></div><button id="helpBtn">?</button>
+</header>
+<div id="main">
+  <aside id="palette"></aside>
+  <div id="stage">
+    <div id="crumbs"></div>
+    <canvas id="canvas"></canvas>
+    <div id="dropPanel" class="hidden"></div>
+    <div id="exprPopup" class="hidden"></div>
+    <div id="toast" class="hidden"></div>
+    <div id="timeline" class="hidden">
+      <div class="tl-head">
+        <span class="tl-title">📈 Timeline</span>
+        <span class="tl-hint">one step per clock toggle / input change</span>
+        <span class="spacer"></span>
+        <button id="tlClear" class="mini-btn">clear</button>
+        <button id="tlClose" class="mini-btn">✕</button>
+      </div>
+      <div class="tl-body">
+        <div id="tlLabels"></div>
+        <div id="tlScroll"><canvas id="tlCanvas"></canvas></div>
+      </div>
+    </div>
+    <div id="helpPanel" class="hidden"><div class="help-box"><h2>x <button id="helpClose">✕</button></h2></div></div>
+  </div>
+</div>
+<script src="../js/model.js"></script>
+<script src="../js/builtins.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/render.js"></script>
+<script src="../js/interact.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  registerBuiltinDefs();
+  setTopCircuit(newCircuit());
+  initCanvas();
+  initInteractions();
+  initUI();
+
+  const c = App.topCircuit;
+  // half adder from gates (shows IEC symbols + ortho wires)
+  const a = makeComp("IN", 64, 64, { label: "A" });
+  const b = makeComp("IN", 64, 160, { label: "B" });
+  const x = makeComp("XOR", 240, 72);
+  const n = makeComp("AND", 240, 176);
+  const s = makeComp("OUT", 420, 84, { label: "SUM" });
+  const cy = makeComp("OUT", 420, 188, { label: "CARRY" });
+  // clocked counter for the timeline
+  const clk = makeComp("CLK", 64, 320);
+  const cnt = makeComp("CUSTOM", 240, 280, { defName: "4-bit Counter" });
+  const q0 = makeComp("OUT", 480, 296, { label: "Q0" });
+  const q1 = makeComp("OUT", 480, 352, { label: "Q1" });
+  c.components.push(a, b, x, n, s, cy, clk, cnt, q0, q1);
+  addWire(c, a, 0, x, 0); addWire(c, b, 0, x, 1);
+  addWire(c, a, 0, n, 0); addWire(c, b, 0, n, 1);
+  addWire(c, x, 0, s, 0); addWire(c, n, 0, cy, 0);
+  addWire(c, clk, 0, cnt, 0);
+  addWire(c, cnt, 0, q0, 0); addWire(c, cnt, 1, q1, 0);
+  // a manually rerouted wire (extra bends)
+  c.wires.find(w => w.from.c === b.id && w.to.c === n.id).route = [136, 232, 192];
+  touchCircuit(c);
+
+  setMode(true);
+  a.state = true; settle(); timelineRecord();
+  for (let i = 0; i < 12; i++) clockTick();
+  toggleTimeline();
+  requestRender();
+});
+</script>
+</body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Logic Lab — circuit simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="tabbar">
+  <button class="tab active" data-tab="digital">⚡ Digital Logic</button>
+  <button class="tab" data-tab="analog">🔌 Analog Electronics</button>
+</div>
+
+<div id="digitalApp">
+<header id="toolbar">
+  <div class="brand">⚡ Logic&nbsp;Lab</div>
+  <button id="modeBtn" class="primary" title="Switch between editing and simulation">▶ Simulate</button>
+
+  <div class="group" id="editTools">
+    <button id="newBtn" title="Clear the worksheet">New</button>
+    <button id="saveBtn" title="Save sketch to browser storage">💾 Save</button>
+    <button id="loadBtn" title="Load sketch from browser storage">Load</button>
+    <button id="shiftLockBtn" title="Touch: acts like holding Shift — drag empty space to box-select, tap parts to add/remove them">⇧ Select</button>
+    <span class="sep"></span>
+    <button id="makeICBtn" title="Turn the current worksheet into a reusable component">📦 Create IC</button>
+    <button id="exportBtn" title="Export all custom components as a JSON file">⬇ Export</button>
+    <button id="importBtn" title="Import custom components from a JSON file">⬆ Import</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+
+  <div class="group hidden" id="simTools">
+    <button id="playBtn" title="Run / pause the clock">▶ Run</button>
+    <button id="prevBtn" title="Step back to the previous state">⏮ Prev</button>
+    <button id="nextBtn" title="Manually toggle the clock">Next ⏭</button>
+    <label class="freq">🕒
+      <input type="range" id="freqSlider" min="-2" max="6" step="1" value="1">
+      <span id="freqLabel">2 Hz</span>
+    </label>
+    <span id="clkIndicator" class="clk">CLK 0</span>
+    <button id="resetBtn" title="Reset all stored states (flip-flops) to 0">Reset</button>
+    <span class="sep"></span>
+    <button id="inputsBtn">Inputs ▾</button>
+    <button id="ttBtn">Truth table ▾</button>
+    <button id="boolBtn">Boolean ▾</button>
+    <button id="timelineBtn">Timeline ▾</button>
+  </div>
+
+  <div class="spacer"></div>
+  <button id="helpBtn" title="Help">?</button>
+</header>
+
+<div id="main">
+  <aside id="palette"></aside>
+  <div id="inspector" class="hidden">
+    <div id="inspCrumbs"></div>
+    <canvas id="canvas2"></canvas>
+    <div id="inspEmpty">Double-click a chip on the right to inspect its insides here (live).</div>
+  </div>
+  <div id="splitDivider" class="hidden" title="Drag to resize · double-click to close"></div>
+  <div id="stage">
+    <div id="crumbs"></div>
+    <canvas id="canvas"></canvas>
+    <div id="dropPanel" class="hidden"></div>
+    <div id="boolPanel" class="hidden"></div>
+    <div id="exprPopup" class="hidden"></div>
+    <div id="toast" class="hidden"></div>
+    <div id="ctxMenu" class="hidden"></div>
+    <div id="timeline" class="hidden">
+      <div class="tl-head">
+        <span class="tl-title">📈 Timeline</span>
+        <span class="tl-hint">one step per clock toggle / input change · untick a signal to hide it</span>
+        <span class="spacer"></span>
+        <button id="tlClear" class="mini-btn">clear</button>
+        <button id="tlClose" class="mini-btn">✕</button>
+      </div>
+      <div class="tl-body">
+        <div id="tlLabels"></div>
+        <div id="tlScroll"><canvas id="tlCanvas"></canvas></div>
+      </div>
+    </div>
+    <div id="helpPanel" class="hidden">
+      <div class="help-box">
+        <h2>How to use Logic Lab <button id="helpClose">✕</button></h2>
+        <h3>Building (Edit mode)</h3>
+        <ul>
+          <li><b>Add components:</b> drag them from the left panel onto the worksheet. Gates use IEC symbols (<code>&amp;</code>=AND, <code>≥1</code>=OR, <code>=1</code>=XOR, <code>1</code>=NOT/buffer; a circle on the output = inverted).</li>
+          <li><b>Wires:</b> drag from one pin to another pin (output → input). Wires run with 90° bends — <b>drag any segment sideways</b> to route it around components (dragging the end segments adds extra bends).</li>
+          <li><b>Buses &amp; tri-state:</b> a <b>Tri-state Buffer</b> passes its data through when the enable input is high, and goes <b>high-impedance (Hi-Z)</b> — drawn as a dashed amber wire — when disabled. Hold <kbd>Shift</kbd> while dropping a wire onto an input to add a <i>second</i> driver, so several tri-state outputs can share one wire (a bus). Enable only one driver at a time; if two disagree the status shows <b>⚠ SHORT CIRCUIT</b>.</li>
+          <li><b>Junctions:</b> drag a <b>Junction (bus tap)</b> onto the sheet to make a shared bus point. Wire several tri-state outputs <i>into</i> the dot (they merge automatically — no Shift needed), then wire <i>from</i> the dot to whatever reads the bus. The dot's colour follows the resolved bus value.</li>
+          <li><b>Gate inputs:</b> select a gate, then use the <b>−</b> / <b>+</b> buttons above it to remove/add input pins (2–8).</li>
+          <li><b>Mux &amp; coders:</b> the <b>Multiplexer</b>, <b>Demultiplexer</b>, <b>Encoder</b> and <b>Decoder</b> resize with the same <b>−</b> / <b>+</b> buttons — MUX/DEMUX step 2:1→4:1→8:1→16:1, and the encoder/decoder grow their address width to match. Data pins are <code>D</code>, select/address pins are <code>S</code>/<code>A</code>, outputs are <code>Y</code>. The encoder is a priority encoder (highest set input wins).</li>
+          <li><b>LED Matrix:</b> a row/column display — pins along the left are <b>rows</b>, pins along the bottom are <b>columns</b>, and each LED lights when <i>both</i> its row and column line are high. Select it to get two <b>−</b> / <b>+</b> pairs above it (<b>rows</b> on the left, <b>cols</b> on the right). Drive it with a counter/decoder to scan it.</li>
+          <li><b>Rename:</b> double-click an Input or Output to rename it.</li>
+          <li><b>Delete:</b> right-click a component or wire for a menu (Delete, Rotate, Rename, Look inside), or select it and press <kbd>Delete</kbd>.</li>
+          <li><b>Rotate:</b> right-click a tri-state buffer and choose <b>↻ Rotate 90°</b> to point it in any direction — the enable pin stays on the side of the triangle.</li>
+          <li><b>Selecting several:</b> hold <kbd>Shift</kbd> and drag on empty space to draw a box around components (or Shift+click to toggle individual ones). Drag any selected component to move the whole group; press <kbd>Delete</kbd> to remove them all.</li>
+          <li><b>Quick-add:</b> right-click empty space and hover <b>I/O</b> or <b>Logic Gates</b> to drop any component straight from the menu.</li>
+          <li><b>Palette:</b> click a category heading to collapse or expand it (<b>Latches &amp; flip-flops</b> and <b>Registers &amp; counters</b> start collapsed).</li>
+          <li><b>Copy / cut / paste:</b> select component(s) and use <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>X</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd>. Pasted inputs/outputs get a suffix (<code>(1)</code>, <code>(2)</code>…) if their label is already in use.</li>
+          <li><b>View:</b> mouse-wheel zooms, drag empty space to pan.</li>
+          <li><b>On a phone / tablet:</b> <b>tap a part</b> in the palette then <b>tap the sheet</b> to drop it (tap the part again or press away to disarm). <b>Drag</b> with one finger to pan, <b>pinch</b> with two to zoom, and <b>press-and-hold</b> a component for its menu (Delete / Rotate / Rename / Look inside). For box-select and moving groups, turn on the <b>⇧ Select</b> button — it acts like holding Shift.</li>
+        </ul>
+        <h3>Custom components (ICs)</h3>
+        <ul>
+          <li>Build a circuit using <b>Input</b> / <b>Output</b> components for the pins, then press <b>📦 Create IC</b>. The inputs/outputs (top-to-bottom) become the chip's pins.</li>
+          <li>Your chips appear under <b>My Components</b> — drag them out like any other part, and use them inside new chips.</li>
+          <li><b>Double-click a chip</b> to look inside it (read-only). In <b>edit</b> mode it opens in place (use the breadcrumb bar to go back).</li>
+          <li><b>Side-by-side inspector (sim mode):</b> drag the handle on the left edge of the worksheet to pull out a second canvas like a curtain. Double-click any chip while simulating to show its insides there — so you watch the inside and the outside live at the same time. The inspector pans (drag), zooms (wheel), drills deeper (double-click a nested chip), and you can toggle its inputs by clicking them. Drag the divider to resize, double-click it (or press <kbd>Esc</kbd>) to close.</li>
+          <li><b>⬇ / ✕</b> on a custom component exports / deletes it. Use toolbar Export/Import to move components between sessions as JSON files.</li>
+        </ul>
+        <h3>Simulating</h3>
+        <ul>
+          <li>Click <b>▶ Simulate</b>. Click Input switches on the sheet to toggle them, or use the <b>Inputs ▾</b> menu (works even while you are inside a chip) — each input has a toggle <i>and</i> a momentary <b>⏼ hold</b> button that flips back when released.</li>
+          <li><b>▶ Run</b> runs the clock at the slider frequency. <b>Next ⏭</b> toggles the clock by half a cycle manually, <b>⏮ Prev</b> steps back through history (also undoes input toggles).</li>
+          <li>All <b>Clock</b> components output the same global clock signal.</li>
+          <li><b>ƒ boxes</b> next to gate outputs: click to see the live boolean expression for that signal — green letters are currently high, and the popup follows the simulation.</li>
+          <li><b>Truth table ▾</b> enumerates the worksheet inputs (up to 8). <b>Boolean ▾</b> shows the formula for every Output. <b>Timeline ▾</b> opens a timing diagram of CLK and all inputs/outputs — untick signals to hide them.</li>
+          <li>In expressions: an overline = NOT, <code>·</code> = AND, <code>+</code> = OR, <code>⊕</code> = XOR, <code>prev</code> = a feedback signal (stored value), <code>0</code> = unconnected pin.</li>
+          <li><b>74HC595:</b> like the real chip — shift data in on SHCP edges, copy to the outputs with an STCP edge. Tie <b>MR'</b> to High&nbsp;(1) for normal operation (it is an active-low reset); OE' high forces the outputs low.</li>
+        </ul>
+        <h3>Saving</h3>
+        <ul>
+          <li><b>💾 Save</b> stores the worksheet and your components in the browser (localStorage); it is loaded automatically next time.</li>
+          <li><b>Export/Import</b> JSON files to keep custom components permanently or share them.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /#digitalApp -->
+
+<div id="analogApp" class="hidden">
+  <header id="anToolbar">
+    <div class="brand">🔌 Analog&nbsp;Lab</div>
+    <button id="anModeBtn" class="primary" title="Solve / edit the circuit">▶ Simulate</button>
+    <div class="group">
+      <button id="anNewBtn" title="Clear the sheet">New</button>
+      <button id="anRunBtn" class="hidden" title="Run / pause time">⏸ Pause</button>
+      <span id="anTime" class="an-status hidden"></span>
+    </div>
+    <span id="anStatus" class="an-status"></span>
+    <div class="spacer"></div>
+    <div class="an-tip">DC · AC · transient · semiconductors — click a meter while simulating for a readout</div>
+  </header>
+  <div id="anMain">
+    <aside id="anPalette"></aside>
+    <div id="anStage">
+      <canvas id="anCanvas"></canvas>
+      <div id="anMeters"></div>
+      <div id="anCtxMenu" class="hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/model.js"></script>
+<script src="js/builtins.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/touch.js"></script>
+<script src="js/render.js"></script>
+<script src="js/interact.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+<script src="js/analog/model.js"></script>
+<script src="js/analog/engine.js"></script>
+<script src="js/analog/render.js"></script>
+<script src="js/analog/interact.js"></script>
+<script src="js/analog/ui.js"></script>
+</body>
+</html>

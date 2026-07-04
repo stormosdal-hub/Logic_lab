@@ -1,0 +1,142 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1782635637.0310996,
+    "ast_hash": "c5e7fef704056979b405f1fe51246c7f",
+    "semantic_hash": "c5e7fef704056979b405f1fe51246c7f"
+  },
+  ".mcp.json": {
+    "mtime": 1782635636.9740996,
+    "ast_hash": "0609d30019040c3dfd56c231cbc308f6",
+    "semantic_hash": "0609d30019040c3dfd56c231cbc308f6"
+  },
+  ".mcp/package.json": {
+    "mtime": 1782635633.223104,
+    "ast_hash": "40b32afa3ea5ac244d0e82520042ca5b",
+    "semantic_hash": "40b32afa3ea5ac244d0e82520042ca5b"
+  },
+  ".mcp/server.js": {
+    "mtime": 1782635633.220104,
+    "ast_hash": "04e12d47e4e384888b941f65aad2ac70",
+    "semantic_hash": "04e12d47e4e384888b941f65aad2ac70"
+  },
+  "js/builtins.js": {
+    "mtime": 1782325119.5770948,
+    "ast_hash": "52be0f45aeb6f5d944a7db0dd5f77f75",
+    "semantic_hash": "52be0f45aeb6f5d944a7db0dd5f77f75"
+  },
+  "js/engine.js": {
+    "mtime": 1782826354.435125,
+    "ast_hash": "6e6ad4cd6302c1be33fd30828fdff223",
+    "semantic_hash": ""
+  },
+  "js/interact.js": {
+    "mtime": 1782826363.884118,
+    "ast_hash": "f189265c7d7c673206bd609c59ee3154",
+    "semantic_hash": ""
+  },
+  "js/main.js": {
+    "mtime": 1782318060.8461924,
+    "ast_hash": "90ebd45576470d6446c13499857b5696",
+    "semantic_hash": "90ebd45576470d6446c13499857b5696"
+  },
+  "js/model.js": {
+    "mtime": 1782826286.8641744,
+    "ast_hash": "85618a5a40f1ff8a054a073507da10eb",
+    "semantic_hash": ""
+  },
+  "js/render.js": {
+    "mtime": 1782324552.0247319,
+    "ast_hash": "1ce7b5844c8b9367e9b0baf817fc255e",
+    "semantic_hash": "1ce7b5844c8b9367e9b0baf817fc255e"
+  },
+  "js/ui.js": {
+    "mtime": 1782324709.3135552,
+    "ast_hash": "6ba73c2cb3842238766379bcd17d1464",
+    "semantic_hash": "6ba73c2cb3842238766379bcd17d1464"
+  },
+  "test/smoke.js": {
+    "mtime": 1782826448.7950559,
+    "ast_hash": "354a32643d15fca1544b499bc8d6085f",
+    "semantic_hash": ""
+  },
+  ".claude/agents/components.md": {
+    "mtime": 1782318060.8451924,
+    "ast_hash": "a9e8a988d46b51e90f840ebb6996ae4e",
+    "semantic_hash": "a9e8a988d46b51e90f840ebb6996ae4e"
+  },
+  ".claude/agents/qa.md": {
+    "mtime": 1782318060.8451924,
+    "ast_hash": "f1d0e902f1371f69cb9a3a74092cba56",
+    "semantic_hash": "f1d0e902f1371f69cb9a3a74092cba56"
+  },
+  ".claude/agents/renderer.md": {
+    "mtime": 1782318060.8451924,
+    "ast_hash": "3e4c967b14730dc81e2954c8a7d8ae79",
+    "semantic_hash": "3e4c967b14730dc81e2954c8a7d8ae79"
+  },
+  ".claude/agents/sim-engine.md": {
+    "mtime": 1782318060.8451924,
+    "ast_hash": "8180e046bfd861f9d9956103eaaa566d",
+    "semantic_hash": "8180e046bfd861f9d9956103eaaa566d"
+  },
+  ".claude/agents/ux.md": {
+    "mtime": 1782318060.8461924,
+    "ast_hash": "4b04ce020b54d819772046cc7d8dba4d",
+    "semantic_hash": "4b04ce020b54d819772046cc7d8dba4d"
+  },
+  "CLAUDE.md": {
+    "mtime": 1782926908.768146,
+    "ast_hash": "b3b155e3e8117024976abd55e973e571",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1782318060.8461924,
+    "ast_hash": "8617109f48f775451bb823b905d91a6f",
+    "semantic_hash": "8617109f48f775451bb823b905d91a6f"
+  },
+  "index.html": {
+    "mtime": 1782926837.350183,
+    "ast_hash": "86dd3006f5887c0a6442c7960ce6f286",
+    "semantic_hash": ""
+  },
+  "test/sim_view.html": {
+    "mtime": 1782318060.8471923,
+    "ast_hash": "41b15ba0c8e25da19ffbdd34b7d34fdc",
+    "semantic_hash": "41b15ba0c8e25da19ffbdd34b7d34fdc"
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1782826515.9820063,
+    "ast_hash": "b70c66a70a88a43cc44597bcd4c8c9ff",
+    "semantic_hash": ""
+  },
+  "js/analog/engine.js": {
+    "mtime": 1782926740.4732313,
+    "ast_hash": "6f25a6a605b0f95848f6617cefb4d42b",
+    "semantic_hash": ""
+  },
+  "js/analog/interact.js": {
+    "mtime": 1782916755.372872,
+    "ast_hash": "734fc8d508e041a95d61937832874043",
+    "semantic_hash": ""
+  },
+  "js/analog/model.js": {
+    "mtime": 1782926502.16034,
+    "ast_hash": "475da7396035aedc3f87538a2ef8c87c",
+    "semantic_hash": ""
+  },
+  "js/analog/render.js": {
+    "mtime": 1782926808.6591976,
+    "ast_hash": "de889d01d4e629b800b4f7aafda450d1",
+    "semantic_hash": ""
+  },
+  "js/analog/ui.js": {
+    "mtime": 1782926823.61519,
+    "ast_hash": "65e68ae1238c7d7fa5e55a6b09f5ddb9",
+    "semantic_hash": ""
+  },
+  "test/analog.js": {
+    "mtime": 1782926646.2762764,
+    "ast_hash": "aa262a329b3c0fae6ee43deb724deba3",
+    "semantic_hash": ""
+  }
+}
