@@ -383,6 +383,7 @@ table.tt tr.tt-row.tt-active { background: rgba(63, 220, 139, 0.18); outline: 1p
 #ctxMenu .ctx-item.danger { color: var(--warn); }
 #ctxMenu .ctx-item.danger:hover { background: #3a2230; }
 #ctxMenu .ctx-sep { height: 1px; background: var(--edge); margin: 4px 2px; }
+#ctxMenu .ctx-disabled { padding: 6px 12px; font-size: 12px; font-style: italic; color: var(--dim); cursor: default; }
 #ctxMenu .ctx-arrow { float: right; margin-left: 12px; color: var(--dim); }
 #ctxMenu .ctx-sub {
   display: none;

@@ -488,6 +488,13 @@ function onCanvasContext(e) {
         { label: "Binary Encoder", action: () => addAt(pt, "BENC") },
         { label: "Binary Decoder", action: () => addAt(pt, "BDEC") },
       ] },
+      { label: "Latches & flip-flops", submenu:
+        builtinDefs("ff").map(d => ({ label: d.name, action: () => addChipAt(pt, d.name) })) },
+      { sep: true },
+      { label: "My components", submenu:
+        (customDefs().length
+          ? customDefs().map(d => ({ label: d.name, action: () => addChipAt(pt, d.name) }))
+          : [{ disabled: true, label: "(none yet — use 📦 Create IC)" }]) },
     ]);
   }
 }
@@ -496,6 +503,22 @@ function onCanvasContext(e) {
 function addAt(pt, type) {
   const circ = curCircuit();
   const comp = makeComp(type, 0, 0, (type === "IN" || type === "OUT") ? { label: nextLabel(circ, type) } : {});
+  const { w, h } = compSize(comp);
+  comp.x = snap(pt.x - w / 2);
+  comp.y = snap(pt.y - h / 2);
+  circ.components.push(comp);
+  touchCircuit(circ);
+  App.selection = [{ kind: "comp", obj: comp }];
+  afterStructChange();
+}
+
+/* Drop a built-in or custom chip (by definition name) centred at a world point
+   — the quick-add menu's equivalent of dragging a chip out of the palette. */
+function addChipAt(pt, defName) {
+  const circ = curCircuit();
+  let comp;
+  try { comp = makeComp("CUSTOM", 0, 0, { defName }); }
+  catch (err) { toast(err.message); return; }
   const { w, h } = compSize(comp);
   comp.x = snap(pt.x - w / 2);
   comp.y = snap(pt.y - h / 2);
@@ -628,6 +651,7 @@ function showContextMenu(mx, my, items) {
 function buildMenuLevel(container, items) {
   for (const it of items) {
     if (it.sep) { container.appendChild(Object.assign(document.createElement("div"), { className: "ctx-sep" })); continue; }
+    if (it.disabled) { container.appendChild(Object.assign(document.createElement("div"), { className: "ctx-item ctx-disabled", textContent: it.label })); continue; }
     const b = document.createElement("button");
     b.className = "ctx-item" + (it.danger ? " danger" : "") + (it.submenu ? " has-sub" : "");
     if (it.submenu) {
