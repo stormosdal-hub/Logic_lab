@@ -183,6 +183,7 @@ function paintPane(cv, ctx, v, circ, secondary) {
   if (!secondary) uiHits.length = 0;
   const sim = App.mode === "sim";
 
+  if (sim && circ._synthOwner) refreshSynthLive(circ._synthOwner);
   circ._lanes = computeWireLanes(circ);
   for (const w of circ.wires) drawWire(circ, w, sim);
   if (!secondary && App.wiring) drawWiringPreview();
@@ -232,16 +233,70 @@ const WIRE_LANE = 10;
 
 function computeWireLanes(circ) {
   const map = new Map();
-  const fwd = [], bwd = [];
+  const bySrc = new Map(), geom = [];
   for (const w of circ.wires) {
     if (w.route && w.route.length) continue;          // hand-routed: leave alone
     const f = compById(circ, w.from.c), t = compById(circ, w.to.c);
     if (!f || !t) continue;
     const a = pinPos(f, "out", w.from.p), b = pinPos(t, "in", w.to.p);
-    if (b.x >= a.x + 24)
-      fwd.push({ w, key: snap((a.x + b.x) / 2), lo: Math.min(a.y, b.y), hi: Math.max(a.y, b.y) });
-    else
-      bwd.push({ w, key: snap((a.y + b.y) / 2), lo: Math.min(a.x, b.x), hi: Math.max(a.x, b.x) });
+    const g = { w, a, b, fwd: b.x >= a.x + 24 };
+    geom.push(g);
+    const key = w.from.c + "#" + w.from.p;
+    if (!bySrc.has(key)) bySrc.set(key, []);
+    bySrc.get(key).push(g);
+  }
+  // Fan-out: one output pin driving several destinations. If routed naively they
+  // share one long straight leg and read as a single fat wire. We split each
+  // fan-out so its long runs are separated:
+  //   • destinations stacked in a COLUMN  → a "comb" of trunks hugging the source
+  //     (each branch peels off at its own X, then runs out at its own Y);
+  //   • destinations spread along a ROW    → each branch takes its own staggered
+  //     horizontal lane just off the source, then drops into its destination.
+  // Vertical channels are allocated so combs from different pins don't collide;
+  // groups that can't fit fall through to the plain lane-offset pass.
+  const done = new Set();
+  const occ = [];   // occupied vertical channels {x, lo, hi}
+  const freeAt = (x, lo, hi) => !occ.some(o =>
+    Math.abs(o.x - x) < WIRE_LANE - 1 && Math.min(o.hi, hi) - Math.max(o.lo, lo) > 4);
+
+  const groups = [...bySrc.values()].filter(g => g.filter(x => x.fwd).length >= 2);
+  groups.sort((A, B) => A[0].a.x - B[0].a.x);
+  for (const group of groups) {
+    const fan = group.filter(g => g.fwd);
+    const a = fan[0].a, n = fan.length;
+    const ys = fan.map(g => g.b.y), xs = fan.map(g => g.b.x);
+    const ySpread = Math.max(...ys) - Math.min(...ys), xSpread = Math.max(...xs) - Math.min(...xs);
+
+    if (ySpread >= xSpread) {                    // COLUMN fan-out → source comb
+      fan.sort((p, q) => p.b.y - q.b.y);
+      const nearest = Math.min(...xs);
+      let x0 = snap(a.x + 24), ok = false;
+      for (; x0 + (n - 1) * WIRE_LANE < nearest - 20; x0 += WIRE_LANE)
+        if (fan.every((g, k) => freeAt(x0 + k * WIRE_LANE, Math.min(a.y, g.b.y), Math.max(a.y, g.b.y)))) { ok = true; break; }
+      if (!ok) continue;                         // no room → plain lane offset
+      fan.forEach((g, k) => {
+        const x = x0 + k * WIRE_LANE;
+        map.set(g.w, { route: [x] });
+        occ.push({ x, lo: Math.min(a.y, g.b.y), hi: Math.max(a.y, g.b.y) });
+        done.add(g.w);
+      });
+    } else {                                     // ROW fan-out → staggered legs
+      fan.sort((p, q) => p.b.x - q.b.x);
+      fan.forEach((g, k) => {
+        const jogX = snap(a.x + 12) + k * 6;
+        const legY = a.y + Math.round((k - (n - 1) / 2) * WIRE_LANE);
+        map.set(g.w, { route: [jogX, legY, snap(g.b.x - 16)] });
+        done.add(g.w);
+      });
+    }
+  }
+  // Everything else: nudge overlapping trunks apart (vertical mid-X for forward
+  // wires, horizontal mid-Y for the ones that loop back).
+  const fwd = [], bwd = [];
+  for (const g of geom) {
+    if (done.has(g.w)) continue;
+    if (g.fwd) fwd.push({ w: g.w, key: snap((g.a.x + g.b.x) / 2), lo: Math.min(g.a.y, g.b.y), hi: Math.max(g.a.y, g.b.y) });
+    else bwd.push({ w: g.w, key: snap((g.a.y + g.b.y) / 2), lo: Math.min(g.a.x, g.b.x), hi: Math.max(g.a.x, g.b.x) });
   }
   assignWireLanes(fwd, map, "mx");
   assignWireLanes(bwd, map, "my");
@@ -281,13 +336,37 @@ function assignWireLanes(list, map, axis) {
    render loop (and lazily by hit-testing) so drawing and clicking stay in sync. */
 function effRoute(circ, w, a, b) {
   if (w.route && w.route.length) return w.route;
-  const base = defaultWireRoute(a, b);
   const lane = circ._lanes && circ._lanes.get(w);
+  if (lane && lane.route) return lane.route.slice();     // fan-out comb: full route override
+  const base = defaultWireRoute(a, b);
   if (lane) {
     if (lane.mx != null) base[0] += lane.mx;
     else if (lane.my != null && base.length >= 3) base[1] += lane.my;
   }
   return base;
+}
+
+/* Live values inside a synthesised address-part schematic (MUX/DEMUX/…). The
+   part itself is a primitive (evaluated by evalAddr), so its gate schematic is
+   not in the simulation. Before drawing it in sim mode we copy the part's live
+   input-pin values onto the schematic's inputs and relax it, so the inner wires
+   light up exactly in step with the real part. Display only — never touches the
+   real sim (these components are not in the global work-list). */
+function refreshSynthLive(comp) {
+  const inst = comp._synth, parent = comp._synthParentCirc;
+  if (!inst || !parent) return;
+  const ins = inputVals(parent, comp);
+  for (let i = 0; i < inst.inputComps.length; i++)
+    inst.inputComps[i].state = ins[i] === null ? false : !!ins[i];
+  settleLocalCircuit(inst.circuit);
+}
+
+/* Relax a detached, purely combinational circuit to a fixed point. */
+function settleLocalCircuit(circ) {
+  for (let pass = 0, changed = true; changed && pass < 60; pass++) {
+    changed = false;
+    for (const c of circ.components) if (evalComp(circ, c)) changed = true;
+  }
 }
 
 function drawWire(circ, w, sim) {

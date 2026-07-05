@@ -816,10 +816,11 @@ function innerCircuitOf(comp) {
   if (comp.type === "CUSTOM") return comp.circuit;
   if (isAddr(comp.type)) {
     if (!comp._synth || comp._synthSel !== comp.sel) {
-      comp._synth = synthAddrCircuit(comp.type, comp.sel).circuit;
+      comp._synth = synthAddrCircuit(comp.type, comp.sel);   // {circuit, inputComps, outputComps}
       comp._synthSel = comp.sel;
+      comp._synth.circuit._synthOwner = comp;                // hook for live refresh in sim
     }
-    return comp._synth;
+    return comp._synth.circuit;
   }
   return null;
 }
@@ -841,6 +842,7 @@ function innerName(comp) {
 function enterComponent(comp) {
   const circuit = innerCircuitOf(comp);
   if (!circuit) return;
+  if (isAddr(comp.type)) comp._synthParentCirc = curCircuit();   // to read its live inputs
   curView().savedView = { ...App.view };
   App.viewStack.push({ name: innerName(comp), circuit, comp });
   App.selection = [];
