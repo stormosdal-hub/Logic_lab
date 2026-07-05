@@ -183,6 +183,7 @@ function paintPane(cv, ctx, v, circ, secondary) {
   if (!secondary) uiHits.length = 0;
   const sim = App.mode === "sim";
 
+  circ._lanes = computeWireLanes(circ);
   for (const w of circ.wires) drawWire(circ, w, sim);
   if (!secondary && App.wiring) drawWiringPreview();
   for (const c of circ.components) drawComp(circ, c, sim);
@@ -220,13 +221,82 @@ function strokePolyline(pts) {
   g2d.stroke();
 }
 
+/* --------- parallel-wire spacing (lane de-overlap) ---------
+   Default-routed wires that share a straight "trunk" — a vertical mid-X segment
+   for forward wires, or a horizontal mid-Y segment for ones that loop back —
+   otherwise stack exactly on top of each other, so a clock fanning out to four
+   flip-flops looks like a single wire. We spread each overlapping group across a
+   few parallel lanes so you can tell how many wires there really are. Wires the
+   user has hand-routed (an explicit `route`) are left untouched. */
+const WIRE_LANE = 10;
+
+function computeWireLanes(circ) {
+  const map = new Map();
+  const fwd = [], bwd = [];
+  for (const w of circ.wires) {
+    if (w.route && w.route.length) continue;          // hand-routed: leave alone
+    const f = compById(circ, w.from.c), t = compById(circ, w.to.c);
+    if (!f || !t) continue;
+    const a = pinPos(f, "out", w.from.p), b = pinPos(t, "in", w.to.p);
+    if (b.x >= a.x + 24)
+      fwd.push({ w, key: snap((a.x + b.x) / 2), lo: Math.min(a.y, b.y), hi: Math.max(a.y, b.y) });
+    else
+      bwd.push({ w, key: snap((a.y + b.y) / 2), lo: Math.min(a.x, b.x), hi: Math.max(a.x, b.x) });
+  }
+  assignWireLanes(fwd, map, "mx");
+  assignWireLanes(bwd, map, "my");
+  return map;
+}
+
+/* Within each shared trunk coordinate, split overlapping wires into lanes. */
+function assignWireLanes(list, map, axis) {
+  const byKey = new Map();
+  for (const it of list) {
+    if (!byKey.has(it.key)) byKey.set(it.key, []);
+    byKey.get(it.key).push(it);
+  }
+  for (const items of byKey.values()) {
+    if (items.length < 2) continue;
+    items.sort((p, q) => p.lo - q.lo || p.hi - q.hi);
+    let group = [], hi = -Infinity;
+    const flush = () => {
+      const n = group.length;
+      if (n > 1) group.forEach((g, i) => {
+        const off = Math.round((i - (n - 1) / 2) * WIRE_LANE);
+        if (off) map.set(g.w, { [axis]: off });
+      });
+      group = [];
+    };
+    for (const it of items) {
+      if (group.length && it.lo > hi + 0.5) { flush(); hi = -Infinity; }
+      group.push(it);
+      hi = Math.max(hi, it.hi);
+    }
+    flush();
+  }
+}
+
+/* The route a wire is actually drawn with: its own if hand-routed, else the
+   default route nudged into its assigned lane. `circ._lanes` is filled in by the
+   render loop (and lazily by hit-testing) so drawing and clicking stay in sync. */
+function effRoute(circ, w, a, b) {
+  if (w.route && w.route.length) return w.route;
+  const base = defaultWireRoute(a, b);
+  const lane = circ._lanes && circ._lanes.get(w);
+  if (lane) {
+    if (lane.mx != null) base[0] += lane.mx;
+    else if (lane.my != null && base.length >= 3) base[1] += lane.my;
+  }
+  return base;
+}
+
 function drawWire(circ, w, sim) {
   const f = compById(circ, w.from.c), t = compById(circ, w.to.c);
   if (!f || !t) return;
   const a = pinPos(f, "out", w.from.p), b = pinPos(t, "in", w.to.p);
   const raw = sim && f.out != null ? f.out[w.from.p] : false;
   const selected = App.selection.some(s => s.kind === "wire" && s.obj === w);
-  const pts = wireRoutePoints(a, b, w.route);
+  const pts = wireRoutePoints(a, b, effRoute(circ, w, a, b));
 
   // a bus wire (wide source pin) is drawn thick and labelled with its value
   if (pinBits(f, "out", w.from.p) > 1) {
@@ -931,13 +1001,14 @@ function hitComp(pt) {
 function hitWireSeg(pt) {
   const circ = activeCircuit();
   if (!circ) return null;
+  if (!circ._lanes) circ._lanes = computeWireLanes(circ);
   const tol = 6;
   for (let i = circ.wires.length - 1; i >= 0; i--) {
     const w = circ.wires[i];
     const f = compById(circ, w.from.c), t = compById(circ, w.to.c);
     if (!f || !t) continue;
     const a = pinPos(f, "out", w.from.p), b = pinPos(t, "in", w.to.p);
-    const pts = wireRoutePoints(a, b, w.route);
+    const pts = wireRoutePoints(a, b, effRoute(circ, w, a, b));
     for (let s = 0; s < pts.length - 1; s++) {
       const p1 = pts[s], p2 = pts[s + 1];
       if (Math.abs(p1.x - p2.x) < 1 && Math.abs(p1.y - p2.y) < 1) continue;

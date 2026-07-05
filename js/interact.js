@@ -427,6 +427,9 @@ function onCanvasDbl(e) {
     else enterComponent(comp);
     return;
   }
+  // primitive address parts have no live inner circuit — open the synthesised
+  // gate schematic in place (read-only) in either mode
+  if (isAddr(comp.type)) { enterComponent(comp); return; }
   if (canEdit() && (comp.type === "IN" || comp.type === "OUT")) renameComp(comp);
 }
 
@@ -531,7 +534,7 @@ function addChipAt(pt, defName) {
 /* Build the right-click menu for a component, gated by mode. */
 function compMenuItems(circ, comp) {
   const items = [];
-  if (comp.type === "CUSTOM")
+  if (comp.type === "CUSTOM" || isAddr(comp.type))
     items.push({ label: "🔎 Look inside", action: () => enterComponent(comp) });
   if (canEdit()) {
     if (comp.type === "IN" || comp.type === "OUT")
@@ -804,13 +807,45 @@ function onCanvasDrop(e) {
 
 /* ---------------- hierarchy navigation ---------------- */
 
+/* The inspectable inner circuit of a component: a CUSTOM chip's live cloned
+   circuit, or — for the primitive address parts (MUX/DEMUX/ENC/DEC/…) — a
+   lazily-built, gate-level schematic so they can be opened just like a chip.
+   The synthesised circuit is a read-only structural view (not part of the sim);
+   it's cached and rebuilt only if the part's select width changes. */
+function innerCircuitOf(comp) {
+  if (comp.type === "CUSTOM") return comp.circuit;
+  if (isAddr(comp.type)) {
+    if (!comp._synth || comp._synthSel !== comp.sel) {
+      comp._synth = synthAddrCircuit(comp.type, comp.sel).circuit;
+      comp._synthSel = comp.sel;
+    }
+    return comp._synth;
+  }
+  return null;
+}
+
+function innerName(comp) {
+  if (comp.type === "CUSTOM") { const def = Defs[comp.defName]; return def ? def.name : comp.defName; }
+  const N = 1 << comp.sel;
+  switch (comp.type) {
+    case "MUX":   return N + ":1 MUX";
+    case "DEMUX": return "1:" + N + " DEMUX";
+    case "DEC":   return comp.sel + "→" + N + " Decoder";
+    case "BDEC":  return comp.sel + "→" + N + " Binary Decoder";
+    case "ENC":   return N + "→" + comp.sel + " Priority Encoder";
+    case "BENC":  return N + "→" + comp.sel + " Binary Encoder";
+  }
+  return comp.type;
+}
+
 function enterComponent(comp) {
-  const def = Defs[comp.defName];
+  const circuit = innerCircuitOf(comp);
+  if (!circuit) return;
   curView().savedView = { ...App.view };
-  App.viewStack.push({ name: def ? def.name : comp.defName, circuit: comp.circuit, comp });
+  App.viewStack.push({ name: innerName(comp), circuit, comp });
   App.selection = [];
   App.wiring = null;
-  fitView(comp.circuit);
+  fitView(circuit);
   updateCrumbs();
   requestRender();
 }

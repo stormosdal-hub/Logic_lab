@@ -67,6 +67,8 @@ All tests must pass before marking any task complete.
 
 **Address components (`ADDR_TYPES` / `isAddr`):** `MUX`, `DEMUX`, `ENC`, `DEC` are primitive (not gate-built) and sized by a `sel` bit-count (1–4). Data-line count = `2^sel`. The ± selection buttons call `setAddrSel()` (mirrors `setGateInputs`). Pin counts come from `numInputsOf`/`numOutputsOf` switching on type; MUX/DEMUX put data pins first then select pins (`muxSelStart`). Evaluation is the pure `evalAddr(c, ins)` in engine.js (ENC is a priority encoder). `sel` round-trips through `serializeCircuit`/`makeComp`/copy-paste. Boolean tracer emits a named leaf for these (no full expansion).
 
+**Look inside an address part:** although primitive, MUX/DEMUX/ENC/DEC/BENC/BDEC are inspectable. `buildAddrData(type, sel)` (model.js) synthesises an **equivalent gate-level circuit** (data-in/select order matches `evalAddr` exactly) and `synthAddrCircuit(type, sel)` makes it live via `instantiateData`. `innerCircuitOf(comp)` (interact.js) returns a CUSTOM chip's `comp.circuit` or, for address parts, a lazily-built schematic cached on `comp._synth`/`comp._synthSel` (rebuilt if `sel` changes) — **not** `comp.circuit`, so the engine's `if (c.circuit)` walks never pull the read-only schematic into the sim. "Look inside" (context menu + double-click, via `enterComponent`) shows it as a static structural view; the smoke test proves the synthesis equals `evalAddr` for every type/size.
+
 **Three-valued logic (tri-state buses):** signal values are `true`, `false`, or `null` (Hi-Z / high-impedance). Only `TRI` buffers emit `null` (when their enable input is low). An input pin can have multiple wires — a bus — resolved by `busValue()` (pure, render-safe): the single active driver wins; all-Hi-Z → `null` (floating); conflicting active drivers → a short circuit, resolved to `false` and flagged via `detectShortsIn()` → `Sim.shortCircuit`. Joining a bus uses `addWireBus()` (Shift+drop in the UI); normal wiring (`addWire`) replaces. Gates treat a Hi-Z input as `0`.
 
 **Junctions (`JUNCTION`):** a bus tap — one node (pin 0) that merges everything wired *into* it (resolved by `busValue` in `evalComp`) and fans its value out to anything wired *from* it. Junctions chain (junction→junction). In the UI, dropping a wire onto a junction always merges (no Shift); `hitPin` returns kind `"j"` for them and tapping one starts a wire *from* it.
@@ -78,6 +80,8 @@ All tests must pass before marking any task complete.
 **Pin ordering** on chips is top-to-bottom by `y`, then `x` — position components in `builtins.js` accordingly.
 
 **Wire routing:** orthogonal segments only. `route` array alternates X/Y coords. `defaultWireRoute` returns `[midX]` for forward wires, `[src.x+16, midY, dst.x-16]` for backward ones.
+
+**Parallel-wire spacing (lane de-overlap):** default-routed wires that would share a straight trunk (a vertical mid-X for forward wires, a horizontal mid-Y for backward ones) — e.g. a clock fanning out to several flip-flops — otherwise stack exactly on top of each other. `computeWireLanes(circ)` groups such overlapping wires and spreads them across parallel lanes (`WIRE_LANE` = 10px), caching the result on `circ._lanes` per render; `effRoute(circ, w, a, b)` applies the offset. **Both `drawWire` and `hitWireSeg` go through `effRoute`**, so clicks still land on the drawn wire. Hand-routed wires (explicit `route`) are left untouched.
 
 **`afterSimChange()`** must be called after any simulation state change — it triggers render, UI, panel, and timeline updates.
 

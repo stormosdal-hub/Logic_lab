@@ -7,7 +7,7 @@ const ctx = vm.createContext({ console });
 for (const f of ["model.js", "builtins.js", "engine.js"]) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "js", f), "utf8"), ctx, { filename: f });
 }
-const T = vm.runInContext("({App, Sim, Defs, Timeline, makeComp, newCircuit, setTopCircuit, addWire, addWireBus, wiresTo, busValue, settle, settleFrom, registerBuiltinDefs, sortedPinComps, computeTruthTable, topOutputExprs, exprTreeForOutputPin, exprToText, exprToHtml, ctxForViewStack, clockTick, stepBack, snapshotState, restoreState, wireTo, compById, defaultWireRoute, wireRoutePoints, pinPos, pinPosLogical, compBox, rotateAround, numInputsOf, numOutputsOf, setAddrSel, evalAddr, setMatrixSize, matrixLit, pinBits, setCompBits, resolveBit, bitEq, createDefFromCircuit, serializeCircuit})", ctx);
+const T = vm.runInContext("({App, Sim, Defs, Timeline, makeComp, newCircuit, setTopCircuit, addWire, addWireBus, wiresTo, busValue, settle, settleFrom, registerBuiltinDefs, sortedPinComps, computeTruthTable, topOutputExprs, exprTreeForOutputPin, exprToText, exprToHtml, ctxForViewStack, clockTick, stepBack, snapshotState, restoreState, wireTo, compById, defaultWireRoute, wireRoutePoints, pinPos, pinPosLogical, compBox, rotateAround, numInputsOf, numOutputsOf, setAddrSel, evalAddr, buildAddrData, synthAddrCircuit, setMatrixSize, matrixLit, pinBits, setCompBits, resolveBit, bitEq, createDefFromCircuit, serializeCircuit})", ctx);
 
 let pass = 0, fail = 0;
 function check(name, cond) {
@@ -1104,6 +1104,40 @@ T.registerBuiltinDefs();
   }
   T.App.mode = "edit";
   check("clockTick drives counter via incremental settle", good);
+}
+
+/* ---- address parts: gate synthesis must equal evalAddr (so "Look inside" is faithful) ---- */
+{
+  const types = ["MUX", "DEMUX", "DEC", "BDEC", "ENC", "BENC"];
+  // small deterministic PRNG so the test is reproducible
+  const lcg = seed => () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+  let bits = 0, mism = 0, firstBad = "";
+  T.App.mode = "sim";
+  for (const type of types) {
+    for (let sel = 1; sel <= 4; sel++) {
+      const inst = T.synthAddrCircuit(type, sel);
+      T.setTopCircuit(inst.circuit);
+      const nIn = inst.inputComps.length;
+      const rnd = lcg(1000 + sel * 13 + type.charCodeAt(0));
+      const vectors = [new Array(nIn).fill(false), new Array(nIn).fill(true)];
+      for (let i = 0; i < nIn; i++) { const v = new Array(nIn).fill(false); v[i] = true; vectors.push(v); }
+      for (let r = 0; r < 12; r++) vectors.push(Array.from({ length: nIn }, () => rnd() < 0.5));
+      for (const vec of vectors) {
+        inst.inputComps.forEach((c, i) => { c.state = vec[i]; });
+        T.settle();
+        const got = inst.outputComps.map(c => c.state);
+        const exp = T.evalAddr({ type, sel }, vec);
+        for (let j = 0; j < got.length; j++) {
+          bits++;
+          if (!!got[j] !== !!exp[j] && !firstBad) firstBad = `${type} sel=${sel} out${j} in=[${vec.map(b => b ? 1 : 0).join("")}]`;
+          if (!!got[j] !== !!exp[j]) mism++;
+        }
+      }
+    }
+  }
+  T.App.mode = "edit";
+  if (mism) console.log("   first mismatch: " + firstBad);
+  check("address synthesis matches evalAddr (" + bits + " output bits, " + mism + " wrong)", mism === 0);
 }
 
 console.log("\n" + pass + " passed, " + fail + " failed");

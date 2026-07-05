@@ -412,6 +412,124 @@ function setAddrSel(circ, c, sel) {
   touchCircuit(circ);
 }
 
+/* ---- gate-level synthesis of the address parts (MUX/DEMUX/ENC/DEC/…) ----
+   These parts are primitives (evaluated by evalAddr), so there is nothing to
+   "look inside". buildAddrData produces an equivalent circuit built purely from
+   gates so it CAN be opened and inspected. Input/output order matches evalAddr
+   exactly — MUX ins are [D0..D(N-1), S0..S(sel-1)], etc. — so the synthesised
+   circuit is verified against evalAddr in the test suite. Returns plain data
+   ({components, wires, inputs, outputs}); synthAddrCircuit turns it live. */
+function buildAddrData(type, sel) {
+  const N = 1 << sel;
+  const comps = [], wires = [], inputs = [], outputs = [];
+  let k = 0;
+  const add = (t, x, y, o) => { const c = Object.assign({ id: "s" + (k++), type: t, x, y }, o || {}); comps.push(c); return c.id; };
+  const IN  = (x, y, label) => { const id = add("IN",  x, y, { label }); return id; };
+  const OUT = (x, y, label) => { const id = add("OUT", x, y, { label }); return id; };
+  const NOT = (x, y, src)   => { const g = add("NOT", x, y); wires.push({ from: { c: src.c, p: src.p }, to: { c: g, p: 0 } }); return { c: g, p: 0 }; };
+  const W = (s, tc, tp) => wires.push({ from: { c: s.c, p: s.p }, to: { c: tc, p: tp } });
+
+  // AND the given source pins (>=1). One literal → passed straight through.
+  const andOf = (srcs, x, y) => {
+    if (srcs.length === 1) return srcs[0];
+    const g = add("AND", x, y, { numInputs: srcs.length });
+    srcs.forEach((s, i) => W(s, g, i));
+    return { c: g, p: 0 };
+  };
+  // Reduce sources with `op` (OR/XOR) into one pin, as a tree of <=8-in gates.
+  const treeOf = (op, srcs, x, y) => {
+    if (!srcs.length) return null;
+    let layer = srcs.slice(), col = x;
+    while (layer.length > 1) {
+      const next = [];
+      for (let i = 0; i < layer.length; i += 8) {
+        const chunk = layer.slice(i, i + 8);
+        if (chunk.length === 1) { next.push(chunk[0]); continue; }
+        const g = add(op, col, y + next.length * 64, { numInputs: chunk.length });
+        chunk.forEach((s, j) => W(s, g, j));
+        next.push({ c: g, p: 0 });
+      }
+      layer = next; col += 150;
+    }
+    return layer[0];
+  };
+  // select lines + their complements (used by MUX/DEMUX/DEC)
+  const selPins = (x0, y0) => {
+    const S = [], nS = [];
+    for (let j = 0; j < sel; j++) { const id = IN(x0, y0 + j * 72, "S" + j); S.push({ c: id, p: 0 }); inputs.push(id); }
+    for (let j = 0; j < sel; j++) nS.push(NOT(x0 + 120, y0 + j * 72, S[j]));
+    return { S, nS };
+  };
+  const litFor = (S, nS, minterm, j) => ((minterm >> j) & 1) ? S[j] : nS[j];
+
+  if (type === "MUX") {
+    const D = [];
+    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 64, "D" + i); D.push({ c: id, p: 0 }); inputs.push(id); }
+    const { S, nS } = selPins(40, 60 + N * 64);
+    const terms = [];
+    for (let i = 0; i < N; i++) {
+      const lits = [D[i]];
+      for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
+      terms.push(andOf(lits, 320, 40 + i * 64));
+    }
+    const y = treeOf("OR", terms, 520, 40);
+    const o = OUT(900, 40 + (N - 1) * 32, "Y"); if (y) W(y, o, 0); outputs.push(o);
+  } else if (type === "DEMUX") {
+    const dId = IN(40, 40, "D"); const D = { c: dId, p: 0 }; inputs.push(dId);
+    const { S, nS } = selPins(40, 140);
+    for (let i = 0; i < N; i++) {
+      const lits = [D];
+      for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
+      const m = andOf(lits, 340, 40 + i * 72);
+      const o = OUT(560, 40 + i * 72, "Y" + i); W(m, o, 0); outputs.push(o);
+    }
+  } else if (type === "DEC" || type === "BDEC") {
+    const { S, nS } = selPins(40, 40);
+    for (let i = 0; i < N; i++) {
+      const lits = [];
+      for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
+      const m = andOf(lits, 340, 40 + i * 72);
+      const o = OUT(560, 40 + i * 72, "Y" + i); W(m, o, 0); outputs.push(o);
+    }
+  } else if (type === "ENC") {
+    const I = [];
+    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 60, "I" + i); I.push({ c: id, p: 0 }); inputs.push(id); }
+    // cum[i] = OR(I[i..N-1]); higher[i] = cum[i+1]. h[i] = I[i] AND NOT higher[i].
+    const cum = new Array(N); cum[N - 1] = I[N - 1];
+    for (let i = N - 2; i >= 0; i--) {
+      const g = add("OR", 200, 40 + i * 60, { numInputs: 2 });
+      W(I[i], g, 0); W(cum[i + 1], g, 1); cum[i] = { c: g, p: 0 };
+    }
+    const h = new Array(N); h[N - 1] = I[N - 1];
+    for (let i = 0; i < N - 1; i++) {
+      const ng = NOT(340, 40 + i * 60, cum[i + 1]);
+      const ag = add("AND", 460, 40 + i * 60, { numInputs: 2 });
+      W(I[i], ag, 0); W(ng, ag, 1); h[i] = { c: ag, p: 0 };
+    }
+    for (let b = 0; b < sel; b++) {
+      const srcs = []; for (let i = 0; i < N; i++) if ((i >> b) & 1) srcs.push(h[i]);
+      const r = treeOf("OR", srcs, 620, 40 + b * 90);
+      const o = OUT(880, 40 + b * 90, "A" + b); if (r) W(r, o, 0); outputs.push(o);
+    }
+  } else if (type === "BENC") {
+    const I = [];
+    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 60, "I" + i); I.push({ c: id, p: 0 }); inputs.push(id); }
+    for (let b = 0; b < sel; b++) {
+      const srcs = []; for (let i = 0; i < N; i++) if ((i >> b) & 1) srcs.push(I[i]);
+      const r = treeOf("XOR", srcs, 320, 40 + b * 90);
+      const o = OUT(600, 40 + b * 90, "A" + b); if (r) W(r, o, 0); outputs.push(o);
+    }
+  }
+  return { components: comps, wires, inputs, outputs };
+}
+
+/* Live inspectable circuit for an address part (+ its IN/OUT comps in
+   evalAddr order). Used by "Look inside" and by the equivalence test. */
+function synthAddrCircuit(type, sel) {
+  const data = buildAddrData(type, sel);
+  return instantiateData(data, data.inputs, data.outputs);
+}
+
 /* Change the bit-count of a bus component (SPLITTER/MERGER) or a wide IN/OUT.
    Pin counts/widths change, so every wire touching the component is dropped. */
 function setCompBits(circ, c, n) {
