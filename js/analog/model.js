@@ -16,10 +16,22 @@ if (typeof Analog === "undefined") { var Analog = {}; }
    matters (DCV +, meter probe A). `value`/`unit` drive the right-click editor. */
 Analog.TYPES = {
   RES: { name: "Resistor",     terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1000,  unit: "Ω", min: 1e-3 },
+  // potentiometer: 0 = end A, 1 = wiper (top), 2 = end B. `value` = total resistance,
+  // `c.ratio` (0–1) = wiper position from end A. Stamped as two series resistors.
+  POT: { name: "Potentiometer", terminals: [{ x: -34, y: 0 }, { x: 0, y: -26 }, { x: 34, y: 0 }], value: 10000, unit: "Ω", pot: true },
   CAP: { name: "Capacitor",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1e-6,  unit: "F", reactive: true },
   IND: { name: "Inductor",     terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1e-3,  unit: "H", reactive: true },
+  // lamp: electrically a resistor; its glow tracks dissipated power against `watts`.
+  LAMP: { name: "Lamp",        terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 100,   unit: "Ω", lamp: true, watts: 1 },
+  // fuse: near-zero resistance until |I| exceeds `value` (amps) — then it blows open
+  // (`c._blown`, reset when a simulation starts or via "Replace fuse").
+  FUSE: { name: "Fuse",        terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 1,     unit: "A", fuse: true },
   DCV: { name: "DC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V" },
   ACV: { name: "AC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V", freq: 60, reactive: true },
+  // square-wave source: ±value at `freq` (50% duty, +value at t = 0)
+  SQV: { name: "Square Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,    unit: "V", freq: 60, reactive: true, square: true },
+  // ideal DC current source: `value` amps out of terminal 0 (+) through the circuit
+  ISRC: { name: "Current Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 0.01, unit: "A", isrc: true },
   GND: { name: "Ground",       terminals: [{ x: 0, y: -22 }],                  value: 0,     unit: "" },
   VM:  { name: "Voltmeter",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "V", meter: true },
   AM:  { name: "Ammeter",      terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "A", meter: true },
@@ -27,6 +39,9 @@ Analog.TYPES = {
   // ---- nonlinear (Newton-Raphson) devices ----
   // anode = terminal 0, cathode = terminal 1. Shockley diode I = Is·(exp(V/nVt)−1).
   DIODE: { name: "Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-14, n: 1 },
+  // zener: Shockley forward + a reverse exponential that breaks down near `value`
+  // volts (the nameplate Vz; editable). Same Newton-Raphson path as the diode.
+  ZENER: { name: "Zener Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 5.1, unit: "V", nonlinear: true, is: 1e-14, n: 1, zener: true },
   LED:   { name: "LED",   terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-18, n: 2, led: true },
   // BJT terminals: 0 = collector, 1 = base, 2 = emitter. Ebers-Moll transport model.
   NPN: { name: "NPN Transistor", terminals: [{ x: 34, y: -28 }, { x: -34, y: 0 }, { x: 34, y: 28 }], value: 100, unit: "β", nonlinear: true, bjt: true, npn: true,  is: 1e-14, bf: 100, br: 1 },
@@ -62,6 +77,8 @@ Analog.makeComp = function (type, x, y, opts = {}) {
   if (def.freq != null) c.freq = opts.freq != null ? opts.freq : def.freq;
   if (def.switchable) c.closed = opts.closed != null ? opts.closed : false;
   if (def.relay) c._on = false;
+  if (def.pot) c.ratio = opts.ratio != null ? opts.ratio : 0.5;
+  if (def.fuse) c._blown = false;
   if (opts.label != null) c.label = opts.label;
   return c;
 };
@@ -109,6 +126,54 @@ Analog.removeComp = function (circ, c) {
   circ.wires = circ.wires.filter(w => w.from.c !== c.id && w.to.c !== c.id);
 };
 Analog.removeWire = function (circ, w) { circ.wires = circ.wires.filter(x => x !== w); };
+
+/* ---- serialization (save / load / undo history / copy-paste) ----
+   Persist only user-editable fields — runtime state (`_vc`, `_il`, `_on`,
+   `_blown`, `_trace`) is rebuilt when a simulation starts. */
+const AN_SAVE_FIELDS = ["rot", "value", "freq", "closed", "ratio", "label"];
+
+/* Plain-data snapshot of a circuit (or, with `only` = array of comps, a subset —
+   used by copy/paste; wires are kept only if both ends are inside the subset). */
+Analog.serializeCircuit = function (circ, only) {
+  const set = only ? new Set(only) : null;
+  const comps = circ.comps.filter(c => !set || set.has(c)).map(c => {
+    const o = { id: c.id, type: c.type, x: c.x, y: c.y };
+    for (const f of AN_SAVE_FIELDS) if (c[f] != null) o[f] = c[f];
+    return o;
+  });
+  const ids = new Set(comps.map(c => c.id));
+  const wires = circ.wires
+    .filter(w => ids.has(w.from.c) && ids.has(w.to.c))
+    .map(w => ({ from: { c: w.from.c, t: w.from.t }, to: { c: w.to.c, t: w.to.t } }));
+  return { v: 1, comps, wires };
+};
+
+/* Materialise serialized data as live comps + wires with FRESH ids (safe to add
+   to any sheet), offset by (dx, dy). Unknown types and dangling wires are dropped. */
+Analog.instantiateData = function (data, dx = 0, dy = 0) {
+  const idMap = {};
+  const comps = [];
+  for (const o of (data && data.comps) || []) {
+    if (!Analog.TYPES[o.type]) continue;
+    const c = Analog.makeComp(o.type, (o.x || 0) + dx, (o.y || 0) + dy, o);
+    idMap[o.id] = c;
+    comps.push(c);
+  }
+  const wires = [];
+  for (const w of (data && data.wires) || []) {
+    const a = idMap[w.from.c], b = idMap[w.to.c];
+    if (!a || !b) continue;
+    if (w.from.t >= Analog.numTerminals(a) || w.to.t >= Analog.numTerminals(b)) continue;
+    wires.push({ id: Analog.uid(), from: { c: a.id, t: w.from.t }, to: { c: b.id, t: w.to.t } });
+  }
+  return { comps, wires };
+};
+
+/* Rebuild a whole circuit from serialized data. */
+Analog.deserializeCircuit = function (data) {
+  const { comps, wires } = Analog.instantiateData(data, 0, 0);
+  return { comps, wires };
+};
 
 /* ---- node extraction (union-find over wired terminals) ----
    Every terminal is a graph vertex "compId:termIndex"; wires union them.

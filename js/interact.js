@@ -675,6 +675,9 @@ function hideContextMenu() { $("#ctxMenu").classList.add("hidden"); }
 function onKeyDown(e) {
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "textarea" || tag === "select") return;
+  // ignore keys while the analog tab is in front (it has its own handler)
+  const dig = document.getElementById("digitalApp");
+  if (dig && dig.classList.contains("hidden")) return;
 
   if (e.key === "Escape") {
     App.wiring = null;

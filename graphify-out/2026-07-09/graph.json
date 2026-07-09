@@ -46,6 +46,165 @@
   },
   "nodes": [
     {
+      "label": ".mcp.json",
+      "file_type": "code",
+      "source_file": ".mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_config_file"
+      },
+      "_origin": "ast",
+      "id": "mcp",
+      "community": 10,
+      "norm_label": ".mcp.json"
+    },
+    {
+      "label": "graphify",
+      "file_type": "code",
+      "source_file": ".mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_server"
+      },
+      "_origin": "ast",
+      "id": "mcp_mcp_server_graphify",
+      "community": 10,
+      "norm_label": "graphify"
+    },
+    {
+      "label": "node",
+      "file_type": "code",
+      "source_file": ".mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_command"
+      },
+      "_origin": "ast",
+      "id": "mcp_command_node",
+      "community": 10,
+      "norm_label": "node"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mcp_package",
+      "community": 6,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "mcp_package_name",
+      "community": 6,
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "mcp_package_version",
+      "community": 6,
+      "norm_label": "version"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "mcp_package_type",
+      "community": 6,
+      "norm_label": "type"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "mcp_package_main",
+      "community": 6,
+      "norm_label": "main"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "mcp_package_dependencies",
+      "community": 6,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "@modelcontextprotocol/sdk",
+      "file_type": "code",
+      "source_file": ".mcp/package.json",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "mcp_package_dependencies_modelcontextprotocol_sdk",
+      "community": 6,
+      "norm_label": "@modelcontextprotocol/sdk"
+    },
+    {
+      "label": "server.js",
+      "file_type": "code",
+      "source_file": ".mcp/server.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mcp_server",
+      "community": 8,
+      "norm_label": "server.js"
+    },
+    {
+      "label": "__dirname",
+      "file_type": "code",
+      "source_file": ".mcp/server.js",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "mcp_server_dirname",
+      "community": 8,
+      "norm_label": "__dirname"
+    },
+    {
+      "label": "VAULT",
+      "file_type": "code",
+      "source_file": ".mcp/server.js",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "mcp_server_vault",
+      "community": 8,
+      "norm_label": "vault"
+    },
+    {
+      "label": "server",
+      "file_type": "code",
+      "source_file": ".mcp/server.js",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "mcp_server_server",
+      "community": 8,
+      "norm_label": "server"
+    },
+    {
+      "label": "transport",
+      "file_type": "code",
+      "source_file": ".mcp/server.js",
+      "source_location": "L97",
+      "_origin": "ast",
+      "id": "mcp_server_transport",
+      "community": 8,
+      "norm_label": "transport"
+    },
+    {
       "label": "engine.js",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
@@ -56,40 +215,10 @@
       "norm_label": "engine.js"
     },
     {
-      "label": "_sqPhase()",
-      "file_type": "code",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "analog_engine_sqphase",
-      "community": 22,
-      "norm_label": "_sqphase()"
-    },
-    {
-      "label": "_zenerVz()",
-      "file_type": "code",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L30",
-      "_origin": "ast",
-      "id": "analog_engine_zenervz",
-      "community": 22,
-      "norm_label": "_zenervz()"
-    },
-    {
-      "label": "_potR()",
-      "file_type": "code",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "analog_engine_potr",
-      "community": 22,
-      "norm_label": "_potr()"
-    },
-    {
       "label": "_anLimitJ()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L43",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "analog_engine_anlimitj",
       "community": 22,
@@ -99,7 +228,7 @@
       "label": "_anSolve()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L57",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "analog_engine_ansolve",
       "community": 22,
@@ -109,7 +238,7 @@
       "label": "_anBuild()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L86",
+      "source_location": "L71",
       "_origin": "ast",
       "id": "analog_engine_anbuild",
       "community": 22,
@@ -119,7 +248,7 @@
       "label": "_anSolveMode()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L227",
+      "source_location": "L178",
       "_origin": "ast",
       "id": "analog_engine_ansolvemode",
       "community": 22,
@@ -139,7 +268,7 @@
       "label": "_anDown()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L70",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "analog_interact_andown",
       "community": 23,
@@ -149,7 +278,7 @@
       "label": "_anMove()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L135",
+      "source_location": "L100",
       "_origin": "ast",
       "id": "analog_interact_anmove",
       "community": 23,
@@ -159,7 +288,7 @@
       "label": "_anUp()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L187",
+      "source_location": "L124",
       "_origin": "ast",
       "id": "analog_interact_anup",
       "community": 23,
@@ -169,7 +298,7 @@
       "label": "_anContext()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L219",
+      "source_location": "L140",
       "_origin": "ast",
       "id": "analog_interact_ancontext",
       "community": 23,
@@ -179,7 +308,7 @@
       "label": "_anWheel()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L230",
+      "source_location": "L149",
       "_origin": "ast",
       "id": "analog_interact_anwheel",
       "community": 23,
@@ -189,7 +318,7 @@
       "label": "_anKey()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L241",
+      "source_location": "L160",
       "_origin": "ast",
       "id": "analog_interact_ankey",
       "community": 23,
@@ -209,21 +338,11 @@
       "label": "_anRot()",
       "file_type": "code",
       "source_file": "js/analog/model.js",
-      "source_location": "L89",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "analog_model_anrot",
       "community": 27,
       "norm_label": "_anrot()"
-    },
-    {
-      "label": "AN_SAVE_FIELDS",
-      "file_type": "code",
-      "source_file": "js/analog/model.js",
-      "source_location": "L133",
-      "_origin": "ast",
-      "id": "analog_model_an_save_fields",
-      "community": 27,
-      "norm_label": "an_save_fields"
     },
     {
       "label": "render.js",
@@ -246,30 +365,10 @@
       "norm_label": "_anvcolor()"
     },
     {
-      "label": "_probeLines()",
-      "file_type": "code",
-      "source_file": "js/analog/render.js",
-      "source_location": "L102",
-      "_origin": "ast",
-      "id": "analog_render_probelines",
-      "community": 24,
-      "norm_label": "_probelines()"
-    },
-    {
-      "label": "_drawProbe()",
-      "file_type": "code",
-      "source_file": "js/analog/render.js",
-      "source_location": "L130",
-      "_origin": "ast",
-      "id": "analog_render_drawprobe",
-      "community": 24,
-      "norm_label": "_drawprobe()"
-    },
-    {
       "label": "_endPos()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L153",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "analog_render_endpos",
       "community": 24,
@@ -279,7 +378,7 @@
       "label": "_drawComp()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L155",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "analog_render_drawcomp",
       "community": 24,
@@ -299,37 +398,17 @@
       "label": "AN_PALETTE",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L19",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "analog_ui_an_palette",
       "community": 25,
       "norm_label": "an_palette"
     },
     {
-      "label": "AN_PREFIX",
-      "file_type": "code",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L55",
-      "_origin": "ast",
-      "id": "analog_ui_an_prefix",
-      "community": 25,
-      "norm_label": "an_prefix"
-    },
-    {
-      "label": "_anShowMenu()",
-      "file_type": "code",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L417",
-      "_origin": "ast",
-      "id": "analog_ui_anshowmenu",
-      "community": 25,
-      "norm_label": "_anshowmenu()"
-    },
-    {
       "label": "_anParse()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L431",
+      "source_location": "L237",
       "_origin": "ast",
       "id": "analog_ui_anparse",
       "community": 25,
@@ -339,7 +418,7 @@
       "label": "_anDrawScope()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L505",
+      "source_location": "L303",
       "_origin": "ast",
       "id": "analog_ui_andrawscope",
       "community": 25,
@@ -349,7 +428,7 @@
       "label": "_anDragWindow()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L533",
+      "source_location": "L328",
       "_origin": "ast",
       "id": "analog_ui_andragwindow",
       "community": 25,
@@ -452,7 +531,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_engine_resolvebit",
-      "community": 1,
+      "community": 4,
       "norm_label": "resolvebit()"
     },
     {
@@ -642,7 +721,7 @@
       "source_location": "L422",
       "_origin": "ast",
       "id": "js_engine_afterstructchange",
-      "community": 2,
+      "community": 3,
       "norm_label": "afterstructchange()"
     },
     {
@@ -772,7 +851,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 3,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -872,7 +951,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_interact_currenttool",
-      "community": 5,
+      "community": 2,
       "norm_label": "currenttool()"
     },
     {
@@ -912,7 +991,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_interact_placetool",
-      "community": 2,
+      "community": 3,
       "norm_label": "placetool()"
     },
     {
@@ -1072,7 +1151,7 @@
       "source_location": "L360",
       "_origin": "ast",
       "id": "js_interact_oncanvasup",
-      "community": 2,
+      "community": 3,
       "norm_label": "oncanvasup()"
     },
     {
@@ -1089,7 +1168,7 @@
       "label": "onCanvasWheel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L436",
+      "source_location": "L433",
       "_origin": "ast",
       "id": "js_interact_oncanvaswheel",
       "community": 2,
@@ -1099,7 +1178,7 @@
       "label": "onCanvasContext()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L449",
+      "source_location": "L446",
       "_origin": "ast",
       "id": "js_interact_oncanvascontext",
       "community": 2,
@@ -1109,27 +1188,17 @@
       "label": "addAt()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L506",
+      "source_location": "L496",
       "_origin": "ast",
       "id": "js_interact_addat",
-      "community": 2,
+      "community": 3,
       "norm_label": "addat()"
-    },
-    {
-      "label": "addChipAt()",
-      "file_type": "code",
-      "source_file": "js/interact.js",
-      "source_location": "L520",
-      "_origin": "ast",
-      "id": "js_interact_addchipat",
-      "community": 2,
-      "norm_label": "addchipat()"
     },
     {
       "label": "compMenuItems()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L535",
+      "source_location": "L509",
       "_origin": "ast",
       "id": "js_interact_compmenuitems",
       "community": 2,
@@ -1139,17 +1208,17 @@
       "label": "rotateComp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L550",
+      "source_location": "L524",
       "_origin": "ast",
       "id": "js_interact_rotatecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "rotatecomp()"
     },
     {
       "label": "renameComp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L556",
+      "source_location": "L530",
       "_origin": "ast",
       "id": "js_interact_renamecomp",
       "community": 2,
@@ -1159,7 +1228,7 @@
       "label": "selectedComps()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L563",
+      "source_location": "L537",
       "_origin": "ast",
       "id": "js_interact_selectedcomps",
       "community": 2,
@@ -1169,7 +1238,7 @@
       "label": "copySelection()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L568",
+      "source_location": "L542",
       "_origin": "ast",
       "id": "js_interact_copyselection",
       "community": 2,
@@ -1179,17 +1248,17 @@
       "label": "deleteSelection()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L594",
+      "source_location": "L568",
       "_origin": "ast",
       "id": "js_interact_deleteselection",
-      "community": 2,
+      "community": 3,
       "norm_label": "deleteselection()"
     },
     {
       "label": "dedupeLabel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L605",
+      "source_location": "L579",
       "_origin": "ast",
       "id": "js_interact_dedupelabel",
       "community": 2,
@@ -1199,17 +1268,17 @@
       "label": "pasteClipboard()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L613",
+      "source_location": "L587",
       "_origin": "ast",
       "id": "js_interact_pasteclipboard",
-      "community": 2,
+      "community": 3,
       "norm_label": "pasteclipboard()"
     },
     {
       "label": "showContextMenu()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L641",
+      "source_location": "L615",
       "_origin": "ast",
       "id": "js_interact_showcontextmenu",
       "community": 2,
@@ -1219,7 +1288,7 @@
       "label": "buildMenuLevel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L654",
+      "source_location": "L628",
       "_origin": "ast",
       "id": "js_interact_buildmenulevel",
       "community": 2,
@@ -1229,7 +1298,7 @@
       "label": "hideContextMenu()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L673",
+      "source_location": "L646",
       "_origin": "ast",
       "id": "js_interact_hidecontextmenu",
       "community": 2,
@@ -1239,7 +1308,7 @@
       "label": "onKeyDown()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L675",
+      "source_location": "L648",
       "_origin": "ast",
       "id": "js_interact_onkeydown",
       "community": 2,
@@ -1249,17 +1318,17 @@
       "label": "parseBusValue()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L706",
+      "source_location": "L676",
       "_origin": "ast",
       "id": "js_interact_parsebusvalue",
-      "community": 4,
+      "community": 2,
       "norm_label": "parsebusvalue()"
     },
     {
       "label": "busValsToHex()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L713",
+      "source_location": "L683",
       "_origin": "ast",
       "id": "js_interact_busvalstohex",
       "community": 5,
@@ -1269,7 +1338,7 @@
       "label": "editWideInput()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L719",
+      "source_location": "L689",
       "_origin": "ast",
       "id": "js_interact_editwideinput",
       "community": 4,
@@ -1279,7 +1348,7 @@
       "label": "onUIHit()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L736",
+      "source_location": "L706",
       "_origin": "ast",
       "id": "js_interact_onuihit",
       "community": 3,
@@ -1289,47 +1358,27 @@
       "label": "dragWireSegment()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L761",
+      "source_location": "L731",
       "_origin": "ast",
       "id": "js_interact_dragwiresegment",
-      "community": 2,
+      "community": 3,
       "norm_label": "dragwiresegment()"
     },
     {
       "label": "onCanvasDrop()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L784",
+      "source_location": "L754",
       "_origin": "ast",
       "id": "js_interact_oncanvasdrop",
-      "community": 2,
+      "community": 3,
       "norm_label": "oncanvasdrop()"
-    },
-    {
-      "label": "innerCircuitOf()",
-      "file_type": "code",
-      "source_file": "js/interact.js",
-      "source_location": "L818",
-      "_origin": "ast",
-      "id": "js_interact_innercircuitof",
-      "community": 2,
-      "norm_label": "innercircuitof()"
-    },
-    {
-      "label": "innerName()",
-      "file_type": "code",
-      "source_file": "js/interact.js",
-      "source_location": "L831",
-      "_origin": "ast",
-      "id": "js_interact_innername",
-      "community": 2,
-      "norm_label": "innername()"
     },
     {
       "label": "enterComponent()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L845",
+      "source_location": "L783",
       "_origin": "ast",
       "id": "js_interact_entercomponent",
       "community": 2,
@@ -1339,7 +1388,7 @@
       "label": "goToLevel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L858",
+      "source_location": "L794",
       "_origin": "ast",
       "id": "js_interact_gotolevel",
       "community": 2,
@@ -1364,46 +1413,6 @@
       "id": "js_main_seeddemo",
       "community": 3,
       "norm_label": "seeddemo()"
-    },
-    {
-      "label": "mobile.js",
-      "file_type": "code",
-      "source_file": "js/mobile.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "js_mobile",
-      "community": 8,
-      "norm_label": "mobile.js"
-    },
-    {
-      "label": "make()",
-      "file_type": "code",
-      "source_file": "js/mobile.js",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "js_mobile_make",
-      "community": 8,
-      "norm_label": "make()"
-    },
-    {
-      "label": "wireApp()",
-      "file_type": "code",
-      "source_file": "js/mobile.js",
-      "source_location": "L25",
-      "_origin": "ast",
-      "id": "js_mobile_wireapp",
-      "community": 8,
-      "norm_label": "wireapp()"
-    },
-    {
-      "label": "init()",
-      "file_type": "code",
-      "source_file": "js/mobile.js",
-      "source_location": "L122",
-      "_origin": "ast",
-      "id": "js_mobile_init",
-      "community": 8,
-      "norm_label": "init()"
     },
     {
       "label": "model.js",
@@ -1432,7 +1441,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "js_model_snap",
-      "community": 2,
+      "community": 3,
       "norm_label": "snap()"
     },
     {
@@ -1472,7 +1481,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "js_model_isaddr",
-      "community": 2,
+      "community": 3,
       "norm_label": "isaddr()"
     },
     {
@@ -1502,7 +1511,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "js_model_isbus",
-      "community": 1,
+      "community": 3,
       "norm_label": "isbus()"
     },
     {
@@ -1562,7 +1571,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 3,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1572,7 +1581,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 1,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1582,7 +1591,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1592,7 +1601,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1612,7 +1621,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "js_model_curview",
-      "community": 2,
+      "community": 3,
       "norm_label": "curview()"
     },
     {
@@ -1622,7 +1631,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "js_model_curcircuit",
-      "community": 2,
+      "community": 3,
       "norm_label": "curcircuit()"
     },
     {
@@ -1672,7 +1681,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "js_model_muxselstart",
-      "community": 1,
+      "community": 3,
       "norm_label": "muxselstart()"
     },
     {
@@ -1692,7 +1701,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "js_model_makecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "makecomp()"
     },
     {
@@ -1862,34 +1871,14 @@
       "source_location": "L402",
       "_origin": "ast",
       "id": "js_model_setaddrsel",
-      "community": 3,
+      "community": 1,
       "norm_label": "setaddrsel()"
-    },
-    {
-      "label": "buildAddrData()",
-      "file_type": "code",
-      "source_file": "js/model.js",
-      "source_location": "L422",
-      "_origin": "ast",
-      "id": "js_model_buildaddrdata",
-      "community": 3,
-      "norm_label": "buildaddrdata()"
-    },
-    {
-      "label": "synthAddrCircuit()",
-      "file_type": "code",
-      "source_file": "js/model.js",
-      "source_location": "L528",
-      "_origin": "ast",
-      "id": "js_model_synthaddrcircuit",
-      "community": 3,
-      "norm_label": "synthaddrcircuit()"
     },
     {
       "label": "setCompBits()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L535",
+      "source_location": "L417",
       "_origin": "ast",
       "id": "js_model_setcompbits",
       "community": 3,
@@ -1899,17 +1888,17 @@
       "label": "nextLabel()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L555",
+      "source_location": "L437",
       "_origin": "ast",
       "id": "js_model_nextlabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "nextlabel()"
     },
     {
       "label": "compSize()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L569",
+      "source_location": "L451",
       "_origin": "ast",
       "id": "js_model_compsize",
       "community": 1,
@@ -1919,17 +1908,17 @@
       "label": "rotateAround()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L603",
+      "source_location": "L485",
       "_origin": "ast",
       "id": "js_model_rotatearound",
-      "community": 1,
+      "community": 3,
       "norm_label": "rotatearound()"
     },
     {
       "label": "pinPosLogical()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L613",
+      "source_location": "L495",
       "_origin": "ast",
       "id": "js_model_pinposlogical",
       "community": 1,
@@ -1939,7 +1928,7 @@
       "label": "pinPos()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L637",
+      "source_location": "L519",
       "_origin": "ast",
       "id": "js_model_pinpos",
       "community": 1,
@@ -1949,27 +1938,27 @@
       "label": "compBox()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L645",
+      "source_location": "L527",
       "_origin": "ast",
       "id": "js_model_compbox",
-      "community": 1,
+      "community": 2,
       "norm_label": "compbox()"
     },
     {
       "label": "defaultWireRoute()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L658",
+      "source_location": "L540",
       "_origin": "ast",
       "id": "js_model_defaultwireroute",
-      "community": 1,
+      "community": 3,
       "norm_label": "defaultwireroute()"
     },
     {
       "label": "wireRoutePoints()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L664",
+      "source_location": "L546",
       "_origin": "ast",
       "id": "js_model_wireroutepoints",
       "community": 1,
@@ -2082,7 +2071,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "js_render_activecircuit",
-      "community": 2,
+      "community": 1,
       "norm_label": "activecircuit()"
     },
     {
@@ -2112,7 +2101,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "js_render_fitviewinto",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitviewinto()"
     },
     {
@@ -2122,7 +2111,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "js_render_fitview",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitview()"
     },
     {
@@ -2179,67 +2168,17 @@
       "label": "strokePolyline()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L216",
+      "source_location": "L214",
       "_origin": "ast",
       "id": "js_render_strokepolyline",
       "community": 1,
       "norm_label": "strokepolyline()"
     },
     {
-      "label": "computeWireLanes()",
-      "file_type": "code",
-      "source_file": "js/render.js",
-      "source_location": "L234",
-      "_origin": "ast",
-      "id": "js_render_computewirelanes",
-      "community": 1,
-      "norm_label": "computewirelanes()"
-    },
-    {
-      "label": "assignWireLanes()",
-      "file_type": "code",
-      "source_file": "js/render.js",
-      "source_location": "L307",
-      "_origin": "ast",
-      "id": "js_render_assignwirelanes",
-      "community": 1,
-      "norm_label": "assignwirelanes()"
-    },
-    {
-      "label": "effRoute()",
-      "file_type": "code",
-      "source_file": "js/render.js",
-      "source_location": "L337",
-      "_origin": "ast",
-      "id": "js_render_effroute",
-      "community": 1,
-      "norm_label": "effroute()"
-    },
-    {
-      "label": "refreshSynthLive()",
-      "file_type": "code",
-      "source_file": "js/render.js",
-      "source_location": "L355",
-      "_origin": "ast",
-      "id": "js_render_refreshsynthlive",
-      "community": 1,
-      "norm_label": "refreshsynthlive()"
-    },
-    {
-      "label": "settleLocalCircuit()",
-      "file_type": "code",
-      "source_file": "js/render.js",
-      "source_location": "L365",
-      "_origin": "ast",
-      "id": "js_render_settlelocalcircuit",
-      "community": 1,
-      "norm_label": "settlelocalcircuit()"
-    },
-    {
       "label": "drawWire()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L372",
+      "source_location": "L223",
       "_origin": "ast",
       "id": "js_render_drawwire",
       "community": 1,
@@ -2249,7 +2188,7 @@
       "label": "drawBusLabel()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L406",
+      "source_location": "L257",
       "_origin": "ast",
       "id": "js_render_drawbuslabel",
       "community": 1,
@@ -2259,7 +2198,7 @@
       "label": "drawWiringPreview()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L420",
+      "source_location": "L271",
       "_origin": "ast",
       "id": "js_render_drawwiringpreview",
       "community": 1,
@@ -2269,7 +2208,7 @@
       "label": "pinInVal()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L438",
+      "source_location": "L289",
       "_origin": "ast",
       "id": "js_render_pininval",
       "community": 1,
@@ -2279,7 +2218,7 @@
       "label": "drawPins()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L442",
+      "source_location": "L293",
       "_origin": "ast",
       "id": "js_render_drawpins",
       "community": 1,
@@ -2289,7 +2228,7 @@
       "label": "drawPinDot()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L455",
+      "source_location": "L306",
       "_origin": "ast",
       "id": "js_render_drawpindot",
       "community": 1,
@@ -2299,7 +2238,7 @@
       "label": "roundRect()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L466",
+      "source_location": "L317",
       "_origin": "ast",
       "id": "js_render_roundrect",
       "community": 1,
@@ -2309,7 +2248,7 @@
       "label": "drawComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L476",
+      "source_location": "L327",
       "_origin": "ast",
       "id": "js_render_drawcomp",
       "community": 1,
@@ -2319,7 +2258,7 @@
       "label": "drawCompBody()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L510",
+      "source_location": "L361",
       "_origin": "ast",
       "id": "js_render_drawcompbody",
       "community": 1,
@@ -2329,7 +2268,7 @@
       "label": "IEC_LABELS",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L530",
+      "source_location": "L381",
       "_origin": "ast",
       "id": "js_render_iec_labels",
       "community": 1,
@@ -2339,17 +2278,17 @@
       "label": "drawGateComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L535",
+      "source_location": "L386",
       "_origin": "ast",
       "id": "js_render_drawgatecomp",
-      "community": 4,
+      "community": 1,
       "norm_label": "drawgatecomp()"
     },
     {
       "label": "drawInComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L577",
+      "source_location": "L428",
       "_origin": "ast",
       "id": "js_render_drawincomp",
       "community": 1,
@@ -2359,7 +2298,7 @@
       "label": "drawOutComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L604",
+      "source_location": "L455",
       "_origin": "ast",
       "id": "js_render_drawoutcomp",
       "community": 1,
@@ -2369,7 +2308,7 @@
       "label": "drawWideValue()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L633",
+      "source_location": "L484",
       "_origin": "ast",
       "id": "js_render_drawwidevalue",
       "community": 1,
@@ -2379,7 +2318,7 @@
       "label": "drawClkComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L650",
+      "source_location": "L501",
       "_origin": "ast",
       "id": "js_render_drawclkcomp",
       "community": 1,
@@ -2389,7 +2328,7 @@
       "label": "drawConstComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L677",
+      "source_location": "L528",
       "_origin": "ast",
       "id": "js_render_drawconstcomp",
       "community": 1,
@@ -2399,7 +2338,7 @@
       "label": "drawTriComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L694",
+      "source_location": "L545",
       "_origin": "ast",
       "id": "js_render_drawtricomp",
       "community": 1,
@@ -2409,7 +2348,7 @@
       "label": "drawJunctionComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L746",
+      "source_location": "L597",
       "_origin": "ast",
       "id": "js_render_drawjunctioncomp",
       "community": 1,
@@ -2419,7 +2358,7 @@
       "label": "drawChipComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L759",
+      "source_location": "L610",
       "_origin": "ast",
       "id": "js_render_drawchipcomp",
       "community": 1,
@@ -2429,7 +2368,7 @@
       "label": "ADDR_TITLE",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L798",
+      "source_location": "L649",
       "_origin": "ast",
       "id": "js_render_addr_title",
       "community": 1,
@@ -2439,7 +2378,7 @@
       "label": "addrInLabel()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L808",
+      "source_location": "L659",
       "_origin": "ast",
       "id": "js_render_addrinlabel",
       "community": 1,
@@ -2449,7 +2388,7 @@
       "label": "addrOutLabel()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L816",
+      "source_location": "L667",
       "_origin": "ast",
       "id": "js_render_addroutlabel",
       "community": 1,
@@ -2459,7 +2398,7 @@
       "label": "drawAddrComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L823",
+      "source_location": "L674",
       "_origin": "ast",
       "id": "js_render_drawaddrcomp",
       "community": 1,
@@ -2469,7 +2408,7 @@
       "label": "drawMatrixComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L871",
+      "source_location": "L722",
       "_origin": "ast",
       "id": "js_render_drawmatrixcomp",
       "community": 1,
@@ -2479,7 +2418,7 @@
       "label": "drawBusComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L914",
+      "source_location": "L765",
       "_origin": "ast",
       "id": "js_render_drawbuscomp",
       "community": 1,
@@ -2489,7 +2428,7 @@
       "label": "drawSelection()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L962",
+      "source_location": "L813",
       "_origin": "ast",
       "id": "js_render_drawselection",
       "community": 1,
@@ -2499,7 +2438,7 @@
       "label": "drawPmButtons()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L991",
+      "source_location": "L842",
       "_origin": "ast",
       "id": "js_render_drawpmbuttons",
       "community": 1,
@@ -2509,7 +2448,7 @@
       "label": "drawHoverPin()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1014",
+      "source_location": "L865",
       "_origin": "ast",
       "id": "js_render_drawhoverpin",
       "community": 1,
@@ -2519,27 +2458,27 @@
       "label": "hitUI()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1036",
+      "source_location": "L887",
       "_origin": "ast",
       "id": "js_render_hitui",
-      "community": 1,
+      "community": 2,
       "norm_label": "hitui()"
     },
     {
       "label": "hitPin()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1044",
+      "source_location": "L895",
       "_origin": "ast",
       "id": "js_render_hitpin",
-      "community": 2,
+      "community": 1,
       "norm_label": "hitpin()"
     },
     {
       "label": "hitComp()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1067",
+      "source_location": "L918",
       "_origin": "ast",
       "id": "js_render_hitcomp",
       "community": 2,
@@ -2549,7 +2488,7 @@
       "label": "hitWireSeg()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1080",
+      "source_location": "L931",
       "_origin": "ast",
       "id": "js_render_hitwireseg",
       "community": 1,
@@ -2559,7 +2498,7 @@
       "label": "hitWire()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1108",
+      "source_location": "L958",
       "_origin": "ast",
       "id": "js_render_hitwire",
       "community": 1,
@@ -2569,10 +2508,10 @@
       "label": "paintToolIcon()",
       "file_type": "code",
       "source_file": "js/render.js",
-      "source_location": "L1115",
+      "source_location": "L965",
       "_origin": "ast",
       "id": "js_render_painttoolicon",
-      "community": 5,
+      "community": 1,
       "norm_label": "painttoolicon()"
     },
     {
@@ -2612,7 +2551,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 2,
+      "community": 3,
       "norm_label": "toast()"
     },
     {
@@ -2652,7 +2591,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "js_ui_updatepaletteselection",
-      "community": 5,
+      "community": 2,
       "norm_label": "updatepaletteselection()"
     },
     {
@@ -3066,13 +3005,413 @@
       "norm_label": "chain()"
     },
     {
+      "label": "components.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_components",
+      "community": 18,
+      "norm_label": "components.md"
+    },
+    {
+      "label": "DSL for defining chips",
+      "file_type": "document",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "agents_components_dsl_for_defining_chips",
+      "community": 18,
+      "norm_label": "dsl for defining chips"
+    },
+    {
+      "label": "Current built-ins and their design",
+      "file_type": "document",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "agents_components_current_built_ins_and_their_design",
+      "community": 18,
+      "norm_label": "current built-ins and their design"
+    },
+    {
+      "label": "Adding a new built-in chip",
+      "file_type": "document",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "agents_components_adding_a_new_built_in_chip",
+      "community": 18,
+      "norm_label": "adding a new built-in chip"
+    },
+    {
+      "label": "qa.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_qa",
+      "community": 16,
+      "norm_label": "qa.md"
+    },
+    {
+      "label": "Test runner pattern",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "agents_qa_test_runner_pattern",
+      "community": 16,
+      "norm_label": "test runner pattern"
+    },
+    {
+      "label": "Helper pattern",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "agents_qa_helper_pattern",
+      "community": 16,
+      "norm_label": "helper pattern"
+    },
+    {
+      "label": "Simulation helpers",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "agents_qa_simulation_helpers",
+      "community": 16,
+      "norm_label": "simulation helpers"
+    },
+    {
+      "label": "Current test coverage (tests 1\u201314)",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "agents_qa_current_test_coverage_tests_1_14",
+      "community": 16,
+      "norm_label": "current test coverage (tests 1\u201314)"
+    },
+    {
+      "label": "Adding a new test",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "agents_qa_adding_a_new_test",
+      "community": 16,
+      "norm_label": "adding a new test"
+    },
+    {
+      "label": "What to test",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "agents_qa_what_to_test",
+      "community": 16,
+      "norm_label": "what to test"
+    },
+    {
+      "label": "What cannot be tested here",
+      "file_type": "document",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L80",
+      "_origin": "ast",
+      "id": "agents_qa_what_cannot_be_tested_here",
+      "community": 16,
+      "norm_label": "what cannot be tested here"
+    },
+    {
+      "label": "renderer.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_renderer",
+      "community": 15,
+      "norm_label": "renderer.md"
+    },
+    {
+      "label": "Canvas setup",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "agents_renderer_canvas_setup",
+      "community": 15,
+      "norm_label": "canvas setup"
+    },
+    {
+      "label": "Coordinate system",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "agents_renderer_coordinate_system",
+      "community": 15,
+      "norm_label": "coordinate system"
+    },
+    {
+      "label": "Color scheme (`COL`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "agents_renderer_color_scheme_col",
+      "community": 15,
+      "norm_label": "color scheme (`col`)"
+    },
+    {
+      "label": "Wire rendering (`drawWire`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "agents_renderer_wire_rendering_drawwire",
+      "community": 15,
+      "norm_label": "wire rendering (`drawwire`)"
+    },
+    {
+      "label": "Component drawing",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "agents_renderer_component_drawing",
+      "community": 15,
+      "norm_label": "component drawing"
+    },
+    {
+      "label": "Selection overlay (`drawSelection`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "agents_renderer_selection_overlay_drawselection",
+      "community": 15,
+      "norm_label": "selection overlay (`drawselection`)"
+    },
+    {
+      "label": "Hit testing (world coords)",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L57",
+      "_origin": "ast",
+      "id": "agents_renderer_hit_testing_world_coords",
+      "community": 15,
+      "norm_label": "hit testing (world coords)"
+    },
+    {
+      "label": "Palette icons (`paintToolIcon`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "agents_renderer_palette_icons_painttoolicon",
+      "community": 15,
+      "norm_label": "palette icons (`painttoolicon`)"
+    },
+    {
+      "label": "Key rules",
+      "file_type": "document",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "agents_renderer_key_rules",
+      "community": 15,
+      "norm_label": "key rules"
+    },
+    {
+      "label": "sim-engine.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/sim-engine.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_sim_engine",
+      "community": 21,
+      "norm_label": "sim-engine.md"
+    },
+    {
+      "label": "Architecture",
+      "file_type": "document",
+      "source_file": ".claude/agents/sim-engine.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "agents_sim_engine_architecture",
+      "community": 21,
+      "norm_label": "architecture"
+    },
+    {
+      "label": "Key invariants",
+      "file_type": "document",
+      "source_file": ".claude/agents/sim-engine.md",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "agents_sim_engine_key_invariants",
+      "community": 21,
+      "norm_label": "key invariants"
+    },
+    {
+      "label": "ux.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_ux",
+      "community": 9,
+      "norm_label": "ux.md"
+    },
+    {
+      "label": "Initialisation order (main.js)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "agents_ux_initialisation_order_main_js",
+      "community": 9,
+      "norm_label": "initialisation order (main.js)"
+    },
+    {
+      "label": "Palette (`ui.js \u2192 buildPalette`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "agents_ux_palette_ui_js_buildpalette",
+      "community": 9,
+      "norm_label": "palette (`ui.js \u2192 buildpalette`)"
+    },
+    {
+      "label": "Toolbar (`initUI`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "agents_ux_toolbar_initui",
+      "community": 9,
+      "norm_label": "toolbar (`initui`)"
+    },
+    {
+      "label": "Mode switching (`setMode`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "agents_ux_mode_switching_setmode",
+      "community": 9,
+      "norm_label": "mode switching (`setmode`)"
+    },
+    {
+      "label": "SimUI update (`updateSimUI`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "agents_ux_simui_update_updatesimui",
+      "community": 9,
+      "norm_label": "simui update (`updatesimui`)"
+    },
+    {
+      "label": "Breadcrumbs (`updateCrumbs`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "agents_ux_breadcrumbs_updatecrumbs",
+      "community": 9,
+      "norm_label": "breadcrumbs (`updatecrumbs`)"
+    },
+    {
+      "label": "Dropdown panels",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "agents_ux_dropdown_panels",
+      "community": 9,
+      "norm_label": "dropdown panels"
+    },
+    {
+      "label": "Expression popup",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "agents_ux_expression_popup",
+      "community": 9,
+      "norm_label": "expression popup"
+    },
+    {
+      "label": "Timeline panel (`#timeline`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "agents_ux_timeline_panel_timeline",
+      "community": 9,
+      "norm_label": "timeline panel (`#timeline`)"
+    },
+    {
+      "label": "Create IC (`createIC`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "agents_ux_create_ic_createic",
+      "community": 9,
+      "norm_label": "create ic (`createic`)"
+    },
+    {
+      "label": "Save / load (localStorage)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L70",
+      "_origin": "ast",
+      "id": "agents_ux_save_load_localstorage",
+      "community": 9,
+      "norm_label": "save / load (localstorage)"
+    },
+    {
+      "label": "Export / import",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "agents_ux_export_import",
+      "community": 9,
+      "norm_label": "export / import"
+    },
+    {
+      "label": "Mouse interactions (`interact.js`)",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "agents_ux_mouse_interactions_interact_js",
+      "community": 9,
+      "norm_label": "mouse interactions (`interact.js`)"
+    },
+    {
+      "label": "Key invariants",
+      "file_type": "document",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L122",
+      "_origin": "ast",
+      "id": "agents_ux_key_invariants",
+      "community": 9,
+      "norm_label": "key invariants"
+    },
+    {
       "label": "ARCHITECTURE.md",
       "file_type": "document",
       "source_file": "ARCHITECTURE.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "root_logic_simulator_web_app_architecture_md",
-      "community": 6,
+      "id": "architecture",
+      "community": 17,
       "norm_label": "architecture.md"
     },
     {
@@ -3081,8 +3420,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "community": 6,
+      "id": "architecture_logic_lab_architecture",
+      "community": 17,
       "norm_label": "logic lab \u2014 architecture"
     },
     {
@@ -3091,8 +3430,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_the_core_loop",
-      "community": 6,
+      "id": "architecture_the_core_loop",
+      "community": 17,
       "norm_label": "the core loop"
     },
     {
@@ -3101,8 +3440,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L40",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_data_model_owns_the_truth",
-      "community": 6,
+      "id": "architecture_data_model_owns_the_truth",
+      "community": 17,
       "norm_label": "data model \u2014 owns the truth"
     },
     {
@@ -3111,8 +3450,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L78",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation",
-      "community": 6,
+      "id": "architecture_engine_simulate_by_event_driven_relaxation",
+      "community": 17,
       "norm_label": "engine \u2014 simulate by event-driven relaxation"
     },
     {
@@ -3121,8 +3460,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L137",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_three_valued_logic_tri_state_buses",
-      "community": 6,
+      "id": "architecture_three_valued_logic_tri_state_buses",
+      "community": 17,
       "norm_label": "three-valued logic (tri-state buses)"
     },
     {
@@ -3131,8 +3470,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L159",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_renderer_paint_the_settled_state",
-      "community": 6,
+      "id": "architecture_renderer_paint_the_settled_state",
+      "community": 17,
       "norm_label": "renderer \u2014 paint the settled state"
     },
     {
@@ -3141,8 +3480,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L190",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_supporting_subsystems",
-      "community": 6,
+      "id": "architecture_supporting_subsystems",
+      "community": 17,
       "norm_label": "supporting subsystems"
     },
     {
@@ -3151,8 +3490,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L207",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_the_cross_cutting_principle_purity_decides_boundaries",
-      "community": 6,
+      "id": "architecture_the_cross_cutting_principle_purity_decides_boundaries",
+      "community": 17,
       "norm_label": "the cross-cutting principle: purity decides boundaries"
     },
     {
@@ -3161,8 +3500,8 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L229",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_architecture_data_flow_summary",
-      "community": 6,
+      "id": "architecture_data_flow_summary",
+      "community": 17,
       "norm_label": "data-flow summary"
     },
     {
@@ -3209,7 +3548,7 @@
       "label": "Architecture",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L42",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "claude_architecture",
       "community": 17,
@@ -3219,7 +3558,7 @@
       "label": "Analog simulator (second tab)",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L93",
+      "source_location": "L81",
       "_origin": "ast",
       "id": "claude_analog_simulator_second_tab",
       "community": 17,
@@ -3229,7 +3568,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L119",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3239,7 +3578,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L131",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3249,7 +3588,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L141",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -3261,8 +3600,8 @@
       "source_file": "README.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "root_logic_simulator_web_app_readme_md",
-      "community": 9,
+      "id": "readme",
+      "community": 19,
       "norm_label": "readme.md"
     },
     {
@@ -3271,8 +3610,8 @@
       "source_file": "README.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_readme_logic_lab",
-      "community": 9,
+      "id": "readme_logic_lab",
+      "community": 19,
       "norm_label": "\u26a1 logic lab"
     },
     {
@@ -3281,8 +3620,8 @@
       "source_file": "README.md",
       "source_location": "L7",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_readme_run_it",
-      "community": 9,
+      "id": "readme_run_it",
+      "community": 19,
       "norm_label": "run it"
     },
     {
@@ -3291,8 +3630,8 @@
       "source_file": "README.md",
       "source_location": "L12",
       "_origin": "ast",
-      "id": "logic_simulator_web_app_readme_highlights",
-      "community": 9,
+      "id": "readme_highlights",
+      "community": 19,
       "norm_label": "highlights"
     },
     {
@@ -4087,6 +4426,127 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".mcp.json",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "mcp",
+      "target": "mcp_mcp_server_graphify"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".mcp.json",
+      "source_location": "L1",
+      "weight": 1.0,
+      "context": "command",
+      "source": "mcp_mcp_server_graphify",
+      "target": "mcp_command_node"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package",
+      "target": "mcp_package_dependencies"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package",
+      "target": "mcp_package_main"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package",
+      "target": "mcp_package_name"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package",
+      "target": "mcp_package_type"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package",
+      "target": "mcp_package_version"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_package_dependencies",
+      "target": "mcp_package_dependencies_modelcontextprotocol_sdk"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/server.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_server",
+      "target": "mcp_server_dirname"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/server.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_server",
+      "target": "mcp_server_server"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/server.js",
+      "source_location": "L97",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_server",
+      "target": "mcp_server_transport"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".mcp/server.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "mcp_server",
+      "target": "mcp_server_vault"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "js/analog/engine.js",
       "source_location": "L50",
       "weight": 1.0,
@@ -4123,91 +4583,6 @@
       "confidence_score": 1.0,
       "source": "analog_engine",
       "target": "analog_engine_ansolvemode"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L34",
-      "weight": 1.0,
-      "source": "analog_engine",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L26",
-      "weight": 1.0,
-      "source": "analog_engine",
-      "target": "analog_engine_sqphase",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L30",
-      "weight": 1.0,
-      "source": "analog_engine",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L100",
-      "weight": 1.0,
-      "source": "analog_engine_anbuild",
-      "target": "analog_engine_sqphase",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L162",
-      "weight": 1.0,
-      "source": "analog_engine_anbuild",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L269",
-      "weight": 1.0,
-      "source": "analog_engine_ansolvemode",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L119",
-      "weight": 1.0,
-      "source": "analog_engine_anbuild",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/engine.js",
-      "source_location": "L259",
-      "weight": 1.0,
-      "source": "analog_engine_ansolvemode",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -4306,16 +4681,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/analog/model.js",
-      "source_location": "L133",
-      "weight": 1.0,
-      "source": "analog_model",
-      "target": "analog_model_an_save_fields",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/model.js",
       "source_location": "L45",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -4346,42 +4711,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/analog/render.js",
-      "source_location": "L130",
-      "weight": 1.0,
-      "source": "analog_render",
-      "target": "analog_render_drawprobe",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/render.js",
       "source_location": "L85",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "analog_render",
       "target": "analog_render_endpos"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/render.js",
-      "source_location": "L102",
-      "weight": 1.0,
-      "source": "analog_render",
-      "target": "analog_render_probelines",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/render.js",
-      "source_location": "L133",
-      "weight": 1.0,
-      "source": "analog_render_drawprobe",
-      "target": "analog_render_probelines",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4392,16 +4726,6 @@
       "confidence_score": 1.0,
       "source": "analog_ui",
       "target": "analog_ui_an_palette"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L55",
-      "weight": 1.0,
-      "source": "analog_ui",
-      "target": "analog_ui_an_prefix",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4432,16 +4756,6 @@
       "confidence_score": 1.0,
       "source": "analog_ui",
       "target": "analog_ui_anparse"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L417",
-      "weight": 1.0,
-      "source": "analog_ui",
-      "target": "analog_ui_anshowmenu",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -5038,17 +5352,6 @@
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
-      "source_location": "L358",
-      "weight": 1.0,
-      "source": "js_render_refreshsynthlive",
-      "target": "js_engine_inputvals"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/engine.js",
       "source_location": "L135",
@@ -5319,17 +5622,6 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "js_engine_settle",
-      "target": "js_engine_evalcomp"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
-      "source_location": "L368",
-      "weight": 1.0,
-      "source": "js_render_settlelocalcircuit",
       "target": "js_engine_evalcomp"
     },
     {
@@ -5866,17 +6158,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L531",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_engine_afterstructchange"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
       "source_location": "L521",
       "weight": 1.0,
       "source": "js_interact_deleteselection",
@@ -6248,16 +6529,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/interact.js",
-      "source_location": "L520",
-      "weight": 1.0,
-      "source": "js_interact",
-      "target": "js_interact_addchipat",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
       "source_location": "L574",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -6300,9 +6571,9 @@
       "source_file": "js/interact.js",
       "source_location": "L21",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_currenttool"
+      "target": "js_interact_currenttool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6393,26 +6664,6 @@
       "confidence_score": 1.0,
       "source": "js_interact",
       "target": "js_interact_initsplit"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L818",
-      "weight": 1.0,
-      "source": "js_interact",
-      "target": "js_interact_innercircuitof",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L831",
-      "weight": 1.0,
-      "source": "js_interact",
-      "target": "js_interact_innername",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6630,9 +6881,9 @@
       "source_file": "js/interact.js",
       "source_location": "L34",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_placetool"
+      "target": "js_interact_placetool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6660,9 +6911,9 @@
       "source_file": "js/interact.js",
       "source_location": "L22",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_sametool"
+      "target": "js_interact_sametool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6680,9 +6931,9 @@
       "source_file": "js/interact.js",
       "source_location": "L25",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_settool"
+      "target": "js_interact_settool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6690,9 +6941,9 @@
       "source_file": "js/interact.js",
       "source_location": "L18",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_shiftheld"
+      "target": "js_interact_shiftheld",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6710,9 +6961,9 @@
       "source_file": "js/interact.js",
       "source_location": "L53",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_toggleshiftlock"
+      "target": "js_interact_toggleshiftlock",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6720,9 +6971,9 @@
       "source_file": "js/interact.js",
       "source_location": "L30",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_toggletool"
+      "target": "js_interact_toggletool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6818,9 +7069,9 @@
       "source_file": "js/interact.js",
       "source_location": "L263",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_oncanvasdown",
-      "target": "js_interact_shiftheld"
+      "target": "js_interact_shiftheld",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6829,9 +7080,9 @@
       "source_file": "js/interact.js",
       "source_location": "L315",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_oncanvasmove",
-      "target": "js_interact_shiftheld"
+      "target": "js_interact_shiftheld",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6840,9 +7091,9 @@
       "source_file": "js/interact.js",
       "source_location": "L385",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_oncanvasup",
-      "target": "js_interact_shiftheld"
+      "target": "js_interact_shiftheld",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6862,9 +7113,9 @@
       "source_file": "js/interact.js",
       "source_location": "L30",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_toggletool",
-      "target": "js_interact_sametool"
+      "target": "js_interact_sametool",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6884,9 +7135,9 @@
       "source_file": "js/interact.js",
       "source_location": "L656",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_onkeydown",
-      "target": "js_interact_settool"
+      "target": "js_interact_settool",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6917,9 +7168,9 @@
       "source_file": "js/interact.js",
       "source_location": "L30",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_toggletool",
-      "target": "js_interact_settool"
+      "target": "js_interact_settool",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6939,9 +7190,9 @@
       "source_file": "js/interact.js",
       "source_location": "L235",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_interact_oncanvasdown",
-      "target": "js_interact_placetool"
+      "target": "js_interact_placetool",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -7642,17 +7893,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L432",
-      "weight": 1.0,
-      "source": "js_interact_oncanvasdbl",
-      "target": "js_model_isaddr"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
       "source_location": "L367",
       "weight": 1.0,
       "source": "js_interact_oncanvasdbl",
@@ -7741,17 +7981,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L495",
-      "weight": 1.0,
-      "source": "js_interact_oncanvascontext",
-      "target": "js_model_builtindefs"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
       "source_location": "L405",
       "weight": 1.0,
       "source": "js_interact_oncanvascontext",
@@ -7767,17 +7996,6 @@
       "weight": 1.0,
       "source": "js_interact_oncanvascontext",
       "target": "js_model_curcircuit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L498",
-      "weight": 1.0,
-      "source": "js_interact_oncanvascontext",
-      "target": "js_model_customdefs"
     },
     {
       "relation": "calls",
@@ -7895,87 +8113,10 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L525",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_model_compsize"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L521",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_model_curcircuit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L523",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_model_makecomp"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L526",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_model_snap"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L529",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_model_touchcircuit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L524",
-      "weight": 1.0,
-      "source": "js_interact_addchipat",
-      "target": "js_ui_toast"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
       "source_location": "L459",
       "weight": 1.0,
       "source": "js_interact_compmenuitems",
       "target": "js_model_canedit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L537",
-      "weight": 1.0,
-      "source": "js_interact_compmenuitems",
-      "target": "js_model_isaddr"
     },
     {
       "relation": "calls",
@@ -8552,61 +8693,6 @@
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L846",
-      "weight": 1.0,
-      "source": "js_interact_entercomponent",
-      "target": "js_interact_innercircuitof",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L820",
-      "weight": 1.0,
-      "source": "js_interact_innercircuitof",
-      "target": "js_model_isaddr"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L822",
-      "weight": 1.0,
-      "source": "js_interact_innercircuitof",
-      "target": "js_model_synthaddrcircuit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L850",
-      "weight": 1.0,
-      "source": "js_interact_entercomponent",
-      "target": "js_interact_innername",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L848",
-      "weight": 1.0,
-      "source": "js_interact_entercomponent",
-      "target": "js_model_curcircuit"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
@@ -8614,17 +8700,6 @@
       "weight": 1.0,
       "source": "js_interact_entercomponent",
       "target": "js_model_curview"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/interact.js",
-      "source_location": "L848",
-      "weight": 1.0,
-      "source": "js_interact_entercomponent",
-      "target": "js_model_isaddr"
     },
     {
       "relation": "calls",
@@ -8727,58 +8802,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "js/mobile.js",
-      "source_location": "L122",
-      "weight": 1.0,
-      "source": "js_mobile",
-      "target": "js_mobile_init",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/mobile.js",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "js_mobile",
-      "target": "js_mobile_make",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/mobile.js",
-      "source_location": "L25",
-      "weight": 1.0,
-      "source": "js_mobile",
-      "target": "js_mobile_wireapp",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/mobile.js",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "js_mobile_wireapp",
-      "target": "js_mobile_make",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/mobile.js",
-      "source_location": "L124",
-      "weight": 1.0,
-      "source": "js_mobile_init",
-      "target": "js_mobile_wireapp",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "js/model.js",
       "source_location": "L25",
       "weight": 1.0,
@@ -8835,16 +8858,6 @@
       "confidence_score": 1.0,
       "source": "js_model",
       "target": "js_model_attop"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
-      "source_location": "L422",
-      "weight": 1.0,
-      "source": "js_model",
-      "target": "js_model_buildaddrdata",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -9280,16 +9293,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/model.js",
-      "source_location": "L528",
-      "weight": 1.0,
-      "source": "js_model",
-      "target": "js_model_synthaddrcircuit",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
       "source_location": "L78",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -9389,17 +9392,6 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "js_model_defaultwireroute",
-      "target": "js_model_snap"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
-      "source_location": "L273",
-      "weight": 1.0,
-      "source": "js_render_computewirelanes",
       "target": "js_model_snap"
     },
     {
@@ -9731,17 +9723,6 @@
       "confidence_score": 1.0,
       "source": "js_model_wiresto",
       "target": "js_model_getmaps"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
-      "source_location": "L239",
-      "weight": 1.0,
-      "source": "js_render_computewirelanes",
-      "target": "js_model_compbyid"
     },
     {
       "relation": "calls",
@@ -10109,17 +10090,6 @@
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
-      "source_location": "L530",
-      "weight": 1.0,
-      "source": "js_model_synthaddrcircuit",
-      "target": "js_model_instantiatedata",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/ui.js",
@@ -10270,17 +10240,6 @@
       "weight": 1.0,
       "source": "js_ui_deletecustomdef",
       "target": "js_model_definuse"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
-      "source_location": "L529",
-      "weight": 1.0,
-      "source": "js_model_synthaddrcircuit",
-      "target": "js_model_buildaddrdata",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -10486,17 +10445,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/render.js",
-      "source_location": "L241",
-      "weight": 1.0,
-      "source": "js_render_computewirelanes",
-      "target": "js_model_pinpos"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
       "source_location": "L687",
       "weight": 1.0,
       "source": "js_render_drawaddrcomp",
@@ -10673,17 +10621,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/render.js",
-      "source_location": "L341",
-      "weight": 1.0,
-      "source": "js_render_effroute",
-      "target": "js_model_defaultwireroute"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "js/render.js",
       "source_location": "L229",
       "weight": 1.0,
       "source": "js_render_drawwire",
@@ -10765,16 +10702,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/render.js",
-      "source_location": "L307",
-      "weight": 1.0,
-      "source": "js_render",
-      "target": "js_render_assignwirelanes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
       "source_location": "L31",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -10800,16 +10727,6 @@
       "confidence_score": 1.0,
       "source": "js_render",
       "target": "js_render_col"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L234",
-      "weight": 1.0,
-      "source": "js_render",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -11035,16 +10952,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/render.js",
-      "source_location": "L337",
-      "weight": 1.0,
-      "source": "js_render",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
       "source_location": "L110",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11185,16 +11092,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/render.js",
-      "source_location": "L355",
-      "weight": 1.0,
-      "source": "js_render",
-      "target": "js_render_refreshsynthlive",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
       "source_location": "L139",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11240,16 +11137,6 @@
       "confidence_score": 1.0,
       "source": "js_render",
       "target": "js_render_screentoworld"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L365",
-      "weight": 1.0,
-      "source": "js_render",
-      "target": "js_render_settlelocalcircuit",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -11625,17 +11512,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/render.js",
-      "source_location": "L187",
-      "weight": 1.0,
-      "source": "js_render_paintpane",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
       "source_location": "L188",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11691,17 +11567,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/render.js",
-      "source_location": "L186",
-      "weight": 1.0,
-      "source": "js_render_paintpane",
-      "target": "js_render_refreshsynthlive",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
       "source_location": "L237",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11718,61 +11583,6 @@
       "confidence_score": 1.0,
       "source": "js_render_drawwiringpreview",
       "target": "js_render_strokepolyline"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L301",
-      "weight": 1.0,
-      "source": "js_render_computewirelanes",
-      "target": "js_render_assignwirelanes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L1083",
-      "weight": 1.0,
-      "source": "js_render_hitwireseg",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L378",
-      "weight": 1.0,
-      "source": "js_render_drawwire",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L1090",
-      "weight": 1.0,
-      "source": "js_render_hitwireseg",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/render.js",
-      "source_location": "L361",
-      "weight": 1.0,
-      "source": "js_render_refreshsynthlive",
-      "target": "js_render_settlelocalcircuit",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12176,9 +11986,9 @@
       "source_file": "js/touch.js",
       "source_location": "L27",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_touch",
-      "target": "js_touch_attach"
+      "target": "js_touch_attach",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -12490,9 +12300,9 @@
       "source_file": "js/ui.js",
       "source_location": "L141",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_updatepaletteselection"
+      "target": "js_ui_updatepaletteselection",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12589,9 +12399,9 @@
       "source_file": "js/ui.js",
       "source_location": "L137",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui_buildpalette",
-      "target": "js_ui_updatepaletteselection"
+      "target": "js_ui_updatepaletteselection",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12978,22 +12788,382 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "ARCHITECTURE.md",
-      "source_location": "L1",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L72",
       "weight": 1.0,
-      "source": "root_logic_simulator_web_app_architecture_md",
-      "target": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "agents_components",
+      "target": "agents_components_adding_a_new_built_in_chip"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_components",
+      "target": "agents_components_current_built_ins_and_their_design"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/components.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_components",
+      "target": "agents_components_dsl_for_defining_chips"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L64",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_adding_a_new_test"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_current_test_coverage_tests_1_14"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_helper_pattern"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L35",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_simulation_helpers"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_test_runner_pattern"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L80",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_what_cannot_be_tested_here"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/qa.md",
+      "source_location": "L72",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_qa",
+      "target": "agents_qa_what_to_test"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_canvas_setup"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_color_scheme_col"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_component_drawing"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_coordinate_system"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L57",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_hit_testing_world_coords"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L68",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_key_rules"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_palette_icons_painttoolicon"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L53",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_selection_overlay_drawselection"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/renderer.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_renderer",
+      "target": "agents_renderer_wire_rendering_drawwire"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/sim-engine.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_sim_engine",
+      "target": "agents_sim_engine_architecture"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/sim-engine.md",
+      "source_location": "L53",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_sim_engine",
+      "target": "agents_sim_engine_key_invariants"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_breadcrumbs_updatecrumbs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_create_ic_createic"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L47",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_dropdown_panels"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_export_import"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L54",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_expression_popup"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_initialisation_order_main_js"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L122",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_key_invariants"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_mode_switching_setmode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_mouse_interactions_interact_js"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_palette_ui_js_buildpalette"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_save_load_localstorage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L35",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_simui_update_updatesimui"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_timeline_panel_timeline"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/ux.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "agents_ux",
+      "target": "agents_ux_toolbar_initui"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
-      "source_location": "L229",
+      "source_location": "L1",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_data_flow_summary",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture",
+      "target": "architecture_logic_lab_architecture"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "claude",
+      "target": "architecture"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ARCHITECTURE.md",
+      "source_location": "L217",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_data_flow_summary"
     },
     {
       "relation": "contains",
@@ -13001,9 +13171,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L40",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_data_model_owns_the_truth",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_data_model_owns_the_truth"
     },
     {
       "relation": "contains",
@@ -13011,29 +13181,29 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L78",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_engine_simulate_by_event_driven_relaxation"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
-      "source_location": "L159",
+      "source_location": "L147",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_renderer_paint_the_settled_state",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_renderer_paint_the_settled_state"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
-      "source_location": "L190",
+      "source_location": "L178",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_supporting_subsystems",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_supporting_subsystems"
     },
     {
       "relation": "contains",
@@ -13041,29 +13211,29 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L15",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_the_core_loop",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_the_core_loop"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
-      "source_location": "L207",
+      "source_location": "L195",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_the_cross_cutting_principle_purity_decides_boundaries",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_logic_lab_architecture",
+      "target": "architecture_the_cross_cutting_principle_purity_decides_boundaries"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
-      "source_location": "L137",
+      "source_location": "L125",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation",
-      "target": "logic_simulator_web_app_architecture_three_valued_logic_tri_state_buses",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "architecture_engine_simulate_by_event_driven_relaxation",
+      "target": "architecture_three_valued_logic_tri_state_buses"
     },
     {
       "relation": "contains",
@@ -13151,9 +13321,9 @@
       "source_file": "README.md",
       "source_location": "L1",
       "weight": 1.0,
-      "source": "root_logic_simulator_web_app_readme_md",
-      "target": "logic_simulator_web_app_readme_logic_lab",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "readme",
+      "target": "readme_logic_lab"
     },
     {
       "relation": "contains",
@@ -13161,9 +13331,9 @@
       "source_file": "README.md",
       "source_location": "L12",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_readme_logic_lab",
-      "target": "logic_simulator_web_app_readme_highlights",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "readme_logic_lab",
+      "target": "readme_highlights"
     },
     {
       "relation": "contains",
@@ -13171,9 +13341,9 @@
       "source_file": "README.md",
       "source_location": "L7",
       "weight": 1.0,
-      "source": "logic_simulator_web_app_readme_logic_lab",
-      "target": "logic_simulator_web_app_readme_run_it",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "readme_logic_lab",
+      "target": "readme_run_it"
     },
     {
       "relation": "references",
@@ -13997,5 +14167,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "e6e64fd7be71f6de524f55f259ba8615c6a6ee51"
+  "built_at_commit": "ea88795256da386aa73cfc0deebe82fa1b60cd15"
 }

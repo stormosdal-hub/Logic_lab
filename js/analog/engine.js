@@ -22,6 +22,21 @@ Analog.Sim = { active: false, running: false, result: null };
 const _VT = 0.025852;   // thermal voltage kT/q at ~300 K
 const _SW_RON = 1e-3, _SW_ROFF = 1e9;   // closed / open contact resistance (switches, relay contacts)
 
+/* Fraction of the current square-wave period elapsed (0..1); high for the first half. */
+function _sqPhase(c, time) { const f = c.freq || 0; return ((time * f) % 1 + 1) % 1; }
+
+/* Effective zener breakdown offset: the exponential adds ≈0.7 V of knee at mA-level
+   currents (vt·ln(I/Is)), so shift it down to land conduction at the nameplate Vz. */
+function _zenerVz(c, def) { return Math.max(0.1, (c.value > 0 ? c.value : def.value) - 0.7); }
+
+/* A potentiometer's two half-resistances (end A → wiper, wiper → end B),
+   each clamped away from zero so a full-scale wiper can't short a node. */
+function _potR(c) {
+  const r = Math.max(0, Math.min(1, c.ratio == null ? 0.5 : c.ratio));
+  const min = Analog.TYPES.RES.min;
+  return { raw: Math.max(c.value * r, min), rwb: Math.max(c.value * (1 - r), min) };
+}
+
 /* Limit the change in a p-n junction voltage between Newton iterations so the
    exponential never explodes (SPICE's pnjlim). `vcrit` is the voltage of
    maximum conductance; past it we take a log-domain step instead of a raw one. */
@@ -82,6 +97,7 @@ function _anBuild(circ, mode, dt, time, gv, nlState) {
     const a = () => nodes.nodeAt(c.id, 0), b = () => nodes.nodeAt(c.id, 1);
     if (c.type === "DCV") vsrc.push({ comp: c, p: a(), q: b(), E: c.value });
     else if (c.type === "ACV") vsrc.push({ comp: c, p: a(), q: b(), E: c.value * Math.sin(w * (c.freq || 0) * time) });
+    else if (c.type === "SQV") vsrc.push({ comp: c, p: a(), q: b(), E: c.value * (_sqPhase(c, time) < 0.5 ? 1 : -1) });
     else if (c.type === "AM") vsrc.push({ comp: c, p: a(), q: b(), E: 0 });
     else if (c.type === "IND" && mode === "dc") vsrc.push({ comp: c, p: a(), q: b(), E: 0 });
     else if (c.type === "IND") inds.push({ comp: c, a: vi(a()), b: vi(b()) });
@@ -94,13 +110,29 @@ function _anBuild(circ, mode, dt, time, gv, nlState) {
   const inject = (a, b, I) => { if (a >= 0) z[a] += I; if (b >= 0) z[b] -= I; };   // current source flowing a→b
 
   for (const c of circ.comps)
-    if (c.type === "RES") stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / Math.max(c.value, Analog.TYPES.RES.min));
+    if (c.type === "RES" || c.type === "LAMP")
+      stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / Math.max(c.value, Analog.TYPES.RES.min));
+
+  // potentiometer: two resistors, end A — wiper — end B, split by `ratio`
+  for (const c of circ.comps)
+    if (c.type === "POT") {
+      const { raw, rwb } = _potR(c);
+      stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / raw);
+      stampG(vi(nodes.nodeAt(c.id, 1)), vi(nodes.nodeAt(c.id, 2)), 1 / rwb);
+    }
+
+  // ideal current source: `value` amps delivered out of terminal 0 into the circuit
+  for (const c of circ.comps)
+    if (c.type === "ISRC") inject(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), c.value);
 
   // switches / push-buttons: a conductance that flips with the manual `closed` state.
+  // fuses: near-zero resistance until blown, then open.
   // relays: a coil resistor (terminals 0,1) + a normally-open contact (2,3) driven by `_on`.
   for (const c of circ.comps) {
     if (c.type === "SW" || c.type === "PUSH")
       stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / (c.closed ? _SW_RON : _SW_ROFF));
+    else if (c.type === "FUSE")
+      stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / (c._blown ? _SW_ROFF : _SW_RON));
     else if (c.type === "RELAY") {
       stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / Math.max(c.value, 1e-3));       // coil
       stampG(vi(nodes.nodeAt(c.id, 2)), vi(nodes.nodeAt(c.id, 3)), 1 / (c._on ? _SW_RON : _SW_ROFF));  // NO contact
@@ -118,14 +150,31 @@ function _anBuild(circ, mode, dt, time, gv, nlState) {
     if (!def || !def.nonlinear) continue;
     const st = nlState.get(c.id) || {};
 
-    if (!def.bjt) {                                   // diode / LED (2 terminals)
+    if (!def.bjt) {                                   // diode / LED / zener (2 terminals)
       const na = nodes.nodeAt(c.id, 0), nc = nodes.nodeAt(c.id, 1);
       const vt = def.n * _VT, vcrit = vt * Math.log(vt / (Math.SQRT2 * def.is));
-      let vd = lim(gv(na) - gv(nc), st.vd == null ? 0 : st.vd, vt, vcrit);
+      const vraw = gv(na) - gv(nc);
+      let vd, erev = 0, grev = 0;
+      if (def.zener) {
+        // reverse breakdown: a second exponential I = −Is·exp((−vd−Vz')/vt), with the
+        // knee offset so conduction lands at the nameplate voltage. Limit whichever
+        // junction (forward vd, or reverse u = −vd−Vz') is active this iteration.
+        const vz = _zenerVz(c, def);
+        if (vraw < -vz / 2) {
+          const u = lim(-vraw - vz, st.u == null ? 0 : st.u, vt, vcrit);
+          st.u = u; vd = -vz - u;
+        } else {
+          vd = lim(vraw, st.vd == null ? 0 : st.vd, vt, vcrit); st.u = -vd - vz;
+        }
+        erev = Math.exp(Math.min((-vd - vz) / vt, 80));
+        grev = (def.is / vt) * erev;
+      } else {
+        vd = lim(vraw, st.vd == null ? 0 : st.vd, vt, vcrit);
+      }
       st.vd = vd; nlState.set(c.id, st);
       const evd = Math.exp(Math.min(vd / vt, 80));
-      const id0 = def.is * (evd - 1);
-      const gd = (def.is / vt) * evd + GMIN;
+      const id0 = def.is * (evd - 1) - def.is * erev;
+      const gd = (def.is / vt) * evd + grev + GMIN;
       const ieq = id0 - gd * vd;                      // I = gd·(Va−Vb) + ieq
       stampG(vi(na), vi(nc), gd);
       inject(vi(na), vi(nc), -ieq);
@@ -206,12 +255,19 @@ function _anSolveMode(circ, mode, dt, time) {
   const cur = new Map();
   for (const c of circ.comps) {
     let i = 0;
-    if (c.type === "RES") i = vdiff(c) / Math.max(c.value, RES_MIN);
+    if (c.type === "RES" || c.type === "LAMP") i = vdiff(c) / Math.max(c.value, RES_MIN);
+    else if (c.type === "POT") { const { raw } = _potR(c); i = (termV(c.id, 0) - termV(c.id, 1)) / raw; }   // end A → wiper
     else if (c.type === "AM") i = vBranch(c) || 0;
-    else if (c.type === "DCV" || c.type === "ACV") { const bi = vBranch(c); i = bi == null ? 0 : -bi; }   // delivered current
+    else if (c.type === "DCV" || c.type === "ACV" || c.type === "SQV") { const bi = vBranch(c); i = bi == null ? 0 : -bi; }   // delivered current
+    else if (c.type === "ISRC") i = c.value;
+    else if (c.type === "FUSE") i = vdiff(c) / (c._blown ? _SW_ROFF : _SW_RON);
     else if (c.type === "CAP") i = mode === "tran" ? (c.value / dt) * (vdiff(c) - (c._vc || 0)) : 0;
     else if (c.type === "IND") i = mode === "tran" ? (c._il || 0) + (dt / c.value) * vdiff(c) : (vBranch(c) || 0);
-    else if (c.type === "DIODE" || c.type === "LED") { const d = Analog.TYPES[c.type], vt = d.n * _VT; i = d.is * (Math.exp(Math.min(vdiff(c) / vt, 80)) - 1); }
+    else if (c.type === "DIODE" || c.type === "LED" || c.type === "ZENER") {
+      const d = Analog.TYPES[c.type], vt = d.n * _VT, vd = vdiff(c);
+      i = d.is * (Math.exp(Math.min(vd / vt, 80)) - 1);
+      if (d.zener) i -= d.is * Math.exp(Math.min((-vd - _zenerVz(c, d)) / vt, 80));
+    }
     else if (c.type === "NPN" || c.type === "PNP") {   // report collector current
       const d = Analog.TYPES[c.type], sg = d.npn ? 1 : -1;
       const vbe = sg * (termV(c.id, 1) - termV(c.id, 2)), vbc = sg * (termV(c.id, 1) - termV(c.id, 0));
@@ -235,6 +291,9 @@ function _anSolveMode(circ, mode, dt, time) {
     if (icoil >= pull) c._on = true;
     else if (icoil <= 0.5 * pull) c._on = false;
   }
+  // fuses: blow (permanently, until replaced/reset) when |I| exceeds the rating
+  for (const c of circ.comps)
+    if (c.type === "FUSE" && !c._blown && Math.abs(cur.get(c) || 0) > Math.max(c.value, 1e-6)) c._blown = true;
 
   return {
     ok: true, mode, nodes,
@@ -244,26 +303,28 @@ function _anSolveMode(circ, mode, dt, time) {
   };
 }
 
-/* DC operating point (resistive; C open, L short). A relay's contact state is a
-   discrete function of its coil current, so re-solve until every relay settles. */
+/* DC operating point (resistive; C open, L short). Relay contacts and fuses are
+   discrete functions of their own current, so re-solve until every state settles. */
 Analog.solveDC = function (circ) {
-  const relays = circ.comps.filter(c => c.type === "RELAY");
+  const stateful = circ.comps.filter(c => c.type === "RELAY" || c.type === "FUSE");
   let res;
-  for (let i = 0, iters = relays.length ? 20 : 1; i < iters; i++) {
-    const before = relays.map(r => !!r._on);
+  for (let i = 0, iters = stateful.length ? 20 : 1; i < iters; i++) {
+    const before = stateful.map(c => (c.type === "RELAY" ? !!c._on : !!c._blown));
     res = _anSolveMode(circ, "dc", null, 0);
-    if (!res.ok || relays.every((r, k) => !!r._on === before[k])) break;
+    if (!res.ok || stateful.every((c, k) => (c.type === "RELAY" ? !!c._on : !!c._blown) === before[k])) break;
   }
   return res;
 };
 
-/* Reset all reactive state to zero (uncharged caps, no inductor current) and
-   de-energise every relay, so each simulation run starts from a clean state. */
+/* Reset all reactive state to zero (uncharged caps, no inductor current),
+   de-energise every relay and replace every fuse, so each simulation run
+   starts from a clean state. */
 Analog.initTransient = function (circ) {
   for (const c of circ.comps) {
     if (c.type === "CAP") c._vc = 0;
     else if (c.type === "IND") c._il = 0;
     else if (c.type === "RELAY") c._on = false;
+    else if (c.type === "FUSE") c._blown = false;
   }
 };
 
@@ -274,13 +335,13 @@ Analog.stepTransient = function (circ, dt, time) { return _anSolveMode(circ, "tr
 /* A rough slowest timescale of the circuit — used to auto-pick a timestep and
    the oscilloscope window (RC = R·C, RL = L/R, AC = a few periods). */
 Analog.characteristicTime = function (circ) {
-  const Rs = circ.comps.filter(c => c.type === "RES").map(c => c.value);
+  const Rs = circ.comps.filter(c => c.type === "RES" || c.type === "LAMP" || c.type === "POT").map(c => c.value);
   const Ravg = Rs.length ? Rs.reduce((a, b) => a + b, 0) / Rs.length : 1000;
   let tau = 0;
   for (const c of circ.comps) {
     if (c.type === "CAP") tau = Math.max(tau, c.value * Ravg);
     else if (c.type === "IND") tau = Math.max(tau, c.value / Ravg);
-    else if (c.type === "ACV") tau = Math.max(tau, 3 / Math.max(c.freq || 1, 1e-6));
+    else if (c.type === "ACV" || c.type === "SQV") tau = Math.max(tau, 3 / Math.max(c.freq || 1, 1e-6));
   }
   return tau > 0 ? tau : 1e-3;
 };

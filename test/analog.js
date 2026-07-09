@@ -367,5 +367,162 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   check("relay off: contact blocks (~0 A)", Math.abs(s.current(rl)) < 1e-6);
 }
 
+/* ---- 21. Potentiometer: wiper divides the voltage by `ratio` ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const p = A.makeComp("POT", 100, 0, { value: 10000, ratio: 0.25 });
+  const vm = A.makeComp("VM", 200, 0);
+  const g = A.makeComp("GND", 300, 0);
+  c.comps.push(v, p, vm, g);
+  A.addWire(c, v, 0, p, 0);    // + — end A
+  A.addWire(c, p, 2, g, 0);    // end B — gnd
+  A.addWire(c, p, 1, vm, 0);   // wiper — VM+
+  A.addWire(c, vm, 1, g, 0); A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  check("pot: solves", s.ok);
+  // wiper sits 25% from end A → V = 10 · (1 − 0.25) = 7.5 V
+  check("pot: wiper at 25% reads 7.5 V", near(s.meter(vm), 7.5, 1e-3));
+  p.ratio = 0.5;
+  check("pot: mid-travel reads 5 V", near(A.solveDC(c).meter(vm), 5, 1e-3));
+}
+
+/* ---- 22. Current source: 2 mA through 1 kΩ gives 2 V ---- */
+{
+  const c = A.newCircuit();
+  const i = A.makeComp("ISRC", 0, 0, { value: 0.002 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(i, r, g);
+  A.addWire(c, i, 0, r, 0); A.addWire(c, r, 1, g, 0); A.addWire(c, i, 1, g, 0);
+  const s = A.solveDC(c);
+  check("isrc: solves", s.ok);
+  check("isrc: 2 mA · 1 kΩ = 2 V", near(s.volt(i.id, 0), 2, 1e-6));
+  check("isrc: resistor carries 2 mA", near(s.current(r), 0.002, 1e-9));
+}
+
+/* ---- 23. Lamp: electrically a resistor ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const la = A.makeComp("LAMP", 100, 0, { value: 100 });
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(v, la, g);
+  A.addWire(c, v, 0, la, 0); A.addWire(c, la, 1, g, 0); A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  check("lamp: 10 V / 100 Ω = 100 mA", near(s.current(la), 0.1, 1e-6));
+}
+
+/* ---- 24. Fuse: holds under the rating, blows above it ---- */
+{
+  const mk = rating => {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 5 });
+    const r = A.makeComp("RES", 100, 0, { value: 100 });   // 50 mA loop current
+    const f = A.makeComp("FUSE", 200, 0, { value: rating });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, r, f, g);
+    A.addWire(c, v, 0, r, 0); A.addWire(c, r, 1, f, 0); A.addWire(c, f, 1, g, 0); A.addWire(c, v, 1, g, 0);
+    return { c, r, f };
+  };
+  const hold = mk(1);                       // 50 mA < 1 A rating
+  const s1 = A.solveDC(hold.c);
+  check("fuse holds: intact", hold.f._blown === false);
+  check("fuse holds: ~50 mA flows", near(s1.current(hold.r), 0.05, 1e-4));
+  const blow = mk(0.01);                    // 50 mA > 10 mA rating
+  const s2 = A.solveDC(blow.c);
+  check("fuse blows: _blown set", blow.f._blown === true);
+  check("fuse blows: circuit opens (~0 A)", Math.abs(s2.current(blow.r)) < 1e-6);
+  A.initTransient(blow.c);
+  check("fuse: initTransient replaces it", blow.f._blown === false);
+}
+
+/* ---- 25. Square source: +V for the first half period, −V for the second ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("SQV", 0, 0, { value: 5, freq: 1 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(v, r, g);
+  A.addWire(c, v, 0, r, 0); A.addWire(c, r, 1, g, 0); A.addWire(c, v, 1, g, 0);
+  A.initTransient(c);
+  const hi = A.stepTransient(c, 1e-3, 0.25);
+  const lo = A.stepTransient(c, 1e-3, 0.75);
+  check("square: high half is +5 V", near(hi.volt(v.id, 0), 5, 1e-9));
+  check("square: low half is −5 V", near(lo.volt(v.id, 0), -5, 1e-9));
+}
+
+/* ---- 26. Zener: clamps near Vz in reverse, ~0.7 V forward ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 12 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const z = A.makeComp("ZENER", 200, 0, { value: 5.1 });
+  const g = A.makeComp("GND", 300, 0);
+  c.comps.push(v, r, z, g);
+  // reverse orientation: cathode (terminal 1) toward the supply, anode to ground
+  A.addWire(c, v, 0, r, 0); A.addWire(c, r, 1, z, 1); A.addWire(c, z, 0, g, 0); A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  check("zener rev: solves", s.ok);
+  const vk = s.volt(z.id, 1);
+  check("zener rev: clamps at ≈ 5.1 V (got " + vk.toFixed(2) + ")", vk > 4.8 && vk < 5.5);
+  // forward orientation behaves like a plain diode
+  const c2 = A.newCircuit();
+  const v2 = A.makeComp("DCV", 0, 0, { value: 5 });
+  const r2 = A.makeComp("RES", 100, 0, { value: 1000 });
+  const z2 = A.makeComp("ZENER", 200, 0, { value: 5.1 });
+  const g2 = A.makeComp("GND", 300, 0);
+  c2.comps.push(v2, r2, z2, g2);
+  A.addWire(c2, v2, 0, r2, 0); A.addWire(c2, r2, 1, z2, 0); A.addWire(c2, z2, 1, g2, 0); A.addWire(c2, v2, 1, g2, 0);
+  const s2 = A.solveDC(c2);
+  const vf = s2.volt(z2.id, 0) - s2.volt(z2.id, 1);
+  check("zener fwd: ≈ 0.6–0.8 V drop", vf > 0.6 && vf < 0.8);
+}
+
+/* ---- 27. Serialization: save → load round-trips and solves identically ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 9, label: "V1" });
+  const p = A.makeComp("POT", 100, 0, { value: 5000, ratio: 0.3, rot: 1 });
+  const sw = A.makeComp("SW", 200, 0, { closed: true });
+  const q = A.makeComp("ACV", 300, 0, { value: 2, freq: 50 });
+  const g = A.makeComp("GND", 400, 0);
+  c.comps.push(v, p, sw, q, g);
+  A.addWire(c, v, 0, p, 0); A.addWire(c, p, 2, sw, 0); A.addWire(c, sw, 1, g, 0); A.addWire(c, v, 1, g, 0);
+  A.addWire(c, q, 0, sw, 0); A.addWire(c, q, 1, g, 0);   // AC source across the switch
+  v._runtimeJunk = 42;                      // must not persist
+  const data = JSON.parse(JSON.stringify(A.serializeCircuit(c)));
+  const c2 = A.deserializeCircuit(data);
+  check("serialize: comps survive", c2.comps.length === 5);
+  check("serialize: wires survive", c2.wires.length === 6);
+  const p2 = c2.comps.find(x => x.type === "POT");
+  check("serialize: value/ratio/rot kept", p2.value === 5000 && p2.ratio === 0.3 && p2.rot === 1);
+  check("serialize: label kept", c2.comps.find(x => x.type === "DCV").label === "V1");
+  check("serialize: freq kept", c2.comps.find(x => x.type === "ACV").freq === 50);
+  check("serialize: switch state kept", c2.comps.find(x => x.type === "SW").closed === true);
+  check("serialize: runtime fields dropped", !JSON.stringify(data).includes("_runtimeJunk"));
+  check("serialize: fresh ids", !c2.comps.some(x => c.comps.some(y => y.id === x.id)));
+  const s1 = A.solveDC(c), s2 = A.solveDC(c2);
+  check("serialize: solves identically", s1.ok && s2.ok &&
+    near(s1.volt(p.id, 1), s2.volt(p2.id, 1), 1e-9));
+  // subset copy (comp + no dangling wires) — the copy/paste path
+  const sub = A.serializeCircuit(c, [v, p]);
+  check("serialize subset: 2 comps, 1 wire", sub.comps.length === 2 && sub.wires.length === 1);
+}
+
+/* ---- 28. removeWire splits the node ---- */
+{
+  const c = A.newCircuit();
+  const r1 = A.makeComp("RES", 0, 0, { value: 1 });
+  const r2 = A.makeComp("RES", 100, 0, { value: 1 });
+  c.comps.push(r1, r2);
+  const w = A.addWire(c, r1, 1, r2, 0);
+  let nodes = A.buildNodes(c);
+  check("removeWire: joined before", nodes.nodeAt(r1.id, 1) === nodes.nodeAt(r2.id, 0));
+  A.removeWire(c, w);
+  nodes = A.buildNodes(c);
+  check("removeWire: split after", nodes.nodeAt(r1.id, 1) !== nodes.nodeAt(r2.id, 0));
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

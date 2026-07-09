@@ -146,12 +146,16 @@
     <button id="anModeBtn" class="primary" title="Solve / edit the circuit">▶ Simulate</button>
     <div class="group">
       <button id="anNewBtn" title="Clear the sheet">New</button>
+      <button id="anSaveBtn" title="Save the sheet to browser storage">💾 Save</button>
+      <button id="anLoadBtn" title="Load the saved sheet">Load</button>
+      <button id="anUndoBtn" title="Undo (Ctrl+Z)" disabled>↩ Undo</button>
+      <button id="anRedoBtn" title="Redo (Ctrl+Y)" disabled>↪ Redo</button>
       <button id="anRunBtn" class="hidden" title="Run / pause time">⏸ Pause</button>
       <span id="anTime" class="an-status hidden"></span>
     </div>
     <span id="anStatus" class="an-status"></span>
     <div class="spacer"></div>
-    <div class="an-tip">DC · AC · transient · semiconductors — click a meter while simulating for a readout</div>
+    <div class="an-tip">DC · AC · transient · semiconductors — hover anything while simulating to probe it</div>
   </header>
   <div id="anMain">
     <aside id="anPalette"></aside>

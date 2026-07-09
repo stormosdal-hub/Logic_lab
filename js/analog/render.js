@@ -32,15 +32,16 @@ Analog.requestRender = function () {
 Analog.render = function () {
   const App = Analog.App, cv = App.canvas, g = App.ctx;
   if (!cv || !g) return;
-  const W = cv.width, H = cv.height, sim = App.mode === "sim";
+  const dpr = App.dpr || 1;
+  const W = cv.width / dpr, H = cv.height / dpr, sim = App.mode === "sim";
   const res = sim ? App.result : null;
 
-  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
   g.fillStyle = "#0f1420";
   g.fillRect(0, 0, W, H);
 
   const v = App.view;
-  g.setTransform(v.scale, 0, 0, v.scale, v.ox, v.oy);
+  g.setTransform(v.scale * dpr, 0, 0, v.scale * dpr, v.ox * dpr, v.oy * dpr);
 
   // grid
   const x0 = -v.ox / v.scale, y0 = -v.oy / v.scale, x1 = x0 + W / v.scale, y1 = y0 + H / v.scale;
@@ -74,13 +75,80 @@ Analog.render = function () {
   g.lineWidth = 1.5; g.strokeStyle = "#4f8cff";
   for (const c of App.selection) { const b = Analog.compBox(c); g.strokeRect(b.x, b.y, b.w, b.h); }
 
+  // marquee (Shift+drag box select)
+  if (App.drag && App.drag.marquee) {
+    const d = App.drag;
+    const x = Math.min(d.x0, d.x1), y = Math.min(d.y0, d.y1);
+    const bw = Math.abs(d.x1 - d.x0), bh = Math.abs(d.y1 - d.y0);
+    g.fillStyle = "rgba(79,140,255,0.08)"; g.fillRect(x, y, bw, bh);
+    g.strokeStyle = "#4f8cff"; g.lineWidth = 1 / v.scale;
+    g.setLineDash([6 / v.scale, 4 / v.scale]);
+    g.strokeRect(x, y, bw, bh);
+    g.setLineDash([]);
+  }
+
   // wiring rubber-band
   if (App.wiring) {
     const s = Analog.terminalPos(Analog.compById(App.circ, App.wiring.c), App.wiring.t);
     g.strokeStyle = "#ffd166"; g.lineWidth = 2.5;
     g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(App.wiring.x, App.wiring.y); g.stroke();
   }
+
+  // hover probe (sim mode): live values in a tooltip near the cursor
+  _drawProbe(g, App, res);
 };
+
+/* Lines of text for the sim-mode hover probe, from the hovered target. */
+function _probeLines(App, res, p) {
+  if (!res || !res.ok) return null;
+  const circ = App.circ;
+  if (p.kind === "term") {
+    if (!Analog.compById(circ, p.c)) return null;
+    return [Analog.fmt(res.volt(p.c, p.t), "V")];
+  }
+  if (p.kind === "wire") {
+    if (!circ.wires.includes(p.w)) return null;
+    return [Analog.fmt(res.volt(p.w.from.c, p.w.from.t), "V")];
+  }
+  const c = p.comp;
+  if (!circ.comps.includes(c)) return null;
+  const def = Analog.TYPES[c.type];
+  const V = (a, b) => res.volt(c.id, a) - res.volt(c.id, b);
+  const I = res.current(c);
+  if (c.type === "GND") return ["0 V"];
+  if (Analog.isMeter(c)) return [def.name + ": " + Analog.fmt(res.meter(c), def.unit)];
+  if (def.bjt) return ["Ic " + Analog.fmt(I, "A"), "Vce " + Analog.fmt(V(0, 2), "V"), "Vbe " + Analog.fmt(V(1, 2), "V")];
+  if (def.relay) return ["coil " + Analog.fmt(Math.abs(V(0, 1)) / Math.max(c.value, 1e-3), "A"),
+    "contact " + (c._on ? "closed" : "open")];
+  if (def.pot) return ["wiper " + Math.round(100 * (c.ratio == null ? 0.5 : c.ratio)) + "% · " + Analog.fmt(res.volt(c.id, 1), "V"),
+    "drag ← → to adjust"];
+  const lines = ["V " + Analog.fmt(V(0, 1), "V"), "I " + Analog.fmt(I, "A")];
+  if (c.type === "RES" || c.type === "LAMP" || def.fuse) lines.push("P " + Analog.fmt(Math.abs(V(0, 1) * I), "W"));
+  return lines;
+}
+
+function _drawProbe(g, App, res) {
+  const p = App.probe;
+  if (!p || App.mode !== "sim") return;
+  const lines = _probeLines(App, res, p);
+  if (!lines || !lines.length) return;
+  const dpr = App.dpr || 1;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.font = "12px monospace";
+  let tw = 0;
+  for (const s of lines) tw = Math.max(tw, g.measureText(s).width);
+  const bw = tw + 16, bh = lines.length * 16 + 10;
+  const cw = App.canvas.width / dpr, ch = App.canvas.height / dpr;
+  let x = p.sx + 14, y = p.sy + 14;
+  if (x + bw > cw - 4) x = p.sx - bw - 10;
+  if (y + bh > ch - 4) y = p.sy - bh - 10;
+  g.fillStyle = "rgba(10,16,28,0.92)";
+  g.fillRect(x, y, bw, bh);
+  g.strokeStyle = "#4f8cff"; g.lineWidth = 1;
+  g.strokeRect(x, y, bw, bh);
+  g.fillStyle = "#d7e3f4"; g.textAlign = "left"; g.textBaseline = "top";
+  lines.forEach((s, i) => g.fillText(s, x + 8, y + 6 + i * 16));
+}
 
 function _endPos(circ, e) { const c = Analog.compById(circ, e.c); return c ? Analog.terminalPos(c, e.t) : null; }
 
@@ -95,6 +163,36 @@ function _drawComp(g, c, sim, res) {
   if (c.type === "RES") {
     g.beginPath(); g.moveTo(-34, 0); g.lineTo(-24, 0); g.moveTo(24, 0); g.lineTo(34, 0); g.stroke();
     g.beginPath(); g.rect(-24, -9, 48, 18); g.fillStyle = "#182338"; g.fill(); g.stroke();
+  } else if (c.type === "POT") {
+    g.beginPath(); g.moveTo(-34, 0); g.lineTo(-24, 0); g.moveTo(24, 0); g.lineTo(34, 0); g.stroke();
+    g.beginPath(); g.rect(-24, -9, 48, 18); g.fillStyle = "#182338"; g.fill(); g.stroke();
+    // wiper arm — its landing point slides with `ratio`
+    const r = Math.max(0, Math.min(1, c.ratio == null ? 0.5 : c.ratio));
+    const wx = -22 + 44 * r;
+    g.beginPath(); g.moveTo(0, -26); g.lineTo(0, -20); g.lineTo(wx, -20); g.lineTo(wx, -14); g.stroke();
+    g.fillStyle = "#cdd8ea";
+    g.beginPath(); g.moveTo(wx, -9); g.lineTo(wx - 4, -15); g.lineTo(wx + 4, -15); g.closePath(); g.fill();
+  } else if (c.type === "LAMP") {
+    const P = sim && res && res.ok ? Math.abs((res.volt(c.id, 0) - res.volt(c.id, 1)) * res.current(c)) : 0;
+    const lit = Math.max(0, Math.min(1, P / (def.watts || 1)));
+    g.beginPath(); g.moveTo(-34, 0); g.lineTo(-16, 0); g.moveTo(16, 0); g.lineTo(34, 0); g.stroke();
+    if (lit > 0.02) { g.save(); g.globalAlpha = 0.45 * lit; g.fillStyle = "#ffd166"; g.beginPath(); g.arc(0, 0, 24, 0, 7); g.fill(); g.restore(); }
+    g.beginPath(); g.arc(0, 0, 16, 0, 7);
+    g.fillStyle = lit > 0.02 ? `rgba(255,209,102,${(0.15 + 0.55 * lit).toFixed(3)})` : "#182338";
+    g.fill(); g.stroke();
+    const k = 16 * Math.SQRT1_2;
+    g.beginPath(); g.moveTo(-k, -k); g.lineTo(k, k); g.moveTo(-k, k); g.lineTo(k, -k); g.stroke();
+  } else if (c.type === "FUSE") {
+    const blown = sim && !!c._blown;
+    g.beginPath(); g.moveTo(-30, 0); g.lineTo(-20, 0); g.moveTo(20, 0); g.lineTo(30, 0); g.stroke();
+    g.beginPath(); g.rect(-20, -8, 40, 16); g.fillStyle = "#182338"; g.fill(); g.stroke();
+    if (blown) {
+      g.strokeStyle = "#ff6b6b";
+      g.beginPath(); g.moveTo(-20, 0); g.lineTo(-7, 0); g.moveTo(7, 0); g.lineTo(20, 0); g.stroke();
+      g.beginPath(); g.moveTo(-5, -5); g.lineTo(5, 5); g.moveTo(-5, 5); g.lineTo(5, -5); g.stroke();
+    } else {
+      g.beginPath(); g.moveTo(-20, 0); g.lineTo(20, 0); g.stroke();
+    }
   } else if (c.type === "DCV") {
     g.beginPath(); g.moveTo(0, -34); g.lineTo(0, -10); g.moveTo(0, 10); g.lineTo(0, 34); g.stroke();
     g.lineWidth = 3;
@@ -121,6 +219,18 @@ function _drawComp(g, c, sim, res) {
     g.beginPath(); g.strokeStyle = "#ffd166";
     for (let i = -10; i <= 10; i++) { const x = i, y = -7 * Math.sin(i / 10 * Math.PI); i === -10 ? g.moveTo(x, y) : g.lineTo(x, y); }
     g.stroke();
+  } else if (c.type === "SQV") {
+    g.beginPath(); g.moveTo(0, -34); g.lineTo(0, -16); g.moveTo(0, 16); g.lineTo(0, 34); g.stroke();
+    g.beginPath(); g.arc(0, 0, 16, 0, 7); g.fillStyle = "#182338"; g.fill(); g.stroke();
+    g.beginPath(); g.strokeStyle = "#ffd166"; g.lineWidth = 1.8;
+    g.moveTo(-10, 5); g.lineTo(-10, -5); g.lineTo(0, -5); g.lineTo(0, 5); g.lineTo(10, 5); g.lineTo(10, -5);
+    g.stroke();
+  } else if (c.type === "ISRC") {
+    g.beginPath(); g.moveTo(0, -34); g.lineTo(0, -16); g.moveTo(0, 16); g.lineTo(0, 34); g.stroke();
+    g.beginPath(); g.arc(0, 0, 16, 0, 7); g.fillStyle = "#182338"; g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(0, 9); g.lineTo(0, -4); g.stroke();          // arrow points at terminal 0 (+)
+    g.fillStyle = "#cdd8ea";
+    g.beginPath(); g.moveTo(0, -10); g.lineTo(-4.5, -3); g.lineTo(4.5, -3); g.closePath(); g.fill();
   } else if (c.type === "VM" || c.type === "AM") {
     g.beginPath(); g.moveTo(-34, 0); g.lineTo(-16, 0); g.moveTo(16, 0); g.lineTo(34, 0); g.stroke();
     g.beginPath(); g.arc(0, 0, 16, 0, 7); g.fillStyle = "#182338"; g.fill(); g.stroke();
@@ -136,6 +246,10 @@ function _drawComp(g, c, sim, res) {
     g.beginPath(); g.moveTo(-30, 0); g.lineTo(-8, 0); g.moveTo(8, 0); g.lineTo(30, 0); g.stroke();   // leads
     g.beginPath(); g.moveTo(-8, -11); g.lineTo(-8, 11); g.lineTo(9, 0); g.closePath(); g.fillStyle = "#cdd8ea"; g.fill(); g.stroke();  // anode triangle
     g.beginPath(); g.moveTo(9, -11); g.lineTo(9, 11); g.stroke();   // cathode bar
+  } else if (c.type === "ZENER") {
+    g.beginPath(); g.moveTo(-30, 0); g.lineTo(-8, 0); g.moveTo(8, 0); g.lineTo(30, 0); g.stroke();
+    g.beginPath(); g.moveTo(-8, -11); g.lineTo(-8, 11); g.lineTo(9, 0); g.closePath(); g.fillStyle = "#cdd8ea"; g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(4, -14); g.lineTo(9, -11); g.lineTo(9, 11); g.lineTo(14, 14); g.stroke();   // Z-bent cathode bar
   } else if (c.type === "LED") {
     const I = sim && res && res.ok ? res.current(c) : 0;
     const lit = Math.max(0, Math.min(1, I / 0.008));
@@ -187,15 +301,26 @@ function _drawComp(g, c, sim, res) {
   }
   g.restore();
 
-  // upright value / reading label
+  // designator (R1, C2, …) above the part
   const box = Analog.compBox(c);
+  if (c.label) {
+    g.fillStyle = "#7e93b2"; g.font = "11px sans-serif"; g.textAlign = "center"; g.textBaseline = "bottom";
+    g.fillText(c.label, c.x, box.y + 8);
+  }
+
+  // upright value / reading label
   g.fillStyle = "#9fb3d0"; g.font = "12px sans-serif"; g.textAlign = "center"; g.textBaseline = "top";
   let label = "";
-  if (c.type === "RES") label = Analog.fmt(c.value, "Ω");
+  if (c.type === "RES") { label = Analog.fmt(c.value, "Ω"); if (sim && res && res.ok) { g.fillStyle = "#ffd166"; label += " · " + Analog.fmt(res.current(c), "A"); } }
+  else if (c.type === "POT") label = Analog.fmt(c.value, "Ω") + " · " + Math.round(100 * (c.ratio == null ? 0.5 : c.ratio)) + "%";
+  else if (c.type === "LAMP") { label = Analog.fmt(c.value, "Ω"); if (sim && res && res.ok) { g.fillStyle = "#ffd166"; label = Analog.fmt(Math.abs((res.volt(c.id, 0) - res.volt(c.id, 1)) * res.current(c)), "W"); } }
+  else if (c.type === "FUSE") { label = Analog.fmt(c.value, "A"); if (sim && c._blown) { g.fillStyle = "#ff6b6b"; label = "BLOWN"; } }
   else if (c.type === "CAP") label = Analog.fmt(c.value, "F");
   else if (c.type === "IND") label = Analog.fmt(c.value, "H");
   else if (c.type === "DCV") label = Analog.fmt(c.value, "V");
-  else if (c.type === "ACV") label = Analog.fmt(c.value, "V") + " " + Analog.fmt(c.freq || 0, "Hz");
+  else if (c.type === "ACV" || c.type === "SQV") label = Analog.fmt(c.value, "V") + " " + Analog.fmt(c.freq || 0, "Hz");
+  else if (c.type === "ISRC") label = Analog.fmt(c.value, "A");
+  else if (c.type === "ZENER") { label = Analog.fmt(c.value, "V"); if (sim && res && res.ok) { g.fillStyle = "#ffd166"; label = Analog.fmt(res.meter(c), "V"); } }
   else if (c.type === "NPN" || c.type === "PNP") { label = "β " + Math.round(c.value); if (sim && res && res.ok) { g.fillStyle = "#ffd166"; label = "Ic " + Analog.fmt(res.current(c), "A"); } }
   else if (c.type === "DIODE" || c.type === "LED") { if (sim && res && res.ok) { g.fillStyle = "#ffd166"; label = Analog.fmt(res.meter(c), "V"); } }
   else if (c.type === "RELAY") { label = Analog.fmt(c.value, "Ω"); if (sim && res && res.ok) { g.fillStyle = c._on ? "#7CFC7C" : "#9fb3d0"; label = c._on ? "ON" : "off"; } }
