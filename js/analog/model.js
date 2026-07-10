@@ -63,6 +63,10 @@ Analog.isNonlinear = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYP
 /* a circuit needs time-stepping if it has any capacitor, inductor, or AC source */
 Analog.isTransient = function (circ) { return circ.comps.some(c => Analog.TYPES[c.type] && Analog.TYPES[c.type].reactive); };
 
+/* ---- grid ---- */
+Analog.GRID = 20;
+Analog.snap = v => Math.round(v / Analog.GRID) * Analog.GRID;
+
 /* ---- ids / circuits ---- */
 let _anUid = 1;
 Analog.uid = function () { return "a" + (_anUid++); };
@@ -127,6 +131,110 @@ Analog.removeComp = function (circ, c) {
 };
 Analog.removeWire = function (circ, w) { circ.wires = circ.wires.filter(x => x !== w); };
 
+/* ---- orthogonal wire routing ----
+   A wire runs in axis-aligned segments (like the digital app). Its shape is
+   `w.h0` (is the FIRST segment horizontal?) + `w.route`, a list of scalars that
+   alternate axes: with h0 true the entries are X, Y, X, … — each one the
+   endpoint of a segment in the current direction. After the route is consumed
+   the path closes onto terminal B with up to two segments (continue in the
+   current direction to align with B, then turn into it). A wire with no
+   stored route gets an automatic default that follows its terminals around
+   as components move; dragging a segment materialises the route. */
+
+/* Which way a terminal points (out of the component body), snapped to the
+   dominant axis: {x:±1, y:0} or {x:0, y:±1}. */
+Analog.terminalDir = function (c, t) {
+  const r = _anRot(Analog.TYPES[c.type].terminals[t], c.rot);
+  if (Math.abs(r.x) >= Math.abs(r.y)) return { x: Math.sign(r.x) || 1, y: 0 };
+  return { x: 0, y: Math.sign(r.y) || 1 };
+};
+
+/* Automatic route for a wire without a stored one: leave the source terminal
+   along its lead, straight if the terminals are aligned, else a Z through the
+   midpoint. */
+Analog.defaultRoute = function (circ, w) {
+  const ca = Analog.compById(circ, w.from.c), cb = Analog.compById(circ, w.to.c);
+  const A = Analog.terminalPos(ca, w.from.t), B = Analog.terminalPos(cb, w.to.t);
+  const h0 = Analog.terminalDir(ca, w.from.t).x !== 0;
+  if (h0 ? A.y === B.y : A.x === B.x) return { h0, route: [] };
+  return { h0, route: [Analog.snap(h0 ? (A.x + B.x) / 2 : (A.y + B.y) / 2)] };
+};
+
+/* The wire's segments, degenerate ones included so indices are stable:
+   [{ax, ay, bx, by, horiz, routeIdx}]. `routeIdx` says which route scalar sets
+   the segment's LATERAL position (what dragging it sideways changes):
+   ≥ 0 = that route entry; -1 = pinned to terminal A; -2 = pinned to terminal B. */
+Analog.wireSegs = function (circ, w) {
+  const ca = Analog.compById(circ, w.from.c), cb = Analog.compById(circ, w.to.c);
+  if (!ca || !cb) return [];
+  const A = Analog.terminalPos(ca, w.from.t), B = Analog.terminalPos(cb, w.to.t);
+  const stored = w.route != null;
+  const { h0, route } = stored ? { h0: !!w.h0, route: w.route } : Analog.defaultRoute(circ, w);
+  const segs = [];
+  let x = A.x, y = A.y, horiz = h0;
+  for (let i = 0; i < route.length; i++) {
+    const nx = horiz ? route[i] : x, ny = horiz ? y : route[i];
+    segs.push({ ax: x, ay: y, bx: nx, by: ny, horiz, routeIdx: i - 1 < 0 ? -1 : i - 1 });
+    x = nx; y = ny; horiz = !horiz;
+  }
+  // close onto B: continue in the current direction to align, then turn into it
+  const q = horiz ? { x: B.x, y } : { x, y: B.y };
+  segs.push({ ax: x, ay: y, bx: q.x, by: q.y, horiz, routeIdx: route.length - 1 });
+  segs.push({ ax: q.x, ay: q.y, bx: B.x, by: B.y, horiz: !horiz, routeIdx: -2 });
+  return segs;
+};
+
+/* Drawing path: the segment chain as points, zero-length segments dropped. */
+Analog.wirePath = function (circ, w) {
+  const segs = Analog.wireSegs(circ, w);
+  if (!segs.length) return [];
+  const pts = [{ x: segs[0].ax, y: segs[0].ay }];
+  for (const s of segs) {
+    const last = pts[pts.length - 1];
+    if (s.bx === last.x && s.by === last.y) continue;
+    pts.push({ x: s.bx, y: s.by });
+  }
+  return pts;
+};
+
+/* Points visited by a partial route while drawing (start point + each bend). */
+Analog.routePoints = function (A, h0, route) {
+  const pts = [{ x: A.x, y: A.y }];
+  let x = A.x, y = A.y, horiz = h0;
+  for (const v of route) {
+    if (horiz) x = v; else y = v;
+    pts.push({ x, y });
+    horiz = !horiz;
+  }
+  return pts;
+};
+
+/* Prepare a wire segment for dragging: materialise the default route if needed,
+   and turn terminal-pinned end segments into draggable ones by inserting a bend
+   at the terminal. Returns { idx, horiz } — during the drag, write the pointer's
+   lateral coordinate into w.route[idx]. */
+Analog.grabWireSeg = function (circ, w, segIdx) {
+  if (w.route == null) {
+    const d = Analog.defaultRoute(circ, w);
+    w.h0 = d.h0; w.route = d.route;
+  }
+  const segs = Analog.wireSegs(circ, w);
+  const s = segs[segIdx];
+  if (!s) return null;
+  if (s.routeIdx >= 0) return { idx: s.routeIdx, horiz: s.horiz };
+  if (s.routeIdx === -1) {                       // first segment: bend at terminal A
+    const ca = Analog.compById(circ, w.from.c);
+    const A = Analog.terminalPos(ca, w.from.t);
+    w.route.unshift(s.horiz ? A.x : A.y, s.horiz ? s.ay : s.ax);
+    return { idx: 1, horiz: s.horiz };
+  }
+  // closing segment: bend at terminal B
+  const cb = Analog.compById(circ, w.to.c);
+  const B = Analog.terminalPos(cb, w.to.t);
+  w.route.push(s.horiz ? s.ay : s.ax, s.horiz ? B.x : B.y);
+  return { idx: w.route.length - 2, horiz: s.horiz };
+};
+
 /* ---- serialization (save / load / undo history / copy-paste) ----
    Persist only user-editable fields — runtime state (`_vc`, `_il`, `_on`,
    `_blown`, `_trace`) is rebuilt when a simulation starts. */
@@ -144,7 +252,11 @@ Analog.serializeCircuit = function (circ, only) {
   const ids = new Set(comps.map(c => c.id));
   const wires = circ.wires
     .filter(w => ids.has(w.from.c) && ids.has(w.to.c))
-    .map(w => ({ from: { c: w.from.c, t: w.from.t }, to: { c: w.to.c, t: w.to.t } }));
+    .map(w => {
+      const o = { from: { c: w.from.c, t: w.from.t }, to: { c: w.to.c, t: w.to.t } };
+      if (w.route != null && w.route.length) { o.route = w.route.slice(); o.h0 = !!w.h0; }
+      return o;
+    });
   return { v: 1, comps, wires };
 };
 
@@ -164,7 +276,13 @@ Analog.instantiateData = function (data, dx = 0, dy = 0) {
     const a = idMap[w.from.c], b = idMap[w.to.c];
     if (!a || !b) continue;
     if (w.from.t >= Analog.numTerminals(a) || w.to.t >= Analog.numTerminals(b)) continue;
-    wires.push({ id: Analog.uid(), from: { c: a.id, t: w.from.t }, to: { c: b.id, t: w.to.t } });
+    const nw = { id: Analog.uid(), from: { c: a.id, t: w.from.t }, to: { c: b.id, t: w.to.t } };
+    if (w.route != null && w.route.length) {
+      // route scalars are absolute axis coordinates — offset X entries by dx, Y by dy
+      nw.route = w.route.map((v, i) => v + (((i % 2 === 0) === !!w.h0) ? dx : dy));
+      nw.h0 = !!w.h0;
+    }
+    wires.push(nw);
   }
   return { comps, wires };
 };

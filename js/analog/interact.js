@@ -33,22 +33,25 @@ Analog.hitComp = function (wx, wy) {
   return null;
 };
 
-/* Nearest wire within a few pixels (point-to-segment distance). */
-Analog.hitWire = function (wx, wy) {
+/* Nearest wire segment within a few pixels: { w, seg } (seg indexes wireSegs). */
+Analog.hitWireSeg = function (wx, wy) {
   const circ = Analog.App.circ, R = 7 / Analog.App.view.scale;
   for (let i = circ.wires.length - 1; i >= 0; i--) {
     const w = circ.wires[i];
-    const ca = Analog.compById(circ, w.from.c), cb = Analog.compById(circ, w.to.c);
-    if (!ca || !cb) continue;
-    const a = Analog.terminalPos(ca, w.from.t), b = Analog.terminalPos(cb, w.to.t);
-    const L2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
-    let t = L2 ? ((wx - a.x) * (b.x - a.x) + (wy - a.y) * (b.y - a.y)) / L2 : 0;
-    t = Math.max(0, Math.min(1, t));
-    const dx = wx - (a.x + t * (b.x - a.x)), dy = wy - (a.y + t * (b.y - a.y));
-    if (dx * dx + dy * dy <= R * R) return w;
+    const segs = Analog.wireSegs(circ, w);
+    for (let k = 0; k < segs.length; k++) {
+      const s = segs[k];
+      const L2 = (s.bx - s.ax) ** 2 + (s.by - s.ay) ** 2;
+      if (!L2) continue;                                   // degenerate segment
+      let t = ((wx - s.ax) * (s.bx - s.ax) + (wy - s.ay) * (s.by - s.ay)) / L2;
+      t = Math.max(0, Math.min(1, t));
+      const dx = wx - (s.ax + t * (s.bx - s.ax)), dy = wy - (s.ay + t * (s.by - s.ay));
+      if (dx * dx + dy * dy <= R * R) return { w, seg: k };
+    }
   }
   return null;
 };
+Analog.hitWire = function (wx, wy) { const h = Analog.hitWireSeg(wx, wy); return h ? h.w : null; };
 
 Analog.bindCanvas = function () {
   const App = Analog.App, cv = App.canvas;
@@ -73,6 +76,9 @@ function _anDown(e) {
   if (e.button !== 0) return;
   const m = Analog.mousePos(e), w = Analog.screenToWorld(m.x, m.y);
   App.probe = null;
+
+  // mid-wiring: everything (bend / finish) happens on mouse-up
+  if (App.wiring) return;
 
   // placement tool active
   if (App.tool && App.mode === "edit") {
@@ -105,9 +111,15 @@ function _anDown(e) {
     return;
   }
 
-  // edit mode: terminal → start a wire
+  // edit mode: terminal → start a wire (first segment leaves along the lead;
+  // release on empty space to plant a bend, on another terminal to finish)
   const term = Analog.hitTerminal(w.x, w.y);
-  if (term) { App.wiring = { c: term.c, t: term.t, x: w.x, y: w.y }; return; }
+  if (term) {
+    const tc = Analog.compById(App.circ, term.c);
+    App.wiring = { c: term.c, t: term.t, h0: Analog.terminalDir(tc, term.t).x !== 0, route: [], x: w.x, y: w.y };
+    Analog.requestRender();
+    return;
+  }
 
   // component → select + move
   const hc = Analog.hitComp(w.x, w.y);
@@ -117,6 +129,13 @@ function _anDown(e) {
     App.drag = { move: true, wx: w.x, wy: w.y, items: App.selection.map(c => ({ c, x: c.x, y: c.y })) };
     Analog.requestRender();
     return;
+  }
+
+  // wire segment → pull it sideways (materialises the route)
+  const hs = Analog.hitWireSeg(w.x, w.y);
+  if (hs) {
+    const grab = Analog.grabWireSeg(App.circ, hs.w, hs.seg);
+    if (grab) { App.drag = { wireSeg: hs.w, idx: grab.idx, horiz: grab.horiz }; return; }
   }
 
   // Shift on empty space → marquee box select
@@ -156,7 +175,20 @@ function _anMove(e) {
     App.drag.x1 = w.x; App.drag.y1 = w.y;
     Analog.requestRender(); return;
   }
-  if (App.wiring) { App.wiring.x = w.x; App.wiring.y = w.y; App.hover = Analog.hitTerminal(w.x, w.y); Analog.requestRender(); return; }
+  if (App.drag && App.drag.wireSeg) {
+    App.drag.wireSeg.route[App.drag.idx] = App.drag.horiz ? Analog.snap(w.y) : Analog.snap(w.x);
+    Analog.requestRender(); return;
+  }
+  if (App.wiring) {
+    App.hover = Analog.hitTerminal(w.x, w.y);
+    if (App.hover) {                                   // magnet onto the terminal
+      const hp = Analog.terminalPos(Analog.compById(App.circ, App.hover.c), App.hover.t);
+      App.wiring.x = hp.x; App.wiring.y = hp.y;
+    } else {
+      App.wiring.x = Analog.snap(w.x); App.wiring.y = Analog.snap(w.y);
+    }
+    Analog.requestRender(); return;
+  }
 
   // hover feedback for terminals (edit)
   if (App.mode === "edit") {
@@ -191,12 +223,21 @@ function _anUp(e) {
     const m = Analog.mousePos(e), w = Analog.screenToWorld(m.x, m.y);
     const t = Analog.hitTerminal(w.x, w.y);
     if (t && !(t.c === App.wiring.c && t.t === App.wiring.t)) {
-      Analog.addWire(App.circ, Analog.compById(App.circ, App.wiring.c), App.wiring.t,
+      // release on another terminal → finish the wire with the routed bends
+      const nw = Analog.addWire(App.circ, Analog.compById(App.circ, App.wiring.c), App.wiring.t,
         Analog.compById(App.circ, t.c), t.t);
+      if (App.wiring.route.length) { nw.route = App.wiring.route; nw.h0 = App.wiring.h0; }
+      App.wiring = null;
       Analog.snapshot();
       Analog.resolve();
+    } else if (!t) {
+      // release on empty space → plant a bend and keep drawing (Esc / right-click cancels)
+      const horiz = (App.wiring.route.length % 2 === 0) === App.wiring.h0;
+      App.wiring.route.push(horiz ? Analog.snap(w.x) : Analog.snap(w.y));
     }
-    App.wiring = null; Analog.requestRender();
+    // (release back on the start terminal keeps the wire armed — click-to-route mode)
+    Analog.requestRender();
+    return;
   }
   if (App.drag && App.drag.marquee) {
     const d = App.drag;
@@ -210,9 +251,9 @@ function _anUp(e) {
     return;
   }
   if (App.drag) {
-    const moved = App.drag.move;
+    const changed = App.drag.move || App.drag.wireSeg;
     App.drag = null;
-    if (moved) { Analog.snapshot(); Analog.resolve(); }
+    if (changed) { Analog.snapshot(); Analog.resolve(); }
   }
 }
 
@@ -220,6 +261,7 @@ function _anContext(e) {
   e.preventDefault();
   const App = Analog.App;
   const m = Analog.mousePos(e), w = Analog.screenToWorld(m.x, m.y);
+  if (App.wiring) { App.wiring = null; App.hover = null; Analog.requestRender(); return; }
   if (App.tool) { App.tool = null; Analog.updatePaletteSel(); return; }
   const c = Analog.hitComp(w.x, w.y);
   if (c) { App.selection = [c]; Analog.requestRender(); Analog.showCtxMenu(c, e.clientX, e.clientY); return; }
@@ -244,7 +286,7 @@ function _anKey(e) {
   if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || "")) return;
   const ctrl = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
 
-  if (e.key === "Escape") { App.tool = null; App.wiring = null; Analog.hideCtxMenu(); Analog.updatePaletteSel(); Analog.requestRender(); }
+  if (e.key === "Escape") { App.tool = null; App.wiring = null; App.hover = null; Analog.hideCtxMenu(); Analog.updatePaletteSel(); Analog.requestRender(); }
   else if (ctrl && k === "z") { e.preventDefault(); e.shiftKey ? Analog.redo() : Analog.undo(); }
   else if (ctrl && k === "y") { e.preventDefault(); Analog.redo(); }
   else if (ctrl && k === "c") { Analog.copySelection(); }

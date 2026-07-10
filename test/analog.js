@@ -510,6 +510,84 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   check("serialize subset: 2 comps, 1 wire", sub.comps.length === 2 && sub.wires.length === 1);
 }
 
+/* ---- 27b. Orthogonal wire routing ---- */
+{
+  const c = A.newCircuit();
+  const r1 = A.makeComp("RES", 0, 0);        // terminals at (±34, 0) — face horizontally
+  const r2 = A.makeComp("RES", 200, 100);
+  const v = A.makeComp("DCV", 400, 300);     // terminals at (0, ±34) — face vertically
+  c.comps.push(r1, r2, v);
+
+  // aligned horizontal terminals → straight wire, no bends
+  const r3 = A.makeComp("RES", 200, 0);
+  c.comps.push(r3);
+  const wS = A.addWire(c, r1, 1, r3, 0);     // (34,0) → (166,0)
+  let pts = A.wirePath(c, wS);
+  check("route: aligned = straight", pts.length === 2 && pts[0].y === pts[1].y);
+
+  // horizontal-facing, offset → Z through the mid X
+  const wZ = A.addWire(c, r1, 1, r2, 0);     // (34,0) → (166,100)
+  pts = A.wirePath(c, wZ);
+  check("route: default Z has 4 points", pts.length === 4);
+  check("route: Z is orthogonal", pts.every((p, i) => i === 0 || p.x === pts[i - 1].x || p.y === pts[i - 1].y));
+  check("route: Z bends at snapped mid X", pts[1].x === A.snap((34 + 166) / 2) && pts[1].y === 0);
+
+  // vertical-facing source terminal → leaves vertically (h0 false)
+  const wV = A.addWire(c, v, 0, r2, 1);      // DCV top (400,266) → RES right (234,100)
+  check("route: vertical lead → vertical first", A.defaultRoute(c, wV).h0 === false);
+  pts = A.wirePath(c, wV);
+  check("route: vertical default is orthogonal", pts.every((p, i) => i === 0 || p.x === pts[i - 1].x || p.y === pts[i - 1].y));
+
+  // explicit route: h0 + alternating scalars, closing onto B
+  wZ.h0 = true; wZ.route = [80, 60];         // right to x=80, down to y=60, close onto (166,100)
+  pts = A.wirePath(c, wZ);
+  const want = [[34, 0], [80, 0], [80, 60], [166, 60], [166, 100]];
+  check("route: explicit path exact", pts.length === want.length &&
+    pts.every((p, i) => p.x === want[i][0] && p.y === want[i][1]));
+
+  // moving a component flexes the wire but keeps it orthogonal
+  r2.x += 40; r2.y += 20;
+  pts = A.wirePath(c, wZ);
+  check("route: follows moved component", pts[pts.length - 1].x === 206 + 0 && pts.every((p, i) => i === 0 || p.x === pts[i - 1].x || p.y === pts[i - 1].y));
+  r2.x -= 40; r2.y -= 20;
+
+  // wireSegs maps segments to the route scalar that moves them
+  const segs = A.wireSegs(c, wZ);
+  check("segs: first pinned to A", segs[0].routeIdx === -1 && segs[0].horiz === true);
+  check("segs: interior maps to route", segs[1].routeIdx === 0 && segs[1].horiz === false);
+  check("segs: closing leg maps to last scalar", segs[2].routeIdx === 1 && segs[2].horiz === true);
+  check("segs: final leg pinned to B", segs[segs.length - 1].routeIdx === -2);
+
+  // grabbing an interior segment returns its scalar; dragging moves the path
+  let grab = A.grabWireSeg(c, wZ, 1);
+  check("grab: interior segment", grab.idx === 0 && grab.horiz === false);
+  wZ.route[grab.idx] = 120;
+  pts = A.wirePath(c, wZ);
+  check("grab: drag moved the segment", pts[1].x === 120 && pts[2].x === 120);
+
+  // grabbing the A-pinned first segment inserts a bend at the terminal
+  grab = A.grabWireSeg(c, wZ, 0);
+  check("grab: first segment materialises a bend", grab.idx === 1 && wZ.route.length === 4);
+  wZ.route[grab.idx] = -40;                  // pull the first run up to y = −40
+  pts = A.wirePath(c, wZ);
+  check("grab: first segment now draggable", pts.some(p => p.y === -40));
+
+  // grabbing a default-routed wire materialises the default first
+  const wAuto = A.addWire(c, r1, 0, r2, 1);
+  const segsAuto = A.wireSegs(c, wAuto);
+  grab = A.grabWireSeg(c, wAuto, 1);
+  check("grab: default route materialised", Array.isArray(wAuto.route) && grab != null);
+
+  // routes serialize, and paste offsets X/Y scalars by axis
+  const data = A.serializeCircuit(c);
+  const c2 = A.deserializeCircuit(data);
+  const wz2 = c2.wires.find(x => x.route && x.route.length === 4);
+  check("route: serialized", !!wz2 && wz2.h0 === true);
+  const off = A.instantiateData(A.serializeCircuit(c), 100, 60);
+  const wz3 = off.wires.find(x => x.route && x.route.length === 4);
+  check("route: paste offsets by axis", wz3.route[0] === wZ.route[0] + 100 && wz3.route[1] === wZ.route[1] + 60);
+}
+
 /* ---- 28. removeWire splits the node ---- */
 {
   const c = A.newCircuit();

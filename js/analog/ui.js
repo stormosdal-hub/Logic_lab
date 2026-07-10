@@ -94,6 +94,7 @@ Analog.init = function () {
   document.getElementById("anNewBtn").addEventListener("click", () => {
     if (App.mode === "sim") Analog.toggleMode();
     App.circ = Analog.newCircuit(); App.selection = []; App.result = null;
+    App.wiring = null; App.hover = null;
     for (const m of App.meters.slice()) m.el.remove(); App.meters = [];
     Analog.snapshot();
     Analog.requestRender();
@@ -141,9 +142,11 @@ Analog.buildPalette = function () {
   }
   const hint = document.createElement("p");
   hint.className = "an-hint";
-  hint.innerHTML = "Click a part then click the sheet to place it. Drag terminal-to-terminal to wire. " +
-    "Right-click a part <i>or a wire</i> for options. <kbd>Shift</kbd>+drag box-selects; " +
-    "<kbd>R</kbd> rotates, <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo, " +
+  hint.innerHTML = "Click a part then click the sheet to place it. <b>Wiring:</b> click a terminal, then " +
+    "click empty space to bend the wire (each click turns the corner), and click another terminal to finish — " +
+    "or just drag terminal-to-terminal (<kbd>Esc</kbd>/right-click cancels). <b>Drag any wire segment</b> " +
+    "sideways to re-route it; right-click a wire to straighten or delete it. " +
+    "<kbd>Shift</kbd>+drag box-selects; <kbd>R</kbd> rotates, <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo, " +
     "<kbd>Ctrl</kbd>+<kbd>C</kbd>/<kbd>V</kbd> copy/paste. Add a <b>Ground</b> for a reference. " +
     "While simulating: hover anything to probe it, click switches, drag a potentiometer.";
   host.appendChild(hint);
@@ -224,6 +227,7 @@ Analog.loadSheet = function () {
   if (App.mode === "sim") Analog.toggleMode();
   App.circ = Analog.deserializeCircuit(data);
   App.selection = []; App.result = null; App.tool = null;
+  App.wiring = null; App.hover = null;
   Analog.pruneMeters();
   Analog.updatePaletteSel();
   Analog.snapshot();
@@ -263,7 +267,7 @@ Analog.pasteClip = function () {
 /* ---- mode / solve ---- */
 Analog.toggleMode = function () {
   const App = Analog.App;
-  App.probe = null; App.hover = null;
+  App.probe = null; App.hover = null; App.wiring = null; App.drag = null;
   if (App.mode === "edit") { App.mode = "sim"; App.tool = null; Analog.updatePaletteSel(); Analog.enterSim(); }
   else { App.mode = "edit"; Analog.exitSim(); }
   document.getElementById("anModeBtn").textContent = App.mode === "sim" ? "✎ Edit" : "▶ Simulate";
@@ -410,9 +414,11 @@ Analog.showCtxMenu = function (c, sx, sy) {
   _anShowMenu(items, sx, sy);
 };
 Analog.showWireMenu = function (w, sx, sy) {
-  _anShowMenu([
-    { label: "🗑 Delete wire", fn: () => { Analog.removeWire(Analog.App.circ, w); Analog.snapshot(); Analog.afterStruct(); } },
-  ], sx, sy);
+  const items = [];
+  if (w.route != null && w.route.length)
+    items.push({ label: "⟲ Straighten", fn: () => { delete w.route; delete w.h0; Analog.snapshot(); Analog.requestRender(); } });
+  items.push({ label: "🗑 Delete wire", fn: () => { Analog.removeWire(Analog.App.circ, w); Analog.snapshot(); Analog.afterStruct(); } });
+  _anShowMenu(items, sx, sy);
 };
 function _anShowMenu(items, sx, sy) {
   const menu = document.getElementById("anCtxMenu");

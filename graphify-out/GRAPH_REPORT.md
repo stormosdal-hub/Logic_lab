@@ -1,16 +1,16 @@
 # Graph Report - logic-lab  (2026-07-09)
 
 ## Corpus Check
-- 19 files · ~57,327 words
+- 19 files · ~59,539 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 384 nodes · 931 edges · 22 communities (16 shown, 6 thin omitted)
+- 383 nodes · 930 edges · 22 communities (16 shown, 6 thin omitted)
 - Extraction: 70% EXTRACTED · 30% INFERRED · 0% AMBIGUOUS · INFERRED: 278 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e6e64fd7`
+- Built from commit: `e5593b75`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -55,10 +55,10 @@
   js/analog/engine.js → test/analog.js
 - `releaseMomentaryInputs()` --calls--> `toggleInput()`  [INFERRED]
   js/ui.js → js/engine.js
-- `onCanvasDown()` --calls--> `hitUI()`  [INFERRED]
-  js/interact.js → js/render.js
-- `loadLocal()` --calls--> `setTopCircuit()`  [INFERRED]
-  js/ui.js → js/model.js
+- `drawSelection()` --calls--> `isBus()`  [INFERRED]
+  js/render.js → js/model.js
+- `afterSimChange() Post-Simulation Hook` --conceptually_related_to--> `Canvas Setup (initCanvas / RAF loop)`  [INFERRED]
+  CLAUDE.md → .claude/agents/renderer.md
 
 ## Import Cycles
 - None detected.
@@ -75,24 +75,24 @@ Cohesion: 0.08
 Nodes (38): Canvas Setup (initCanvas / RAF loop), Color Scheme (COL), Component Drawing (drawComp), Wire Rendering (drawWire), Hit Testing (hitPin / hitComp / hitWire), Palette Icons (paintToolIcon), Renderer Agent, uiHits Array (+30 more)
 
 ### Community 1 - "Component Data Model"
-Cohesion: 0.08
-Nodes (67): busValue(), matrixLit(), resolveBit(), addrWidth(), compBox(), compById(), compSize(), defaultWireRoute() (+59 more)
+Cohesion: 0.09
+Nodes (56): busValue(), matrixLit(), compBox(), compSize(), pinBits(), pinPos(), wireRoutePoints(), activeView() (+48 more)
 
 ### Community 2 - "Interaction & Navigation"
 Cohesion: 0.09
-Nodes (65): afterStructChange(), addAt(), addChipAt(), buildMenuLevel(), compMenuItems(), copySelection(), dedupeLabel(), deleteSelection() (+57 more)
+Nodes (61): afterStructChange(), addAt(), addChipAt(), buildMenuLevel(), compMenuItems(), copySelection(), deleteSelection(), dragWireSegment() (+53 more)
 
 ### Community 3 - "Edit Operations & Wiring"
 Cohesion: 0.11
-Nodes (29): exprTreeForOutputPin(), onUIHit(), seedDemo(), ADDR_TYPES, addWire(), addWireBus(), App, buildAddrData() (+21 more)
+Nodes (37): dedupeLabel(), enterComponent(), innerCircuitOf(), innerName(), onUIHit(), pasteClipboard(), seedDemo(), ADDR_TYPES (+29 more)
 
 ### Community 4 - "Simulation Engine"
-Cohesion: 0.11
-Nodes (42): afterSimChange(), applyTTRow(), bitEq(), busConflict(), clockTick(), collectCircuits(), computeTruthTable(), copyVal() (+34 more)
+Cohesion: 0.10
+Nodes (47): afterSimChange(), applyTTRow(), bitEq(), busConflict(), clockTick(), collectCircuits(), computeTruthTable(), copyVal() (+39 more)
 
 ### Community 5 - "Boolean Expressions & Timeline"
 Cohesion: 0.09
-Nodes (35): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), currentTool(), builtinDefs(), createDefFromCircuit() (+27 more)
+Nodes (37): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), currentTool(), builtinDefs(), createDefFromCircuit() (+29 more)
 
 ### Community 6 - "MCP Package Config"
 Cohesion: 0.20
@@ -134,9 +134,9 @@ Nodes (11): _anBuild(), _anSolve(), _anSolveMode(), _potR(), _sqPhase(), _zenerV
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
+- **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Edit Operations & Wiring`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
   _High betweenness centrality (0.041) - this node is a cross-community bridge._
-- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Edit Operations & Wiring`, `Simulation Engine`?**
+- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Simulation Engine`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `afterStructChange()` connect `Interaction & Navigation` to `Edit Operations & Wiring`, `Simulation Engine`?**
   _High betweenness centrality (0.019) - this node is a cross-community bridge._

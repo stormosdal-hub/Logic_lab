@@ -7,8 +7,7 @@
 
 if (typeof Analog === "undefined") { var Analog = {}; }
 
-Analog.GRID = 20;
-Analog.snap = v => Math.round(v / Analog.GRID) * Analog.GRID;
+/* (GRID / snap live in model.js so the routing helpers stay pure) */
 
 /* view transform helpers */
 Analog.screenToWorld = function (sx, sy) {
@@ -50,13 +49,16 @@ Analog.render = function () {
   for (let x = Math.floor(x0 / G) * G; x < x1; x += G)
     for (let y = Math.floor(y0 / G) * G; y < y1; y += G) g.fillRect(x - 0.5, y - 0.5, 1, 1);
 
-  // wires
-  g.lineWidth = 3; g.lineCap = "round";
+  // wires (orthogonal polylines)
+  g.lineWidth = 3; g.lineCap = "round"; g.lineJoin = "round";
   for (const w of App.circ.wires) {
-    const a = _endPos(App.circ, w.from), b = _endPos(App.circ, w.to);
-    if (!a || !b) continue;
+    const pts = Analog.wirePath(App.circ, w);
+    if (pts.length < 2) continue;
     g.strokeStyle = sim && res && res.ok ? _anVColor(res.volt(w.from.c, w.from.t)) : "#8aa0c0";
-    g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+    g.beginPath();
+    g.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
+    g.stroke();
   }
 
   // components
@@ -87,11 +89,26 @@ Analog.render = function () {
     g.setLineDash([]);
   }
 
-  // wiring rubber-band
+  // wiring rubber-band: committed bends, then a live orthogonal L to the cursor
   if (App.wiring) {
-    const s = Analog.terminalPos(Analog.compById(App.circ, App.wiring.c), App.wiring.t);
+    const W2 = App.wiring;
+    const A = Analog.terminalPos(Analog.compById(App.circ, W2.c), W2.t);
+    const pts = Analog.routePoints(A, W2.h0, W2.route);
+    const anchor = pts[pts.length - 1];
+    const horiz = (W2.route.length % 2 === 0) === W2.h0;    // direction of the next segment
+    const corner = horiz ? { x: W2.x, y: anchor.y } : { x: anchor.x, y: W2.y };
     g.strokeStyle = "#ffd166"; g.lineWidth = 2.5;
-    g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(App.wiring.x, App.wiring.y); g.stroke();
+    g.beginPath();
+    g.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
+    g.lineTo(corner.x, corner.y);                            // leg in the current direction
+    g.stroke();
+    g.save(); g.setLineDash([5 / v.scale, 4 / v.scale]); g.lineWidth = 1.8;
+    g.beginPath(); g.moveTo(corner.x, corner.y); g.lineTo(W2.x, W2.y); g.stroke();   // the turn you'd take
+    g.restore();
+    // bend handles
+    g.fillStyle = "#ffd166";
+    for (let i = 1; i < pts.length; i++) { g.beginPath(); g.arc(pts[i].x, pts[i].y, 2.5, 0, 7); g.fill(); }
   }
 
   // hover probe (sim mode): live values in a tooltip near the cursor
@@ -149,8 +166,6 @@ function _drawProbe(g, App, res) {
   g.fillStyle = "#d7e3f4"; g.textAlign = "left"; g.textBaseline = "top";
   lines.forEach((s, i) => g.fillText(s, x + 8, y + 6 + i * 16));
 }
-
-function _endPos(circ, e) { const c = Analog.compById(circ, e.c); return c ? Analog.terminalPos(c, e.t) : null; }
 
 function _drawComp(g, c, sim, res) {
   const def = Analog.TYPES[c.type];

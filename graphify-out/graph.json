@@ -139,7 +139,7 @@
       "label": "_anDown()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L70",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "analog_interact_andown",
       "community": 23,
@@ -149,7 +149,7 @@
       "label": "_anMove()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L135",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "analog_interact_anmove",
       "community": 23,
@@ -159,7 +159,7 @@
       "label": "_anUp()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L187",
+      "source_location": "L219",
       "_origin": "ast",
       "id": "analog_interact_anup",
       "community": 23,
@@ -169,7 +169,7 @@
       "label": "_anContext()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L219",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "analog_interact_ancontext",
       "community": 23,
@@ -179,7 +179,7 @@
       "label": "_anWheel()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L230",
+      "source_location": "L272",
       "_origin": "ast",
       "id": "analog_interact_anwheel",
       "community": 23,
@@ -189,7 +189,7 @@
       "label": "_anKey()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L241",
+      "source_location": "L283",
       "_origin": "ast",
       "id": "analog_interact_ankey",
       "community": 23,
@@ -209,7 +209,7 @@
       "label": "_anRot()",
       "file_type": "code",
       "source_file": "js/analog/model.js",
-      "source_location": "L89",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "analog_model_anrot",
       "community": 27,
@@ -219,7 +219,7 @@
       "label": "AN_SAVE_FIELDS",
       "file_type": "code",
       "source_file": "js/analog/model.js",
-      "source_location": "L133",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "analog_model_an_save_fields",
       "community": 27,
@@ -239,7 +239,7 @@
       "label": "_anVColor()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L20",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "analog_render_anvcolor",
       "community": 24,
@@ -249,7 +249,7 @@
       "label": "_probeLines()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L102",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "analog_render_probelines",
       "community": 24,
@@ -259,27 +259,17 @@
       "label": "_drawProbe()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L130",
+      "source_location": "L147",
       "_origin": "ast",
       "id": "analog_render_drawprobe",
       "community": 24,
       "norm_label": "_drawprobe()"
     },
     {
-      "label": "_endPos()",
-      "file_type": "code",
-      "source_file": "js/analog/render.js",
-      "source_location": "L153",
-      "_origin": "ast",
-      "id": "analog_render_endpos",
-      "community": 24,
-      "norm_label": "_endpos()"
-    },
-    {
       "label": "_drawComp()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L155",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "analog_render_drawcomp",
       "community": 24,
@@ -319,7 +309,7 @@
       "label": "_anShowMenu()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L417",
+      "source_location": "L423",
       "_origin": "ast",
       "id": "analog_ui_anshowmenu",
       "community": 25,
@@ -329,7 +319,7 @@
       "label": "_anParse()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L431",
+      "source_location": "L437",
       "_origin": "ast",
       "id": "analog_ui_anparse",
       "community": 25,
@@ -339,7 +329,7 @@
       "label": "_anDrawScope()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L505",
+      "source_location": "L511",
       "_origin": "ast",
       "id": "analog_ui_andrawscope",
       "community": 25,
@@ -349,7 +339,7 @@
       "label": "_anDragWindow()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L533",
+      "source_location": "L539",
       "_origin": "ast",
       "id": "analog_ui_andragwindow",
       "community": 25,
@@ -452,7 +442,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_engine_resolvebit",
-      "community": 1,
+      "community": 4,
       "norm_label": "resolvebit()"
     },
     {
@@ -772,7 +762,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 3,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -1192,7 +1182,7 @@
       "source_location": "L605",
       "_origin": "ast",
       "id": "js_interact_dedupelabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "dedupelabel()"
     },
     {
@@ -1202,7 +1192,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "js_interact_pasteclipboard",
-      "community": 2,
+      "community": 3,
       "norm_label": "pasteclipboard()"
     },
     {
@@ -1312,7 +1302,7 @@
       "source_location": "L818",
       "_origin": "ast",
       "id": "js_interact_innercircuitof",
-      "community": 2,
+      "community": 3,
       "norm_label": "innercircuitof()"
     },
     {
@@ -1322,7 +1312,7 @@
       "source_location": "L831",
       "_origin": "ast",
       "id": "js_interact_innername",
-      "community": 2,
+      "community": 3,
       "norm_label": "innername()"
     },
     {
@@ -1332,7 +1322,7 @@
       "source_location": "L845",
       "_origin": "ast",
       "id": "js_interact_entercomponent",
-      "community": 2,
+      "community": 3,
       "norm_label": "entercomponent()"
     },
     {
@@ -1452,7 +1442,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_model_isgate",
-      "community": 1,
+      "community": 3,
       "norm_label": "isgate()"
     },
     {
@@ -1472,7 +1462,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "js_model_isaddr",
-      "community": 2,
+      "community": 3,
       "norm_label": "isaddr()"
     },
     {
@@ -1482,7 +1472,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_model_addrwidth",
-      "community": 1,
+      "community": 3,
       "norm_label": "addrwidth()"
     },
     {
@@ -1502,7 +1492,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "js_model_isbus",
-      "community": 1,
+      "community": 3,
       "norm_label": "isbus()"
     },
     {
@@ -1562,7 +1552,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 3,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1572,7 +1562,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 1,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1582,7 +1572,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1592,7 +1582,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1602,7 +1592,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "js_model_settopcircuit",
-      "community": 3,
+      "community": 2,
       "norm_label": "settopcircuit()"
     },
     {
@@ -1652,7 +1642,7 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "js_model_numinputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numinputsof()"
     },
     {
@@ -1662,7 +1652,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "js_model_numoutputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numoutputsof()"
     },
     {
@@ -1672,7 +1662,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "js_model_muxselstart",
-      "community": 1,
+      "community": 3,
       "norm_label": "muxselstart()"
     },
     {
@@ -1692,7 +1682,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "js_model_makecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "makecomp()"
     },
     {
@@ -1782,7 +1772,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "js_model_defdependencies",
-      "community": 3,
+      "community": 5,
       "norm_label": "defdependencies()"
     },
     {
@@ -1922,7 +1912,7 @@
       "source_location": "L603",
       "_origin": "ast",
       "id": "js_model_rotatearound",
-      "community": 1,
+      "community": 3,
       "norm_label": "rotatearound()"
     },
     {
@@ -1932,7 +1922,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "js_model_pinposlogical",
-      "community": 1,
+      "community": 3,
       "norm_label": "pinposlogical()"
     },
     {
@@ -1962,7 +1952,7 @@
       "source_location": "L658",
       "_origin": "ast",
       "id": "js_model_defaultwireroute",
-      "community": 1,
+      "community": 2,
       "norm_label": "defaultwireroute()"
     },
     {
@@ -2342,7 +2332,7 @@
       "source_location": "L535",
       "_origin": "ast",
       "id": "js_render_drawgatecomp",
-      "community": 4,
+      "community": 1,
       "norm_label": "drawgatecomp()"
     },
     {
@@ -2522,7 +2512,7 @@
       "source_location": "L1036",
       "_origin": "ast",
       "id": "js_render_hitui",
-      "community": 1,
+      "community": 2,
       "norm_label": "hitui()"
     },
     {
@@ -2702,7 +2692,7 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "js_ui_updatecrumbs",
-      "community": 2,
+      "community": 5,
       "norm_label": "updatecrumbs()"
     },
     {
@@ -2742,7 +2732,7 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "js_ui_closeboolpanel",
-      "community": 5,
+      "community": 2,
       "norm_label": "closeboolpanel()"
     },
     {
@@ -2892,7 +2882,7 @@
       "source_location": "L630",
       "_origin": "ast",
       "id": "js_ui_exportdefs",
-      "community": 3,
+      "community": 5,
       "norm_label": "exportdefs()"
     },
     {
@@ -3229,7 +3219,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L119",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3239,7 +3229,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L131",
+      "source_location": "L133",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3249,7 +3239,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L141",
+      "source_location": "L143",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -4130,9 +4120,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
+      "target": "analog_engine_potr"
     },
     {
       "relation": "contains",
@@ -4140,9 +4130,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine",
-      "target": "analog_engine_sqphase",
-      "confidence_score": 1.0
+      "target": "analog_engine_sqphase"
     },
     {
       "relation": "contains",
@@ -4150,9 +4140,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
+      "target": "analog_engine_zenervz"
     },
     {
       "relation": "calls",
@@ -4161,9 +4151,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine_anbuild",
-      "target": "analog_engine_sqphase",
-      "confidence_score": 1.0
+      "target": "analog_engine_sqphase"
     },
     {
       "relation": "calls",
@@ -4172,9 +4162,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L162",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine_anbuild",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
+      "target": "analog_engine_zenervz"
     },
     {
       "relation": "calls",
@@ -4183,9 +4173,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L269",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine_ansolvemode",
-      "target": "analog_engine_zenervz",
-      "confidence_score": 1.0
+      "target": "analog_engine_zenervz"
     },
     {
       "relation": "calls",
@@ -4194,9 +4184,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine_anbuild",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
+      "target": "analog_engine_potr"
     },
     {
       "relation": "calls",
@@ -4205,9 +4195,9 @@
       "source_file": "js/analog/engine.js",
       "source_location": "L259",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_engine_ansolvemode",
-      "target": "analog_engine_potr",
-      "confidence_score": 1.0
+      "target": "analog_engine_potr"
     },
     {
       "relation": "calls",
@@ -4308,9 +4298,9 @@
       "source_file": "js/analog/model.js",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_model",
-      "target": "analog_model_an_save_fields",
-      "confidence_score": 1.0
+      "target": "analog_model_an_save_fields"
     },
     {
       "relation": "contains",
@@ -4348,19 +4338,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L130",
       "weight": 1.0,
-      "source": "analog_render",
-      "target": "analog_render_drawprobe",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/render.js",
-      "source_location": "L85",
-      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "analog_render",
-      "target": "analog_render_endpos"
+      "target": "analog_render_drawprobe"
     },
     {
       "relation": "contains",
@@ -4368,9 +4348,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L102",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render",
-      "target": "analog_render_probelines",
-      "confidence_score": 1.0
+      "target": "analog_render_probelines"
     },
     {
       "relation": "calls",
@@ -4379,9 +4359,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L133",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render_drawprobe",
-      "target": "analog_render_probelines",
-      "confidence_score": 1.0
+      "target": "analog_render_probelines"
     },
     {
       "relation": "contains",
@@ -4399,9 +4379,9 @@
       "source_file": "js/analog/ui.js",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_ui",
-      "target": "analog_ui_an_prefix",
-      "confidence_score": 1.0
+      "target": "analog_ui_an_prefix"
     },
     {
       "relation": "contains",
@@ -4439,9 +4419,9 @@
       "source_file": "js/analog/ui.js",
       "source_location": "L417",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_ui",
-      "target": "analog_ui_anshowmenu",
-      "confidence_score": 1.0
+      "target": "analog_ui_anshowmenu"
     },
     {
       "relation": "contains",
@@ -6250,9 +6230,9 @@
       "source_file": "js/interact.js",
       "source_location": "L520",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_addchipat",
-      "confidence_score": 1.0
+      "target": "js_interact_addchipat"
     },
     {
       "relation": "contains",
@@ -6400,9 +6380,9 @@
       "source_file": "js/interact.js",
       "source_location": "L818",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_innercircuitof",
-      "confidence_score": 1.0
+      "target": "js_interact_innercircuitof"
     },
     {
       "relation": "contains",
@@ -6410,9 +6390,9 @@
       "source_file": "js/interact.js",
       "source_location": "L831",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_interact",
-      "target": "js_interact_innername",
-      "confidence_score": 1.0
+      "target": "js_interact_innername"
     },
     {
       "relation": "contains",
@@ -8556,9 +8536,9 @@
       "source_file": "js/interact.js",
       "source_location": "L846",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_interact_entercomponent",
-      "target": "js_interact_innercircuitof",
-      "confidence_score": 1.0
+      "target": "js_interact_innercircuitof"
     },
     {
       "relation": "calls",
@@ -8589,9 +8569,9 @@
       "source_file": "js/interact.js",
       "source_location": "L850",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_interact_entercomponent",
-      "target": "js_interact_innername",
-      "confidence_score": 1.0
+      "target": "js_interact_innername"
     },
     {
       "relation": "calls",
@@ -8730,9 +8710,9 @@
       "source_file": "js/mobile.js",
       "source_location": "L122",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_mobile",
-      "target": "js_mobile_init",
-      "confidence_score": 1.0
+      "target": "js_mobile_init"
     },
     {
       "relation": "contains",
@@ -8740,9 +8720,9 @@
       "source_file": "js/mobile.js",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_mobile",
-      "target": "js_mobile_make",
-      "confidence_score": 1.0
+      "target": "js_mobile_make"
     },
     {
       "relation": "contains",
@@ -8750,9 +8730,9 @@
       "source_file": "js/mobile.js",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_mobile",
-      "target": "js_mobile_wireapp",
-      "confidence_score": 1.0
+      "target": "js_mobile_wireapp"
     },
     {
       "relation": "calls",
@@ -8761,9 +8741,9 @@
       "source_file": "js/mobile.js",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_mobile_wireapp",
-      "target": "js_mobile_make",
-      "confidence_score": 1.0
+      "target": "js_mobile_make"
     },
     {
       "relation": "calls",
@@ -8772,9 +8752,9 @@
       "source_file": "js/mobile.js",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_mobile_init",
-      "target": "js_mobile_wireapp",
-      "confidence_score": 1.0
+      "target": "js_mobile_wireapp"
     },
     {
       "relation": "contains",
@@ -8842,9 +8822,9 @@
       "source_file": "js/model.js",
       "source_location": "L422",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_model",
-      "target": "js_model_buildaddrdata",
-      "confidence_score": 1.0
+      "target": "js_model_buildaddrdata"
     },
     {
       "relation": "contains",
@@ -9282,9 +9262,9 @@
       "source_file": "js/model.js",
       "source_location": "L528",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_model",
-      "target": "js_model_synthaddrcircuit",
-      "confidence_score": 1.0
+      "target": "js_model_synthaddrcircuit"
     },
     {
       "relation": "contains",
@@ -10113,9 +10093,9 @@
       "source_file": "js/model.js",
       "source_location": "L530",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_model_synthaddrcircuit",
-      "target": "js_model_instantiatedata",
-      "confidence_score": 1.0
+      "target": "js_model_instantiatedata"
     },
     {
       "relation": "calls",
@@ -10278,9 +10258,9 @@
       "source_file": "js/model.js",
       "source_location": "L529",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_model_synthaddrcircuit",
-      "target": "js_model_buildaddrdata",
-      "confidence_score": 1.0
+      "target": "js_model_buildaddrdata"
     },
     {
       "relation": "calls",
@@ -10767,9 +10747,9 @@
       "source_file": "js/render.js",
       "source_location": "L307",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render",
-      "target": "js_render_assignwirelanes",
-      "confidence_score": 1.0
+      "target": "js_render_assignwirelanes"
     },
     {
       "relation": "contains",
@@ -10807,9 +10787,9 @@
       "source_file": "js/render.js",
       "source_location": "L234",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
+      "target": "js_render_computewirelanes"
     },
     {
       "relation": "contains",
@@ -11037,9 +11017,9 @@
       "source_file": "js/render.js",
       "source_location": "L337",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
+      "target": "js_render_effroute"
     },
     {
       "relation": "contains",
@@ -11187,9 +11167,9 @@
       "source_file": "js/render.js",
       "source_location": "L355",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render",
-      "target": "js_render_refreshsynthlive",
-      "confidence_score": 1.0
+      "target": "js_render_refreshsynthlive"
     },
     {
       "relation": "contains",
@@ -11247,9 +11227,9 @@
       "source_file": "js/render.js",
       "source_location": "L365",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render",
-      "target": "js_render_settlelocalcircuit",
-      "confidence_score": 1.0
+      "target": "js_render_settlelocalcircuit"
     },
     {
       "relation": "contains",
@@ -11627,9 +11607,9 @@
       "source_file": "js/render.js",
       "source_location": "L187",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_paintpane",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
+      "target": "js_render_computewirelanes"
     },
     {
       "relation": "calls",
@@ -11693,9 +11673,9 @@
       "source_file": "js/render.js",
       "source_location": "L186",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_paintpane",
-      "target": "js_render_refreshsynthlive",
-      "confidence_score": 1.0
+      "target": "js_render_refreshsynthlive"
     },
     {
       "relation": "calls",
@@ -11726,9 +11706,9 @@
       "source_file": "js/render.js",
       "source_location": "L301",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_computewirelanes",
-      "target": "js_render_assignwirelanes",
-      "confidence_score": 1.0
+      "target": "js_render_assignwirelanes"
     },
     {
       "relation": "calls",
@@ -11737,9 +11717,9 @@
       "source_file": "js/render.js",
       "source_location": "L1083",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_hitwireseg",
-      "target": "js_render_computewirelanes",
-      "confidence_score": 1.0
+      "target": "js_render_computewirelanes"
     },
     {
       "relation": "calls",
@@ -11748,9 +11728,9 @@
       "source_file": "js/render.js",
       "source_location": "L378",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_drawwire",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
+      "target": "js_render_effroute"
     },
     {
       "relation": "calls",
@@ -11759,9 +11739,9 @@
       "source_file": "js/render.js",
       "source_location": "L1090",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_hitwireseg",
-      "target": "js_render_effroute",
-      "confidence_score": 1.0
+      "target": "js_render_effroute"
     },
     {
       "relation": "calls",
@@ -11770,9 +11750,9 @@
       "source_file": "js/render.js",
       "source_location": "L361",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_render_refreshsynthlive",
-      "target": "js_render_settlelocalcircuit",
-      "confidence_score": 1.0
+      "target": "js_render_settlelocalcircuit"
     },
     {
       "relation": "calls",
@@ -12981,9 +12961,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "root_logic_simulator_web_app_architecture_md",
-      "target": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_logic_lab_architecture"
     },
     {
       "relation": "contains",
@@ -12991,9 +12971,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L229",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_data_flow_summary",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_data_flow_summary"
     },
     {
       "relation": "contains",
@@ -13001,9 +12981,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_data_model_owns_the_truth",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_data_model_owns_the_truth"
     },
     {
       "relation": "contains",
@@ -13011,9 +12991,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation"
     },
     {
       "relation": "contains",
@@ -13021,9 +13001,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L159",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_renderer_paint_the_settled_state",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_renderer_paint_the_settled_state"
     },
     {
       "relation": "contains",
@@ -13031,9 +13011,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L190",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_supporting_subsystems",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_supporting_subsystems"
     },
     {
       "relation": "contains",
@@ -13041,9 +13021,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_the_core_loop",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_the_core_loop"
     },
     {
       "relation": "contains",
@@ -13051,9 +13031,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L207",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_logic_lab_architecture",
-      "target": "logic_simulator_web_app_architecture_the_cross_cutting_principle_purity_decides_boundaries",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_the_cross_cutting_principle_purity_decides_boundaries"
     },
     {
       "relation": "contains",
@@ -13061,9 +13041,9 @@
       "source_file": "ARCHITECTURE.md",
       "source_location": "L137",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_architecture_engine_simulate_by_event_driven_relaxation",
-      "target": "logic_simulator_web_app_architecture_three_valued_logic_tri_state_buses",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_architecture_three_valued_logic_tri_state_buses"
     },
     {
       "relation": "contains",
@@ -13151,9 +13131,9 @@
       "source_file": "README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "root_logic_simulator_web_app_readme_md",
-      "target": "logic_simulator_web_app_readme_logic_lab",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_readme_logic_lab"
     },
     {
       "relation": "contains",
@@ -13161,9 +13141,9 @@
       "source_file": "README.md",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_readme_logic_lab",
-      "target": "logic_simulator_web_app_readme_highlights",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_readme_highlights"
     },
     {
       "relation": "contains",
@@ -13171,9 +13151,9 @@
       "source_file": "README.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "logic_simulator_web_app_readme_logic_lab",
-      "target": "logic_simulator_web_app_readme_run_it",
-      "confidence_score": 1.0
+      "target": "logic_simulator_web_app_readme_run_it"
     },
     {
       "relation": "references",
@@ -13997,5 +13977,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "e6e64fd7be71f6de524f55f259ba8615c6a6ee51"
+  "built_at_commit": "e5593b7559d5800b47d60933f300e5e7e6992d43"
 }
