@@ -174,6 +174,17 @@ function initUI() {
   const slb = $("#shiftLockBtn");
   if (slb) slb.addEventListener("click", toggleShiftLock);
   $("#makeICBtn").addEventListener("click", createIC);
+  $("#formulaBtn").addEventListener("click", openFormulaPanel);
+  $("#formulaClose").addEventListener("click", closeFormulaPanel);
+  $("#formulaCancel").addEventListener("click", closeFormulaPanel);
+  $("#formulaBuild").addEventListener("click", buildFromFormula);
+  $("#formulaPanel").addEventListener("click", e => {
+    if (e.target.id === "formulaPanel") closeFormulaPanel();
+  });
+  $("#formulaInput").addEventListener("keydown", e => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); buildFromFormula(); }
+    else if (e.key === "Escape") closeFormulaPanel();
+  });
   $("#exportBtn").addEventListener("click", () => {
     const defs = customDefs();
     if (!defs.length) { toast("No custom components to export yet."); return; }
@@ -226,6 +237,7 @@ function setMode(sim) {
   closePanel();
   closeBoolPanel();
   closeExprPopup();
+  closeFormulaPanel();
   const tl = $("#timeline");
   if (tl && !sim) tl.classList.add("hidden");
   App.wiring = null;
@@ -588,6 +600,59 @@ function createIC() {
   createDefFromCircuit(name, circ);
   buildPalette();
   toast("📦 Saved “" + name + "” (" + ins.length + " in / " + outs.length + " out) — drag it from “My components”.");
+}
+
+/* ---------------- boolean formula → circuit dialog ---------------- */
+
+function openFormulaPanel() {
+  if (!canEdit()) { toast("Formulas build onto the main worksheet — switch to Edit mode first."); return; }
+  $("#formulaPanel").classList.remove("hidden");
+  $("#formulaErr").classList.add("hidden");
+  const inp = $("#formulaInput");
+  inp.focus();
+  inp.select();
+}
+function closeFormulaPanel() { $("#formulaPanel").classList.add("hidden"); }
+
+function buildFromFormula() {
+  if (!canEdit()) { closeFormulaPanel(); return; }
+  const errEl = $("#formulaErr");
+  let built;
+  try {
+    built = synthBoolCircuit($("#formulaInput").value);
+  } catch (err) {
+    errEl.textContent = "⚠ " + err.message;
+    errEl.classList.remove("hidden");
+    return;
+  }
+  errEl.classList.add("hidden");
+  const circ = curCircuit();
+  // drop the block to the right of what's already on the sheet, else at the view's top-left
+  let ox, oy;
+  if (circ.components.length) {
+    const boxes = circ.components.map(compBox);
+    ox = snap(Math.max(...boxes.map(b => b.x + b.w)) + 96);
+    oy = snap(Math.min(...boxes.map(b => b.y)));
+  } else {
+    const v = App.view;
+    ox = snap((100 - v.ox) / v.scale);
+    oy = snap((80 - v.oy) / v.scale);
+  }
+  for (const c of built.circuit.components) {
+    c.x += ox;
+    c.y += oy;
+    if ((c.type === "IN" || c.type === "OUT") && c.label) c.label = dedupeLabel(circ, c.label);
+    circ.components.push(c);
+  }
+  for (const w of built.circuit.wires) circ.wires.push(w);
+  touchCircuit(circ);
+  App.selection = built.circuit.components.map(c => ({ kind: "comp", obj: c }));
+  closeFormulaPanel();
+  afterStructChange();
+  const s = n => (n === 1 ? "" : "s");
+  toast("⚡ Built " + built.gates.length + " gate" + s(built.gates.length) +
+        " from " + built.inputs.length + " input" + s(built.inputs.length) +
+        " → " + built.outputs.length + " output" + s(built.outputs.length) + ".");
 }
 
 /* ---------------- save / load (localStorage) ---------------- */

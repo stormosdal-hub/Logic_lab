@@ -7,7 +7,7 @@ const ctx = vm.createContext({ console });
 for (const f of ["model.js", "builtins.js", "engine.js"]) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "js", f), "utf8"), ctx, { filename: f });
 }
-const T = vm.runInContext("({App, Sim, Defs, Timeline, makeComp, newCircuit, setTopCircuit, addWire, addWireBus, wiresTo, busValue, settle, settleFrom, registerBuiltinDefs, sortedPinComps, computeTruthTable, topOutputExprs, exprTreeForOutputPin, exprToText, exprToHtml, ctxForViewStack, clockTick, stepBack, snapshotState, restoreState, wireTo, compById, defaultWireRoute, wireRoutePoints, pinPos, pinPosLogical, compBox, rotateAround, numInputsOf, numOutputsOf, setAddrSel, evalAddr, buildAddrData, synthAddrCircuit, setMatrixSize, matrixLit, pinBits, setCompBits, resolveBit, bitEq, createDefFromCircuit, serializeCircuit})", ctx);
+const T = vm.runInContext("({App, Sim, Defs, Timeline, makeComp, newCircuit, setTopCircuit, addWire, addWireBus, wiresTo, busValue, settle, settleFrom, registerBuiltinDefs, sortedPinComps, computeTruthTable, topOutputExprs, exprTreeForOutputPin, exprToText, exprToHtml, ctxForViewStack, clockTick, stepBack, snapshotState, restoreState, wireTo, compById, defaultWireRoute, wireRoutePoints, pinPos, pinPosLogical, compBox, rotateAround, numInputsOf, numOutputsOf, setAddrSel, evalAddr, buildAddrData, synthAddrCircuit, setMatrixSize, matrixLit, pinBits, setCompBits, resolveBit, bitEq, createDefFromCircuit, serializeCircuit, parseBoolFormulas, parseBoolExpr, evalBoolAst, synthBoolCircuit})", ctx);
 
 let pass = 0, fail = 0;
 function check(name, cond) {
@@ -1138,6 +1138,93 @@ T.registerBuiltinDefs();
   T.App.mode = "edit";
   if (mism) console.log("   first mismatch: " + firstBad);
   check("address synthesis matches evalAddr (" + bits + " output bits, " + mism + " wrong)", mism === 0);
+}
+
+/* ---- boolean formula → circuit synthesis ---- */
+{
+  // parsing: shapes, precedence, implicit AND, postfix ', keywords
+  const p = s => T.parseBoolExpr(s, "t");
+  let e = p("A & B | !C");
+  check("bool parse: OR of AND and NOT", e.op === "OR" && e.parts.length === 2 &&
+    e.parts[0].op === "AND" && e.parts[1].k === "not" && e.parts[1].c.name === "C");
+  e = p("A + B + C");
+  check("bool parse: OR run flattens to one 3-part op", e.op === "OR" && e.parts.length === 3);
+  e = p("A'B");
+  check("bool parse: postfix ' + implicit AND", e.op === "AND" && e.parts[0].k === "not" && e.parts[1].name === "B");
+  e = p("A(B+C)");
+  check("bool parse: juxtaposed group is AND", e.op === "AND" && e.parts[1].op === "OR");
+  e = p("A NAND B");
+  check("bool parse: NAND keyword", e.k === "not" && e.c.op === "AND");
+  e = p("!!A");
+  check("bool parse: double negation collapses", e.k === "var" && e.name === "A");
+  check("bool parse: tracer output round-trips", p("((A·B)'+C)").op === "OR");
+
+  // errors
+  const throws = s => { try { T.parseBoolFormulas(s); return false; } catch (err) { return true; } };
+  check("bool parse: unbalanced paren throws", throws("(A+B"));
+  check("bool parse: bad char throws", throws("A % B"));
+  check("bool parse: duplicate output name throws", throws("Q=A\nQ=B"));
+  check("bool parse: keyword as output name throws", throws("AND = A"));
+  check("bool parse: empty input throws", throws("  \n "));
+
+  // multi-line naming
+  const fs2 = T.parseBoolFormulas("X = A\nB'\n; C^D");
+  check("bool parse: named + auto output names", fs2.map(f => f.name).join(",") === "X,Q2,Q3");
+
+  // synthesized circuits match evalBoolAst on every input combination
+  const cases = [
+    "A & B | !C",
+    "Q = A'B + AB'",                       // XOR built from primitives
+    "S = A ^ B ^ Cin\nCout = A·B + Cin·(A ^ B)",  // full adder, shared (A^B)
+    "((A·B)'+C)'",                         // tracer-style text
+    "Y = (A+B)(C+D) NAND (A XNOR D)",
+    "Q = 1 + A\nR = 0·B\nT = A NOR 0",     // constants
+    "P = A AND B AND C AND D AND E AND F AND G AND H AND I AND J",  // >8 inputs chunks
+  ];
+  for (const text of cases) {
+    const built = T.synthBoolCircuit(text);
+    T.setTopCircuit(built.circuit);
+    T.App.mode = "sim";
+    let mism = 0, rows = 0;
+    const n = built.inputs.length;
+    for (let v = 0; v < (1 << n); v++) {
+      const env = {};
+      built.inputs.forEach((c, i) => { c.state = !!(v >> i & 1); env[c.label] = c.state; });
+      T.settle();
+      built.formulas.forEach((f, i) => {
+        rows++;
+        if (!!built.outputs[i].state !== T.evalBoolAst(f.ast, env)) mism++;
+      });
+    }
+    T.App.mode = "edit";
+    check("bool synth: \"" + text.split("\n")[0] + (text.includes("\n") ? " …" : "") +
+      "\" matches spec (" + rows + " checks)", mism === 0);
+  }
+
+  // structure: shared subexpression builds one gate; NOT-of-op becomes NAND
+  const b1 = T.synthBoolCircuit("Q = (A·B) + (A·B)'");
+  check("bool synth: shared (A·B) reuses one AND", b1.gates.filter(g => g.type === "AND").length === 1);
+  check("bool synth: (A·B)' is a single NAND", b1.gates.some(g => g.type === "NAND"));
+  const b2 = T.synthBoolCircuit("Q = A·B + B·A");
+  check("bool synth: A·B and B·A share a gate (sorted CSE)", b2.gates.filter(g => g.type === "AND").length === 1);
+  const b3 = T.synthBoolCircuit("P = A ^ B ^ C ^ D ^ E ^ F ^ G ^ H ^ I");
+  check("bool synth: 9-wide XOR chunks into ≤8-input gates",
+    b3.gates.every(g => g.numInputs <= 8) && b3.gates.length === 2);
+
+  // wiring an OUT straight from an IN (Q = A) and layout sanity
+  const b4 = T.synthBoolCircuit("Q = A");
+  check("bool synth: Q = A wires IN to OUT with no gates",
+    b4.gates.length === 0 && b4.circuit.wires.length === 1);
+  const b5 = T.synthBoolCircuit("S = A ^ B ^ Cin\nCout = A·B + Cin·(A ^ B)");
+  const overlaps = (a, b) => {
+    const A = T.compBox(a), B = T.compBox(b);
+    return A.x < B.x + B.w && B.x < A.x + A.w && A.y < B.y + B.h && B.y < A.y + A.h;
+  };
+  let hit = 0;
+  const comps = b5.circuit.components;
+  for (let i = 0; i < comps.length; i++)
+    for (let j = i + 1; j < comps.length; j++) if (overlaps(comps[i], comps[j])) hit++;
+  check("bool synth: layout has no overlapping components", hit === 0);
 }
 
 console.log("\n" + pass + " passed, " + fail + " failed");

@@ -689,6 +689,7 @@ function onKeyDown(e) {
     hideContextMenu();
     if (App.split.open) { App.split.open = false; layoutPanes(); }
     document.getElementById("helpPanel").classList.add("hidden");
+    document.getElementById("formulaPanel").classList.add("hidden");
     requestRender();
     return;
   }

@@ -34,6 +34,7 @@
     <button id="shiftLockBtn" title="Touch: acts like holding Shift — drag empty space to box-select, tap parts to add/remove them">⇧ Select</button>
     <span class="sep"></span>
     <button id="makeICBtn" title="Turn the current worksheet into a reusable component">📦 Create IC</button>
+    <button id="formulaBtn" title="Type a boolean algebra formula and build it as a gate circuit">ƒ Formula</button>
     <button id="exportBtn" title="Export all custom components as a JSON file">⬇ Export</button>
     <button id="importBtn" title="Import custom components from a JSON file">⬆ Import</button>
     <input type="file" id="importFile" accept=".json,application/json" hidden>
@@ -89,6 +90,26 @@
         <div id="tlScroll"><canvas id="tlCanvas"></canvas></div>
       </div>
     </div>
+    <div id="formulaPanel" class="hidden">
+      <div class="formula-box">
+        <h2>ƒ Boolean formula → circuit <button id="formulaClose">✕</button></h2>
+        <p class="note">One formula per line (or <code>;</code>-separated); <code>Name = expression</code> names the output pin.
+          AND: <code>·</code> <code>&amp;</code> <code>*</code> or side by side (<code>A B</code>, <code>A(B+C)</code>) ·
+          OR: <code>+</code> <code>|</code> ·
+          XOR: <code>^</code> <code>⊕</code> ·
+          NOT: <code>!A</code> <code>~A</code> or <code>A'</code> ·
+          keywords <code>AND OR XOR NAND NOR XNOR NOT</code> · constants <code>0</code>/<code>1</code> · parentheses.
+          Repeated subexpressions share one gate.</p>
+        <textarea id="formulaInput" rows="4" spellcheck="false"
+          placeholder="S = A ^ B ^ Cin&#10;Cout = A·B + Cin·(A ^ B)"></textarea>
+        <div id="formulaErr" class="hidden"></div>
+        <div class="formula-actions">
+          <button id="formulaBuild" class="primary">⚡ Build circuit</button>
+          <button id="formulaCancel">Cancel</button>
+          <span class="note" style="margin:auto 0 auto auto">Ctrl+Enter builds</span>
+        </div>
+      </div>
+    </div>
     <div id="helpPanel" class="hidden">
       <div class="help-box">
         <h2>How to use Logic Lab <button id="helpClose">✕</button></h2>
@@ -106,6 +127,7 @@
           <li><b>Rotate:</b> right-click a tri-state buffer and choose <b>↻ Rotate 90°</b> to point it in any direction — the enable pin stays on the side of the triangle.</li>
           <li><b>Selecting several:</b> hold <kbd>Shift</kbd> and drag on empty space to draw a box around components (or Shift+click to toggle individual ones). Drag any selected component to move the whole group; press <kbd>Delete</kbd> to remove them all.</li>
           <li><b>Quick-add:</b> right-click empty space and hover a category — <b>I/O</b>, <b>Logic Gates</b>, <b>Mux &amp; coders</b>, <b>Latches &amp; flip-flops</b> or <b>My components</b> — to drop any part (including your own ICs) straight from the menu.</li>
+          <li><b>ƒ Formula:</b> type boolean algebra and get the circuit — press <b>ƒ Formula</b>, enter e.g. <code>Cout = A·B + Cin·(A^B)</code> (one formula per line; <code>Name =</code> names the output pin) and <b>⚡ Build circuit</b> drops the equivalent gates onto the sheet, inputs on the left, outputs on the right. AND is <code>·</code> <code>&amp;</code> <code>*</code> or just side by side (<code>A B</code>, <code>A(B+C)</code>); OR <code>+</code> <code>|</code>; XOR <code>^</code>; NOT <code>!A</code>, <code>~A</code> or <code>A'</code>; also <code>NAND</code>/<code>NOR</code>/<code>XNOR</code> keywords and constants <code>0</code>/<code>1</code>. A repeated subexpression (like <code>A^B</code> above) is built once and shared — and the sim-mode <b>Boolean ▾</b> panel's own expressions paste straight back in.</li>
           <li><b>Palette:</b> click a category heading to collapse or expand it (<b>Latches &amp; flip-flops</b> and <b>Registers &amp; counters</b> start collapsed).</li>
           <li><b>Copy / cut / paste:</b> select component(s) and use <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>X</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd>. Pasted inputs/outputs get a suffix (<code>(1)</code>, <code>(2)</code>…) if their label is already in use.</li>
           <li><b>View:</b> mouse-wheel zooms, drag empty space to pan.</li>

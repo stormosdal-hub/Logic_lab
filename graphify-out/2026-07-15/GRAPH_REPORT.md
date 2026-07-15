@@ -1,16 +1,16 @@
-# Graph Report - logic-lab  (2026-07-15)
+# Graph Report - logic-lab  (2026-07-09)
 
 ## Corpus Check
-- 19 files · ~62,571 words
+- 19 files · ~59,539 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 394 nodes · 959 edges · 22 communities (16 shown, 6 thin omitted)
-- Extraction: 70% EXTRACTED · 30% INFERRED · 0% AMBIGUOUS · INFERRED: 289 edges (avg confidence: 0.8)
+- 383 nodes · 930 edges · 22 communities (16 shown, 6 thin omitted)
+- Extraction: 70% EXTRACTED · 30% INFERRED · 0% AMBIGUOUS · INFERRED: 278 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `dc33d674`
+- Built from commit: `e5593b75`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,26 +37,26 @@
 - [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `$()` - 37 edges
+1. `$()` - 34 edges
 2. `compSize()` - 22 edges
 3. `requestRender()` - 22 edges
 4. `settle()` - 19 edges
-5. `curCircuit()` - 19 edges
-6. `onCanvasDown()` - 18 edges
+5. `onCanvasDown()` - 18 edges
+6. `curCircuit()` - 18 edges
 7. `pinPos()` - 18 edges
-8. `touchCircuit()` - 17 edges
-9. `afterStructChange()` - 14 edges
-10. `makeComp()` - 14 edges
+8. `touchCircuit()` - 15 edges
+9. `roundRect()` - 14 edges
+10. `afterSimChange()` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Orthogonal Wire Routing` --semantically_similar_to--> `Wire Routing Math (defaultWireRoute)`  [INFERRED] [semantically similar]
   CLAUDE.md → .claude/agents/sim-engine.md
 - `_anBuild()` --calls--> `A`  [INFERRED]
   js/analog/engine.js → test/analog.js
+- `releaseMomentaryInputs()` --calls--> `toggleInput()`  [INFERRED]
+  js/ui.js → js/engine.js
 - `drawSelection()` --calls--> `isBus()`  [INFERRED]
   js/render.js → js/model.js
-- `loadLocal()` --calls--> `setTopCircuit()`  [INFERRED]
-  js/ui.js → js/model.js
 - `afterSimChange() Post-Simulation Hook` --conceptually_related_to--> `Canvas Setup (initCanvas / RAF loop)`  [INFERRED]
   CLAUDE.md → .claude/agents/renderer.md
 
@@ -76,23 +76,23 @@ Nodes (38): Canvas Setup (initCanvas / RAF loop), Color Scheme (COL), Component 
 
 ### Community 1 - "Component Data Model"
 Cohesion: 0.09
-Nodes (60): busValue(), matrixLit(), addrWidth(), compSize(), defaultWireRoute(), isGate(), numInputsOf(), numOutputsOf() (+52 more)
+Nodes (56): busValue(), matrixLit(), compBox(), compSize(), pinBits(), pinPos(), wireRoutePoints(), activeView() (+48 more)
 
 ### Community 2 - "Interaction & Navigation"
-Cohesion: 0.10
-Nodes (51): buildMenuLevel(), compMenuItems(), copySelection(), dragWireSegment(), enterComponent(), goToLevel(), hideContextMenu(), initInteractions() (+43 more)
+Cohesion: 0.09
+Nodes (61): afterStructChange(), addAt(), addChipAt(), buildMenuLevel(), compMenuItems(), copySelection(), deleteSelection(), dragWireSegment() (+53 more)
 
 ### Community 3 - "Edit Operations & Wiring"
-Cohesion: 0.10
-Nodes (44): afterStructChange(), synthBoolCircuit(), addAt(), addChipAt(), dedupeLabel(), deleteSelection(), onCanvasDrop(), onUIHit() (+36 more)
+Cohesion: 0.11
+Nodes (37): dedupeLabel(), enterComponent(), innerCircuitOf(), innerName(), onUIHit(), pasteClipboard(), seedDemo(), ADDR_TYPES (+29 more)
 
 ### Community 4 - "Simulation Engine"
-Cohesion: 0.08
-Nodes (54): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+46 more)
+Cohesion: 0.10
+Nodes (47): afterSimChange(), applyTTRow(), bitEq(), busConflict(), clockTick(), collectCircuits(), computeTruthTable(), copyVal() (+39 more)
 
 ### Community 5 - "Boolean Expressions & Timeline"
-Cohesion: 0.10
-Nodes (37): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), currentTool(), createDefFromCircuit(), customDefs(), registerDef() (+29 more)
+Cohesion: 0.09
+Nodes (37): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), currentTool(), builtinDefs(), createDefFromCircuit() (+29 more)
 
 ### Community 6 - "MCP Package Config"
 Cohesion: 0.20
@@ -127,19 +127,19 @@ Cohesion: 0.18
 Nodes (11): _anBuild(), _anSolve(), _anSolveMode(), _potR(), _sqPhase(), _zenerVz(), A, ctx (+3 more)
 
 ## Knowledge Gaps
-- **42 isolated node(s):** `AN_SAVE_FIELDS`, `AN_PALETTE`, `AN_PREFIX`, `Sim`, `BOOL_OPS` (+37 more)
+- **41 isolated node(s):** `AN_SAVE_FIELDS`, `AN_PALETTE`, `AN_PREFIX`, `Sim`, `Timeline` (+36 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Edit Operations & Wiring`, `Simulation Engine`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Edit Operations & Wiring`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
-- **Why does `afterStructChange()` connect `Edit Operations & Wiring` to `Interaction & Navigation`, `Simulation Engine`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Simulation Engine`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `afterStructChange()` connect `Interaction & Navigation` to `Edit Operations & Wiring`, `Simulation Engine`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `$()` (e.g. with `hideContextMenu()` and `showContextMenu()`) actually correct?**
   _`$()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 16 inferred relationships involving `compSize()` (e.g. with `addAt()` and `addChipAt()`) actually correct?**

@@ -666,6 +666,284 @@ function topOutputExprs() {
   });
 }
 
+/* ---------------- boolean formula → circuit synthesis ----------------
+   The inverse of the tracer above: parse boolean algebra text and build
+   an equivalent gate circuit. Pure (no DOM) — used by the "ƒ Formula"
+   dialog in ui.js and tested headlessly in test/smoke.js.
+
+   Syntax (one formula per line, or `;`-separated; `Name = expr` names
+   the output, else Q/Q2/… are used):
+     AND: · & && * . ∧ AND, or juxtaposition — A B, A(B+C), (A+B)C, A'B
+     OR:  + | || ∨ OR          XOR: ^ ⊕ XOR
+     NOT: prefix ! ~ ¬ NOT, or postfix ' — and NAND/NOR/XNOR keywords
+     Constants 0 and 1; parentheses; precedence NOT > AND > XOR > OR.
+   The tracer's own output (e.g. "(A·B)'+C") parses back unchanged.
+
+   AST nodes: {k:"var",name} | {k:"const",v} | {k:"not",c} |
+   {k:"op", op:"AND"|"OR"|"XOR", parts:[…]} — ops are n-ary (associative;
+   XOR is parity, matching evalGate). */
+
+const BOOL_OPS = {
+  AND: "and", NAND: "and", OR: "or", NOR: "or", XOR: "xor", XNOR: "xor",
+};
+
+function tokenizeBool(src, where) {
+  const toks = [];
+  let i = 0;
+  while (i < src.length) {
+    const ch = src[i];
+    if (/\s/.test(ch)) { i++; continue; }
+    if (/[A-Za-z_]/.test(ch)) {
+      let j = i + 1;
+      while (j < src.length && /[A-Za-z0-9_]/.test(src[j])) j++;
+      const word = src.slice(i, j), kw = word.toUpperCase();
+      if (kw === "NOT") toks.push({ k: "not" });
+      else if (BOOL_OPS[kw]) toks.push({ k: BOOL_OPS[kw], neg: kw === "NAND" || kw === "NOR" || kw === "XNOR" });
+      else toks.push({ k: "id", v: word });
+      i = j;
+      continue;
+    }
+    if (ch === "0" || ch === "1") { toks.push({ k: "const", v: ch === "1" }); i++; continue; }
+    if (ch === "&" || ch === "*" || ch === "·" || ch === "." || ch === "∧") {
+      i += (ch === "&" && src[i + 1] === "&") ? 2 : 1;
+      toks.push({ k: "and", neg: false });
+      continue;
+    }
+    if (ch === "|" || ch === "+" || ch === "∨") {
+      i += (ch === "|" && src[i + 1] === "|") ? 2 : 1;
+      toks.push({ k: "or", neg: false });
+      continue;
+    }
+    if (ch === "^" || ch === "⊕") { toks.push({ k: "xor", neg: false }); i++; continue; }
+    if (ch === "!" || ch === "~" || ch === "¬") { toks.push({ k: "not" }); i++; continue; }
+    if (ch === "'" || ch === "’") { toks.push({ k: "post" }); i++; continue; }
+    if (ch === "(") { toks.push({ k: "(" }); i++; continue; }
+    if (ch === ")") { toks.push({ k: ")" }); i++; continue; }
+    throw new Error(where + ": unexpected character “" + ch + "”");
+  }
+  return toks;
+}
+
+function notNode(n) { return n.k === "not" ? n.c : { k: "not", c: n }; }
+
+function parseBoolExpr(src, where) {
+  const toks = tokenizeBool(src, where);
+  let p = 0;
+  const err = msg => { throw new Error(where + ": " + msg); };
+  const startsFactor = t => t && (t.k === "id" || t.k === "const" || t.k === "(" || t.k === "not");
+
+  function primary() {
+    const t = toks[p];
+    if (!t) err("formula ends too early");
+    if (t.k === "id") { p++; return { k: "var", name: t.v }; }
+    if (t.k === "const") { p++; return { k: "const", v: t.v }; }
+    if (t.k === "(") {
+      p++;
+      const e = orLevel();
+      if (!toks[p] || toks[p].k !== ")") err("missing “)”");
+      p++;
+      return e;
+    }
+    err("unexpected “" + (t.v || t.k) + "”");
+  }
+  function unary() {
+    if (toks[p] && toks[p].k === "not") { p++; return notNode(unary()); }
+    let e = primary();
+    while (toks[p] && toks[p].k === "post") { p++; e = notNode(e); }
+    return e;
+  }
+  /* One n-ary op with a matching negated keyword (NAND/NOR/XNOR applies
+     pairwise, left-associative). Plain runs flatten: A+B+C → one 3-part OR. */
+  function binLevel(kind, op, sub, implicit) {
+    let e = sub();
+    for (;;) {
+      const t = toks[p];
+      let neg = false;
+      if (t && t.k === kind) { neg = !!t.neg; p++; }
+      else if (implicit && startsFactor(t)) neg = false;
+      else return e;
+      const r = sub();
+      if (e.k === "op" && e.op === op && !neg) e.parts.push(r);
+      else e = { k: "op", op, parts: [e, r] };
+      if (neg) e = notNode(e);
+    }
+  }
+  const andLevel = () => binLevel("and", "AND", unary, true);
+  const xorLevel = () => binLevel("xor", "XOR", andLevel, false);
+  const orLevel  = () => binLevel("or",  "OR",  xorLevel, false);
+
+  const e = orLevel();
+  if (p < toks.length) err("unexpected “" + (toks[p].v || toks[p].k) + "”");
+  return e;
+}
+
+/* Parse a whole multi-line text into [{name, ast}]. */
+function parseBoolFormulas(text) {
+  const outs = [];
+  const used = new Set();
+  const parts = String(text).split(/[;\r\n]+/);
+  let n = 0;
+  for (const raw of parts) {
+    const src0 = raw.trim();
+    if (!src0) continue;
+    n++;
+    const where = "Formula " + n;
+    let name = null, src = src0;
+    const m = /^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)$/.exec(src0);
+    if (m) {
+      if (m[1].toUpperCase() === "NOT" || BOOL_OPS[m[1].toUpperCase()])
+        throw new Error(where + ": “" + m[1] + "” is a keyword and can't name an output");
+      name = m[1];
+      src = m[2];
+    } else if (src0.includes("=")) {
+      throw new Error(where + ": the left side of “=” must be a single output name");
+    }
+    if (!name) { name = outs.length === 0 ? "Q" : "Q" + (outs.length + 1); while (used.has(name)) name += "x"; }
+    if (used.has(name)) throw new Error(where + ": output “" + name + "” is defined twice");
+    used.add(name);
+    outs.push({ name, ast: parseBoolExpr(src, where) });
+  }
+  if (!outs.length) throw new Error("Type a formula first — e.g.  Q = A·B + C'");
+  return outs;
+}
+
+/* Evaluate an AST against {name: bool} — the spec the built circuit must match. */
+function evalBoolAst(n, env) {
+  switch (n.k) {
+    case "var":   return !!env[n.name];
+    case "const": return n.v;
+    case "not":   return !evalBoolAst(n.c, env);
+    default: {
+      const vs = n.parts.map(x => evalBoolAst(x, env));
+      if (n.op === "AND") return vs.every(Boolean);
+      if (n.op === "OR")  return vs.some(Boolean);
+      return vs.filter(Boolean).length % 2 === 1;   // XOR = parity (matches evalGate)
+    }
+  }
+}
+
+/* Canonical key for subexpression sharing; op parts are sorted so A·B and
+   B·A reuse the same gate. */
+function boolAstKey(n) {
+  switch (n.k) {
+    case "var":   return "v:" + n.name;
+    case "const": return n.v ? "1" : "0";
+    case "not":   return "!(" + boolAstKey(n.c) + ")";
+    default:      return n.op + "(" + n.parts.map(boolAstKey).sort().join(",") + ")";
+  }
+}
+
+/* Build a live circuit from boolean text. Returns {circuit, inputs, outputs,
+   gates, formulas} — comps laid out in columns starting near (0,0); the
+   caller offsets them onto the sheet. Throws with a friendly message on a
+   parse error. */
+function synthBoolCircuit(text) {
+  const formulas = parseBoolFormulas(text);
+  const circ = newCircuit();
+
+  // one IN per variable, in order of first appearance
+  const varOrder = [];
+  (function collect(n) {
+    if (n.k === "var") { if (!varOrder.includes(n.name)) varOrder.push(n.name); }
+    else if (n.k === "not") collect(n.c);
+    else if (n.k === "op") n.parts.forEach(collect);
+  })({ k: "op", op: "AND", parts: formulas.map(f => f.ast) });
+
+  const inputs = [], gates = [], consts = {};
+  const byCol = [[]];
+  const place = (comp, col) => {
+    comp._col = col;
+    (byCol[col] || (byCol[col] = [])).push(comp);
+    circ.components.push(comp);
+    return comp;
+  };
+  const srcByName = {};
+  for (const name of varOrder) {
+    const c = place(makeComp("IN", 0, 0, { label: name }), 0);
+    inputs.push(c);
+    srcByName[name] = c;
+  }
+
+  const memo = new Map();
+  function makeGate(type, srcs) {
+    const g = makeComp(type, 0, 0, { numInputs: srcs.length });
+    place(g, Math.max(...srcs.map(s => s._col)) + 1);
+    srcs.forEach((s, i) => addWire(circ, s, 0, g, i));
+    gates.push(g);
+    return g;
+  }
+  function srcFor(n) {
+    const key = boolAstKey(n);
+    if (memo.has(key)) return memo.get(key);
+    let r;
+    if (n.k === "var") r = srcByName[n.name];
+    else if (n.k === "const") {
+      const t = n.v ? "HIGH" : "LOW";
+      r = consts[t] || (consts[t] = place(makeComp(t, 0, 0), 0));
+    } else if (n.k === "not") {
+      const c = n.c;
+      r = (c.k === "op" && c.parts.length <= GATE_TYPES.AND.max)
+        ? makeGate({ AND: "NAND", OR: "NOR", XOR: "XNOR" }[c.op], c.parts.map(srcFor))
+        : makeGate("NOT", [srcFor(c)]);
+    } else {
+      // n-ary op; a run wider than a gate allows is chunked into a tree
+      let srcs = n.parts.map(srcFor);
+      const max = GATE_TYPES.AND.max;
+      while (srcs.length > max) {
+        const next = [];
+        for (let i = 0; i < srcs.length; i += max) {
+          const grp = srcs.slice(i, i + max);
+          next.push(grp.length === 1 ? grp[0] : makeGate(n.op, grp));
+        }
+        srcs = next;
+      }
+      r = srcs.length === 1 ? srcs[0] : makeGate(n.op, srcs);
+    }
+    memo.set(key, r);
+    return r;
+  }
+
+  const outputs = [];
+  const drivers = formulas.map(f => srcFor(f.ast));
+  const outCol = byCol.length;
+  formulas.forEach((f, i) => {
+    const o = place(makeComp("OUT", 0, 0, { label: f.name }), outCol);
+    addWire(circ, drivers[i], 0, o, 0);
+    outputs.push(o);
+  });
+
+  // layered layout: columns left→right, each comp near the middle of its sources
+  const COL_PITCH = 144, ROW_GAP = 24;
+  const midY = c => c.y + compSize(c).h / 2;
+  byCol.forEach((comps, col) => {
+    if (col > 0) {
+      const want = new Map();
+      for (const c of comps) {
+        const srcs = circ.wires.filter(w => w.to.c === c.id).map(w => compById(circ, w.from.c));
+        want.set(c, srcs.length ? srcs.reduce((a, s) => a + midY(s), 0) / srcs.length : 0);
+      }
+      comps.sort((a, b) => want.get(a) - want.get(b));
+      let cur = -Infinity;
+      for (const c of comps) {
+        c.x = col * COL_PITCH;
+        c.y = Math.max(cur, snap(want.get(c) - compSize(c).h / 2));
+        cur = c.y + compSize(c).h + ROW_GAP;
+      }
+    } else {
+      let cur = 0;
+      for (const c of comps) {
+        c.x = 0;
+        c.y = cur;
+        cur += compSize(c).h + ROW_GAP;
+      }
+    }
+    for (const c of comps) delete c._col;
+  });
+
+  touchCircuit(circ);
+  return { circuit: circ, inputs, outputs, gates, formulas };
+}
+
 /* ---------------- timeline (timing diagram) ----------------
    One sample is recorded per simulation event (clock toggle, input
    toggle, reset), covering CLK and all top-level inputs/outputs. */
