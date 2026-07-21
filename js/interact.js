@@ -65,9 +65,6 @@ function initInteractions() {
   canvas.addEventListener("contextmenu", onCanvasContext);
   window.addEventListener("keydown", onKeyDown);
 
-  canvas.addEventListener("dragover", e => { e.preventDefault(); });
-  canvas.addEventListener("drop", onCanvasDrop);
-
   // touch: reuse the mouse handlers, add pinch-zoom + press-and-hold menu
   if (typeof TouchBridge !== "undefined")
     TouchBridge.attach(canvas, {
@@ -782,31 +779,16 @@ function dragWireSegment(pt) {
 
 /* ---------------- palette drag & drop ---------------- */
 
-function onCanvasDrop(e) {
-  e.preventDefault();
+/* Drop a palette item at a screen point (client coords, from PaletteDrag).
+   Centres the part under the pointer, exactly like the old HTML5 drop did. */
+function dropPaletteItem(item, clientX, clientY) {
   if (!canEdit()) { toast("Switch to Edit mode (top level) to add components."); return; }
-  let data;
-  try { data = JSON.parse(e.dataTransfer.getData("text/plain")); }
-  catch { return; }
-  if (!data || !data.kind) return;
+  if (!item || !item.kind) return;
 
-  const { mx, my } = mousePos(e);
+  const { mx, my } = mousePos({ clientX, clientY });
   const pt = screenToWorld(mx, my);
-  const circ = curCircuit();
-  let comp;
-  try {
-    if (data.kind === "chip") comp = makeComp("CUSTOM", 0, 0, { defName: data.defName });
-    else comp = makeComp(data.type, 0, 0, {
-      label: (data.type === "IN" || data.type === "OUT") ? nextLabel(circ, data.type) : undefined,
-    });
-  } catch (err) { toast(err.message); return; }
-  const { w, h } = compSize(comp);
-  comp.x = snap(pt.x - w / 2);
-  comp.y = snap(pt.y - h / 2);
-  circ.components.push(comp);
-  touchCircuit(circ);
-  App.selection = [{ kind: "comp", obj: comp }];
-  afterStructChange();
+  if (item.kind === "chip") addChipAt(pt, item.defName);
+  else addAt(pt, item.type);
 }
 
 /* ---------------- hierarchy navigation ---------------- */

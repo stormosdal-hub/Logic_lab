@@ -102,8 +102,7 @@ function buildPalette() {
     for (const item of cat.items) {
       const t = document.createElement("div");
       t.className = "tool";
-      t.draggable = true;
-      t.title = "Drag onto the worksheet";
+      t.title = "Drag onto the worksheet (or click, then click the sheet)";
       const cv = document.createElement("canvas");
       cv.width = 46; cv.height = 26;
       paintToolIcon(cv, item.kind === "chip" ? { type: "CHIP" } : item);
@@ -123,18 +122,38 @@ function buildPalette() {
         t.appendChild(del);
       }
       t._item = item;
-      // tap/click arms the part for placement (mobile-friendly); desktop drag still works
+      // drag onto the sheet (PaletteDrag, see initUI); a plain click without
+      // travel arms the part for tap-to-place instead
       t.addEventListener("click", () => toggleTool(item));
-      t.addEventListener("dragstart", e => {
-        e.dataTransfer.setData("text/plain", JSON.stringify(item));
-        e.dataTransfer.effectAllowed = "copy";
-      });
       body.appendChild(t);
     }
     div.appendChild(body);
     pal.appendChild(div);
   }
   updatePaletteSelection();
+}
+
+/* Drag a part out of the palette and drop it on the worksheet. Pointer-based,
+   so it works with a mouse, a finger or a pen alike (see palette-drag.js).
+   Delegated to #palette, so rebuilding the tiles doesn't need a re-attach. */
+function initPaletteDrag() {
+  if (typeof PaletteDrag === "undefined") return;
+  PaletteDrag.attach({
+    palette: $("#palette"),
+    itemSel: ".tool",
+    itemOf: el => el._item || null,
+    canvas: () => canvas,
+    enabled: () => canEdit(),
+    label: item => item.name,
+    ghost: item => {
+      const cv = document.createElement("canvas");
+      cv.width = 46; cv.height = 26;
+      paintToolIcon(cv, item.kind === "chip" ? { type: "CHIP" } : item);
+      return cv;
+    },
+    drop: (item, cx, cy) => dropPaletteItem(item, cx, cy),
+    onStart: () => { if (typeof MobileDrawers !== "undefined") MobileDrawers.closeAll(); },
+  });
 }
 
 /* Highlight the palette tile matching the armed tap-to-place tool (if any). */
@@ -158,6 +177,7 @@ function deleteCustomDef(name) {
 function initUI() {
   buildPalette();
   updateCrumbs();
+  initPaletteDrag();
 
   $("#modeBtn").addEventListener("click", () => setMode(App.mode !== "sim"));
   $("#newBtn").addEventListener("click", () => {

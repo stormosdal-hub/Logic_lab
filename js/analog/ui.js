@@ -87,6 +87,7 @@ Analog.init = function () {
   App.canvas = document.getElementById("anCanvas");
   App.ctx = App.canvas.getContext("2d");
   Analog.buildPalette();
+  Analog.initPaletteDrag();
   Analog.bindCanvas();
 
   document.getElementById("anModeBtn").addEventListener("click", Analog.toggleMode);
@@ -142,7 +143,8 @@ Analog.buildPalette = function () {
   }
   const hint = document.createElement("p");
   hint.className = "an-hint";
-  hint.innerHTML = "Click a part then click the sheet to place it. <b>Wiring:</b> click a terminal, then " +
+  hint.innerHTML = "<b>Drag a part</b> onto the sheet — or click it, then click the sheet, or " +
+    "right-click the sheet to pick one from the menu. <b>Wiring:</b> click a terminal, then " +
     "click empty space to bend the wire (each click turns the corner), and click another terminal to finish — " +
     "or just drag terminal-to-terminal (<kbd>Esc</kbd>/right-click cancels). <b>Drag any wire segment</b> " +
     "sideways to re-route it; right-click a wire to straighten or delete it. " +
@@ -151,6 +153,27 @@ Analog.buildPalette = function () {
     "While simulating: hover anything to probe it, click switches, drag a potentiometer.";
   host.appendChild(hint);
 };
+/* Drag a part out of the palette onto the sheet (pointer-based, so it works
+   with a mouse, a finger or a pen — see palette-drag.js). A press that never
+   travels stays a click and arms the part for click-to-place instead. */
+Analog.initPaletteDrag = function () {
+  if (typeof PaletteDrag === "undefined") return;
+  PaletteDrag.attach({
+    palette: document.getElementById("anPalette"),
+    itemSel: ".an-part",
+    itemOf: el => el.dataset.type || null,
+    canvas: () => Analog.App.canvas,
+    enabled: () => Analog.App.mode === "edit",
+    label: type => (Analog.TYPES[type] && Analog.TYPES[type].name) || type,
+    drop: (type, cx, cy) => {
+      const m = Analog.mousePos({ clientX: cx, clientY: cy });
+      const w = Analog.screenToWorld(m.x, m.y);
+      Analog.addPartAt(type, w.x, w.y);
+    },
+    onStart: () => { if (typeof MobileDrawers !== "undefined") MobileDrawers.closeAll(); },
+  });
+};
+
 Analog.updatePaletteSel = function () {
   for (const b of document.querySelectorAll("#anPalette .an-part"))
     b.classList.toggle("active", b.dataset.type === Analog.App.tool);
@@ -410,26 +433,68 @@ Analog.showCtxMenu = function (c, sx, sy) {
     Analog.snapshot(); Analog.requestRender();
   } });
   items.push({ label: "↻ Rotate 90°", fn: () => { c.rot = (c.rot + 1) & 3; Analog.snapshot(); Analog.afterStruct(); } });
-  items.push({ label: "🗑 Delete", fn: () => { Analog.removeComp(App.circ, c); App.selection = []; Analog.snapshot(); Analog.afterStruct(); } });
+  items.push({ label: "🗑 Delete", danger: true, fn: () => { Analog.removeComp(App.circ, c); App.selection = []; Analog.snapshot(); Analog.afterStruct(); } });
   _anShowMenu(items, sx, sy);
+};
+/* Right-click on empty sheet: the whole palette as submenus, dropping the
+   chosen part at the world point that was clicked. */
+Analog.showAddMenu = function (wx, wy, sx, sy) {
+  _anShowMenu(AN_PALETTE.map(grp => ({
+    label: grp.group,
+    submenu: grp.items.map(item => ({
+      label: item.label,
+      fn: () => Analog.addPartAt(item.type, wx, wy),
+    })),
+  })), sx, sy);
 };
 Analog.showWireMenu = function (w, sx, sy) {
   const items = [];
   if (w.route != null && w.route.length)
     items.push({ label: "⟲ Straighten", fn: () => { delete w.route; delete w.h0; Analog.snapshot(); Analog.requestRender(); } });
-  items.push({ label: "🗑 Delete wire", fn: () => { Analog.removeWire(Analog.App.circ, w); Analog.snapshot(); Analog.afterStruct(); } });
+  items.push({ label: "🗑 Delete wire", danger: true, fn: () => { Analog.removeWire(Analog.App.circ, w); Analog.snapshot(); Analog.afterStruct(); } });
   _anShowMenu(items, sx, sy);
 };
+/* Build one level of the menu; items may carry a `submenu` array, `sep`,
+   `disabled` or `danger` — the markup mirrors the digital tab's menu so both
+   share one stylesheet block. */
+function _anMenuLevel(host, items) {
+  for (const it of items) {
+    if (it.sep) {
+      host.appendChild(Object.assign(document.createElement("div"), { className: "ctx-sep" }));
+      continue;
+    }
+    if (it.disabled) {
+      host.appendChild(Object.assign(document.createElement("div"),
+        { className: "ctx-disabled", textContent: it.label }));
+      continue;
+    }
+    const b = document.createElement("button");
+    b.className = "ctx-item" + (it.danger ? " danger" : "") + (it.submenu ? " has-sub" : "");
+    if (it.submenu) {
+      const lbl = document.createElement("span"); lbl.textContent = it.label; b.appendChild(lbl);
+      const arrow = document.createElement("span"); arrow.className = "ctx-arrow"; arrow.textContent = "▸";
+      b.appendChild(arrow);
+      const sub = document.createElement("div"); sub.className = "ctx-sub";
+      _anMenuLevel(sub, it.submenu);
+      b.appendChild(sub);
+    } else {
+      b.textContent = it.label;
+      b.addEventListener("click", () => { it.fn(); Analog.hideCtxMenu(); Analog.requestRender(); });
+    }
+    host.appendChild(b);
+  }
+}
+
 function _anShowMenu(items, sx, sy) {
   const menu = document.getElementById("anCtxMenu");
   menu.innerHTML = "";
-  for (const it of items) {
-    const d = document.createElement("div"); d.className = "an-ctx-item"; d.textContent = it.label;
-    d.addEventListener("click", () => { it.fn(); Analog.hideCtxMenu(); Analog.requestRender(); });
-    menu.appendChild(d);
-  }
-  menu.style.left = sx + "px"; menu.style.top = sy + "px";
+  _anMenuLevel(menu, items);
   menu.classList.remove("hidden");
+  // keep the menu (and the room its submenus open into) on screen
+  menu.classList.toggle("flip-left", sx > window.innerWidth / 2);
+  menu.style.left = "0px"; menu.style.top = "0px";
+  menu.style.left = Math.min(sx, window.innerWidth - menu.offsetWidth - 6) + "px";
+  menu.style.top = Math.min(sy, window.innerHeight - menu.offsetHeight - 6) + "px";
 }
 Analog.hideCtxMenu = function () { const m = document.getElementById("anCtxMenu"); if (m) m.classList.add("hidden"); };
 

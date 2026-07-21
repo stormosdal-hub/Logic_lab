@@ -139,7 +139,7 @@
       "label": "_anDown()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L88",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "analog_interact_andown",
       "community": 23,
@@ -149,7 +149,7 @@
       "label": "_anMove()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L160",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "analog_interact_anmove",
       "community": 23,
@@ -159,7 +159,7 @@
       "label": "_anUp()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L225",
+      "source_location": "L219",
       "_origin": "ast",
       "id": "analog_interact_anup",
       "community": 23,
@@ -169,7 +169,7 @@
       "label": "_anContext()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L266",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "analog_interact_ancontext",
       "community": 23,
@@ -179,7 +179,7 @@
       "label": "_anWheel()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L280",
+      "source_location": "L272",
       "_origin": "ast",
       "id": "analog_interact_anwheel",
       "community": 23,
@@ -189,7 +189,7 @@
       "label": "_anKey()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L291",
+      "source_location": "L283",
       "_origin": "ast",
       "id": "analog_interact_ankey",
       "community": 23,
@@ -239,7 +239,7 @@
       "label": "_anVColor()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L24",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "analog_render_anvcolor",
       "community": 24,
@@ -249,7 +249,7 @@
       "label": "_probeLines()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L129",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "analog_render_probelines",
       "community": 24,
@@ -259,7 +259,7 @@
       "label": "_drawProbe()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L157",
+      "source_location": "L147",
       "_origin": "ast",
       "id": "analog_render_drawprobe",
       "community": 24,
@@ -269,7 +269,7 @@
       "label": "_drawComp()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L180",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "analog_render_drawcomp",
       "community": 24,
@@ -306,20 +306,10 @@
       "norm_label": "an_prefix"
     },
     {
-      "label": "_anMenuLevel()",
-      "file_type": "code",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L460",
-      "_origin": "ast",
-      "id": "analog_ui_anmenulevel",
-      "community": 25,
-      "norm_label": "_anmenulevel()"
-    },
-    {
       "label": "_anShowMenu()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L488",
+      "source_location": "L423",
       "_origin": "ast",
       "id": "analog_ui_anshowmenu",
       "community": 25,
@@ -329,7 +319,7 @@
       "label": "_anParse()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L502",
+      "source_location": "L437",
       "_origin": "ast",
       "id": "analog_ui_anparse",
       "community": 25,
@@ -339,7 +329,7 @@
       "label": "_anDrawScope()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L576",
+      "source_location": "L511",
       "_origin": "ast",
       "id": "analog_ui_andrawscope",
       "community": 25,
@@ -349,7 +339,7 @@
       "label": "_anDragWindow()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L604",
+      "source_location": "L539",
       "_origin": "ast",
       "id": "analog_ui_andragwindow",
       "community": 25,
@@ -362,7 +352,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "js_builtins",
-      "community": 16,
+      "community": 5,
       "norm_label": "builtins.js"
     },
     {
@@ -372,7 +362,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "js_builtins_definebuiltin",
-      "community": 16,
+      "community": 5,
       "norm_label": "definebuiltin()"
     },
     {
@@ -382,7 +372,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "js_builtins_registerbuiltindefs",
-      "community": 16,
+      "community": 5,
       "norm_label": "registerbuiltindefs()"
     },
     {
@@ -452,7 +442,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_engine_resolvebit",
-      "community": 1,
+      "community": 4,
       "norm_label": "resolvebit()"
     },
     {
@@ -502,7 +492,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "js_engine_busconflict",
-      "community": 1,
+      "community": 4,
       "norm_label": "busconflict()"
     },
     {
@@ -772,7 +762,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 10,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -882,7 +872,7 @@
       "source_location": "L840",
       "_origin": "ast",
       "id": "js_engine_synthboolcircuit",
-      "community": 4,
+      "community": 3,
       "norm_label": "synthboolcircuit()"
     },
     {
@@ -952,7 +942,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_interact_currenttool",
-      "community": 2,
+      "community": 5,
       "norm_label": "currenttool()"
     },
     {
@@ -1019,7 +1009,7 @@
       "label": "inspMousePos()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L82",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "js_interact_inspmousepos",
       "community": 2,
@@ -1029,7 +1019,7 @@
       "label": "initSplit()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L87",
+      "source_location": "L90",
       "_origin": "ast",
       "id": "js_interact_initsplit",
       "community": 2,
@@ -1039,7 +1029,7 @@
       "label": "onSplitMove()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L108",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "js_interact_onsplitmove",
       "community": 2,
@@ -1049,7 +1039,7 @@
       "label": "onSplitUp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L123",
+      "source_location": "L126",
       "_origin": "ast",
       "id": "js_interact_onsplitup",
       "community": 2,
@@ -1059,7 +1049,7 @@
       "label": "onInspDown()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L130",
+      "source_location": "L133",
       "_origin": "ast",
       "id": "js_interact_oninspdown",
       "community": 2,
@@ -1069,7 +1059,7 @@
       "label": "onInspDbl()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L142",
+      "source_location": "L145",
       "_origin": "ast",
       "id": "js_interact_oninspdbl",
       "community": 2,
@@ -1079,7 +1069,7 @@
       "label": "onInspWheel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L151",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "js_interact_oninspwheel",
       "community": 2,
@@ -1089,7 +1079,7 @@
       "label": "inspectInSecondary()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L168",
+      "source_location": "L171",
       "_origin": "ast",
       "id": "js_interact_inspectinsecondary",
       "community": 2,
@@ -1099,7 +1089,7 @@
       "label": "inspectDrill()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L178",
+      "source_location": "L181",
       "_origin": "ast",
       "id": "js_interact_inspectdrill",
       "community": 2,
@@ -1109,7 +1099,7 @@
       "label": "inspGoToLevel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L185",
+      "source_location": "L188",
       "_origin": "ast",
       "id": "js_interact_inspgotolevel",
       "community": 2,
@@ -1119,7 +1109,7 @@
       "label": "updateInspCrumbs()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L191",
+      "source_location": "L194",
       "_origin": "ast",
       "id": "js_interact_updateinspcrumbs",
       "community": 2,
@@ -1129,7 +1119,7 @@
       "label": "onCanvasDown()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L217",
+      "source_location": "L220",
       "_origin": "ast",
       "id": "js_interact_oncanvasdown",
       "community": 2,
@@ -1139,17 +1129,17 @@
       "label": "onCanvasMove()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L304",
+      "source_location": "L307",
       "_origin": "ast",
       "id": "js_interact_oncanvasmove",
-      "community": 10,
+      "community": 2,
       "norm_label": "oncanvasmove()"
     },
     {
       "label": "onCanvasUp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L357",
+      "source_location": "L360",
       "_origin": "ast",
       "id": "js_interact_oncanvasup",
       "community": 2,
@@ -1159,7 +1149,7 @@
       "label": "onCanvasDbl()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L415",
+      "source_location": "L418",
       "_origin": "ast",
       "id": "js_interact_oncanvasdbl",
       "community": 2,
@@ -1169,7 +1159,7 @@
       "label": "onCanvasWheel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L433",
+      "source_location": "L436",
       "_origin": "ast",
       "id": "js_interact_oncanvaswheel",
       "community": 2,
@@ -1179,7 +1169,7 @@
       "label": "onCanvasContext()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L446",
+      "source_location": "L449",
       "_origin": "ast",
       "id": "js_interact_oncanvascontext",
       "community": 2,
@@ -1189,7 +1179,7 @@
       "label": "addAt()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L503",
+      "source_location": "L506",
       "_origin": "ast",
       "id": "js_interact_addat",
       "community": 3,
@@ -1199,7 +1189,7 @@
       "label": "addChipAt()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L517",
+      "source_location": "L520",
       "_origin": "ast",
       "id": "js_interact_addchipat",
       "community": 3,
@@ -1209,7 +1199,7 @@
       "label": "compMenuItems()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L532",
+      "source_location": "L535",
       "_origin": "ast",
       "id": "js_interact_compmenuitems",
       "community": 2,
@@ -1219,7 +1209,7 @@
       "label": "rotateComp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L547",
+      "source_location": "L550",
       "_origin": "ast",
       "id": "js_interact_rotatecomp",
       "community": 3,
@@ -1229,7 +1219,7 @@
       "label": "renameComp()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L553",
+      "source_location": "L556",
       "_origin": "ast",
       "id": "js_interact_renamecomp",
       "community": 2,
@@ -1239,27 +1229,27 @@
       "label": "selectedComps()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L560",
+      "source_location": "L563",
       "_origin": "ast",
       "id": "js_interact_selectedcomps",
-      "community": 3,
+      "community": 2,
       "norm_label": "selectedcomps()"
     },
     {
       "label": "copySelection()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L565",
+      "source_location": "L568",
       "_origin": "ast",
       "id": "js_interact_copyselection",
-      "community": 3,
+      "community": 2,
       "norm_label": "copyselection()"
     },
     {
       "label": "deleteSelection()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L591",
+      "source_location": "L594",
       "_origin": "ast",
       "id": "js_interact_deleteselection",
       "community": 3,
@@ -1269,7 +1259,7 @@
       "label": "dedupeLabel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L602",
+      "source_location": "L605",
       "_origin": "ast",
       "id": "js_interact_dedupelabel",
       "community": 3,
@@ -1279,7 +1269,7 @@
       "label": "pasteClipboard()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L610",
+      "source_location": "L613",
       "_origin": "ast",
       "id": "js_interact_pasteclipboard",
       "community": 3,
@@ -1289,7 +1279,7 @@
       "label": "showContextMenu()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L638",
+      "source_location": "L641",
       "_origin": "ast",
       "id": "js_interact_showcontextmenu",
       "community": 2,
@@ -1299,7 +1289,7 @@
       "label": "buildMenuLevel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L651",
+      "source_location": "L654",
       "_origin": "ast",
       "id": "js_interact_buildmenulevel",
       "community": 2,
@@ -1309,7 +1299,7 @@
       "label": "hideContextMenu()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L670",
+      "source_location": "L673",
       "_origin": "ast",
       "id": "js_interact_hidecontextmenu",
       "community": 2,
@@ -1319,7 +1309,7 @@
       "label": "onKeyDown()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L672",
+      "source_location": "L675",
       "_origin": "ast",
       "id": "js_interact_onkeydown",
       "community": 2,
@@ -1329,7 +1319,7 @@
       "label": "parseBusValue()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L704",
+      "source_location": "L707",
       "_origin": "ast",
       "id": "js_interact_parsebusvalue",
       "community": 4,
@@ -1339,17 +1329,17 @@
       "label": "busValsToHex()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L711",
+      "source_location": "L714",
       "_origin": "ast",
       "id": "js_interact_busvalstohex",
-      "community": 5,
+      "community": 4,
       "norm_label": "busvalstohex()"
     },
     {
       "label": "editWideInput()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L717",
+      "source_location": "L720",
       "_origin": "ast",
       "id": "js_interact_editwideinput",
       "community": 4,
@@ -1359,7 +1349,7 @@
       "label": "onUIHit()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L734",
+      "source_location": "L737",
       "_origin": "ast",
       "id": "js_interact_onuihit",
       "community": 3,
@@ -1369,37 +1359,37 @@
       "label": "dragWireSegment()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L759",
+      "source_location": "L762",
       "_origin": "ast",
       "id": "js_interact_dragwiresegment",
-      "community": 10,
+      "community": 2,
       "norm_label": "dragwiresegment()"
     },
     {
-      "label": "dropPaletteItem()",
+      "label": "onCanvasDrop()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L784",
+      "source_location": "L785",
       "_origin": "ast",
-      "id": "js_interact_droppaletteitem",
+      "id": "js_interact_oncanvasdrop",
       "community": 3,
-      "norm_label": "droppaletteitem()"
+      "norm_label": "oncanvasdrop()"
     },
     {
       "label": "innerCircuitOf()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L801",
+      "source_location": "L819",
       "_origin": "ast",
       "id": "js_interact_innercircuitof",
-      "community": 3,
+      "community": 2,
       "norm_label": "innercircuitof()"
     },
     {
       "label": "innerName()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L814",
+      "source_location": "L832",
       "_origin": "ast",
       "id": "js_interact_innername",
       "community": 2,
@@ -1409,7 +1399,7 @@
       "label": "enterComponent()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L828",
+      "source_location": "L846",
       "_origin": "ast",
       "id": "js_interact_entercomponent",
       "community": 2,
@@ -1419,7 +1409,7 @@
       "label": "goToLevel()",
       "file_type": "code",
       "source_file": "js/interact.js",
-      "source_location": "L841",
+      "source_location": "L859",
       "_origin": "ast",
       "id": "js_interact_gotolevel",
       "community": 2,
@@ -1512,7 +1502,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "js_model_snap",
-      "community": 10,
+      "community": 3,
       "norm_label": "snap()"
     },
     {
@@ -1582,7 +1572,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "js_model_isbus",
-      "community": 1,
+      "community": 3,
       "norm_label": "isbus()"
     },
     {
@@ -1642,7 +1632,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 10,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1652,7 +1642,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 10,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1662,7 +1652,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 10,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1672,7 +1662,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 10,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1812,7 +1802,7 @@
       "source_location": "L286",
       "_origin": "ast",
       "id": "js_model_registerdef",
-      "community": 3,
+      "community": 5,
       "norm_label": "registerdef()"
     },
     {
@@ -1852,7 +1842,7 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "js_model_builtindefs",
-      "community": 5,
+      "community": 3,
       "norm_label": "builtindefs()"
     },
     {
@@ -1872,7 +1862,7 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "js_model_definuse",
-      "community": 5,
+      "community": 3,
       "norm_label": "definuse()"
     },
     {
@@ -2042,7 +2032,7 @@
       "source_location": "L658",
       "_origin": "ast",
       "id": "js_model_defaultwireroute",
-      "community": 10,
+      "community": 1,
       "norm_label": "defaultwireroute()"
     },
     {
@@ -2052,48 +2042,8 @@
       "source_location": "L664",
       "_origin": "ast",
       "id": "js_model_wireroutepoints",
-      "community": 10,
+      "community": 1,
       "norm_label": "wireroutepoints()"
-    },
-    {
-      "label": "palette-drag.js",
-      "file_type": "code",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "js_palette_drag",
-      "community": 15,
-      "norm_label": "palette-drag.js"
-    },
-    {
-      "label": "inside()",
-      "file_type": "code",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L33",
-      "_origin": "ast",
-      "id": "js_palette_drag_inside",
-      "community": 15,
-      "norm_label": "inside()"
-    },
-    {
-      "label": "attach()",
-      "file_type": "code",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L39",
-      "_origin": "ast",
-      "id": "js_palette_drag_attach",
-      "community": 15,
-      "norm_label": "attach()"
-    },
-    {
-      "label": "makeGhost()",
-      "file_type": "code",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L89",
-      "_origin": "ast",
-      "id": "js_palette_drag_makeghost",
-      "community": 15,
-      "norm_label": "makeghost()"
     },
     {
       "label": "render.js",
@@ -2312,7 +2262,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "js_render_computewirelanes",
-      "community": 10,
+      "community": 1,
       "norm_label": "computewirelanes()"
     },
     {
@@ -2322,7 +2272,7 @@
       "source_location": "L307",
       "_origin": "ast",
       "id": "js_render_assignwirelanes",
-      "community": 10,
+      "community": 1,
       "norm_label": "assignwirelanes()"
     },
     {
@@ -2332,7 +2282,7 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "js_render_effroute",
-      "community": 10,
+      "community": 1,
       "norm_label": "effroute()"
     },
     {
@@ -2652,7 +2602,7 @@
       "source_location": "L1044",
       "_origin": "ast",
       "id": "js_render_hitpin",
-      "community": 1,
+      "community": 2,
       "norm_label": "hitpin()"
     },
     {
@@ -2672,7 +2622,7 @@
       "source_location": "L1080",
       "_origin": "ast",
       "id": "js_render_hitwireseg",
-      "community": 10,
+      "community": 1,
       "norm_label": "hitwireseg()"
     },
     {
@@ -2682,7 +2632,7 @@
       "source_location": "L1108",
       "_origin": "ast",
       "id": "js_render_hitwire",
-      "community": 2,
+      "community": 1,
       "norm_label": "hitwire()"
     },
     {
@@ -2692,7 +2642,7 @@
       "source_location": "L1115",
       "_origin": "ast",
       "id": "js_render_painttoolicon",
-      "community": 5,
+      "community": 1,
       "norm_label": "painttoolicon()"
     },
     {
@@ -2732,7 +2682,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 3,
+      "community": 5,
       "norm_label": "toast()"
     },
     {
@@ -2766,30 +2716,20 @@
       "norm_label": "buildpalette()"
     },
     {
-      "label": "initPaletteDrag()",
-      "file_type": "code",
-      "source_file": "js/ui.js",
-      "source_location": "L139",
-      "_origin": "ast",
-      "id": "js_ui_initpalettedrag",
-      "community": 5,
-      "norm_label": "initpalettedrag()"
-    },
-    {
       "label": "updatePaletteSelection()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L160",
+      "source_location": "L141",
       "_origin": "ast",
       "id": "js_ui_updatepaletteselection",
-      "community": 2,
+      "community": 5,
       "norm_label": "updatepaletteselection()"
     },
     {
       "label": "deleteCustomDef()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L166",
+      "source_location": "L147",
       "_origin": "ast",
       "id": "js_ui_deletecustomdef",
       "community": 5,
@@ -2799,7 +2739,7 @@
       "label": "initUI()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L177",
+      "source_location": "L158",
       "_origin": "ast",
       "id": "js_ui_initui",
       "community": 5,
@@ -2809,27 +2749,27 @@
       "label": "setMode()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L249",
+      "source_location": "L229",
       "_origin": "ast",
       "id": "js_ui_setmode",
-      "community": 2,
+      "community": 5,
       "norm_label": "setmode()"
     },
     {
       "label": "updateSimUI()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L271",
+      "source_location": "L251",
       "_origin": "ast",
       "id": "js_ui_updatesimui",
-      "community": 4,
+      "community": 5,
       "norm_label": "updatesimui()"
     },
     {
       "label": "updateCrumbs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L296",
+      "source_location": "L276",
       "_origin": "ast",
       "id": "js_ui_updatecrumbs",
       "community": 5,
@@ -2839,7 +2779,7 @@
       "label": "togglePanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L329",
+      "source_location": "L309",
       "_origin": "ast",
       "id": "js_ui_togglepanel",
       "community": 5,
@@ -2849,17 +2789,17 @@
       "label": "closePanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L334",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "js_ui_closepanel",
-      "community": 2,
+      "community": 5,
       "norm_label": "closepanel()"
     },
     {
       "label": "toggleBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L340",
+      "source_location": "L320",
       "_origin": "ast",
       "id": "js_ui_toggleboolpanel",
       "community": 5,
@@ -2869,7 +2809,7 @@
       "label": "closeBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L345",
+      "source_location": "L325",
       "_origin": "ast",
       "id": "js_ui_closeboolpanel",
       "community": 5,
@@ -2879,7 +2819,7 @@
       "label": "refreshLivePanels()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L349",
+      "source_location": "L329",
       "_origin": "ast",
       "id": "js_ui_refreshlivepanels",
       "community": 5,
@@ -2889,7 +2829,7 @@
       "label": "renderPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L354",
+      "source_location": "L334",
       "_origin": "ast",
       "id": "js_ui_renderpanel",
       "community": 5,
@@ -2899,7 +2839,7 @@
       "label": "renderInputsPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L365",
+      "source_location": "L345",
       "_origin": "ast",
       "id": "js_ui_renderinputspanel",
       "community": 5,
@@ -2909,7 +2849,7 @@
       "label": "renderBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L408",
+      "source_location": "L388",
       "_origin": "ast",
       "id": "js_ui_renderboolpanel",
       "community": 5,
@@ -2919,7 +2859,7 @@
       "label": "releaseMomentaryInputs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L439",
+      "source_location": "L419",
       "_origin": "ast",
       "id": "js_ui_releasemomentaryinputs",
       "community": 4,
@@ -2929,7 +2869,7 @@
       "label": "renderTTPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L448",
+      "source_location": "L428",
       "_origin": "ast",
       "id": "js_ui_renderttpanel",
       "community": 5,
@@ -2939,7 +2879,7 @@
       "label": "showExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L496",
+      "source_location": "L476",
       "_origin": "ast",
       "id": "js_ui_showexprpopup",
       "community": 4,
@@ -2949,7 +2889,7 @@
       "label": "refreshExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L507",
+      "source_location": "L487",
       "_origin": "ast",
       "id": "js_ui_refreshexprpopup",
       "community": 4,
@@ -2959,37 +2899,37 @@
       "label": "closeExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L514",
+      "source_location": "L494",
       "_origin": "ast",
       "id": "js_ui_closeexprpopup",
-      "community": 2,
+      "community": 5,
       "norm_label": "closeexprpopup()"
     },
     {
       "label": "toggleTimeline()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L523",
+      "source_location": "L503",
       "_origin": "ast",
       "id": "js_ui_toggletimeline",
-      "community": 5,
+      "community": 4,
       "norm_label": "toggletimeline()"
     },
     {
       "label": "renderTimeline()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L533",
+      "source_location": "L513",
       "_origin": "ast",
       "id": "js_ui_rendertimeline",
-      "community": 5,
+      "community": 4,
       "norm_label": "rendertimeline()"
     },
     {
       "label": "createIC()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L605",
+      "source_location": "L585",
       "_origin": "ast",
       "id": "js_ui_createic",
       "community": 5,
@@ -2999,27 +2939,27 @@
       "label": "openFormulaPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L627",
+      "source_location": "L607",
       "_origin": "ast",
       "id": "js_ui_openformulapanel",
-      "community": 3,
+      "community": 5,
       "norm_label": "openformulapanel()"
     },
     {
       "label": "closeFormulaPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L635",
+      "source_location": "L615",
       "_origin": "ast",
       "id": "js_ui_closeformulapanel",
-      "community": 3,
+      "community": 5,
       "norm_label": "closeformulapanel()"
     },
     {
       "label": "buildFromFormula()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L637",
+      "source_location": "L617",
       "_origin": "ast",
       "id": "js_ui_buildfromformula",
       "community": 3,
@@ -3029,7 +2969,7 @@
       "label": "saveLocal()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L680",
+      "source_location": "L660",
       "_origin": "ast",
       "id": "js_ui_savelocal",
       "community": 5,
@@ -3039,27 +2979,27 @@
       "label": "loadLocal()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L695",
+      "source_location": "L675",
       "_origin": "ast",
       "id": "js_ui_loadlocal",
-      "community": 3,
+      "community": 5,
       "norm_label": "loadlocal()"
     },
     {
       "label": "exportDefs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L715",
+      "source_location": "L695",
       "_origin": "ast",
       "id": "js_ui_exportdefs",
-      "community": 3,
+      "community": 5,
       "norm_label": "exportdefs()"
     },
     {
       "label": "onImportFile()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L734",
+      "source_location": "L714",
       "_origin": "ast",
       "id": "js_ui_onimportfile",
       "community": 5,
@@ -3369,7 +3309,7 @@
       "label": "Architecture",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L43",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "claude_architecture",
       "community": 17,
@@ -3379,7 +3319,7 @@
       "label": "Analog simulator (second tab)",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L98",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "claude_analog_simulator_second_tab",
       "community": 17,
@@ -3389,7 +3329,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L130",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3399,7 +3339,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L142",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3409,7 +3349,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L152",
+      "source_location": "L145",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -4577,16 +4517,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/analog/ui.js",
-      "source_location": "L460",
-      "weight": 1.0,
-      "source": "analog_ui",
-      "target": "analog_ui_anmenulevel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/ui.js",
       "source_location": "L136",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -4602,17 +4532,6 @@
       "confidence_score": 1.0,
       "source": "analog_ui",
       "target": "analog_ui_anshowmenu"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/analog/ui.js",
-      "source_location": "L491",
-      "weight": 1.0,
-      "source": "analog_ui_anshowmenu",
-      "target": "analog_ui_anmenulevel",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4702,9 +4621,9 @@
       "source_file": "js/engine.js",
       "source_location": "L686",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_bool_ops"
+      "target": "js_engine_bool_ops",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4712,9 +4631,9 @@
       "source_file": "js/engine.js",
       "source_location": "L827",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_boolastkey"
+      "target": "js_engine_boolastkey",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4832,9 +4751,9 @@
       "source_file": "js/engine.js",
       "source_location": "L811",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_evalboolast"
+      "target": "js_engine_evalboolast",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4942,9 +4861,9 @@
       "source_file": "js/engine.js",
       "source_location": "L727",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_notnode"
+      "target": "js_engine_notnode",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4952,9 +4871,9 @@
       "source_file": "js/engine.js",
       "source_location": "L729",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_parseboolexpr"
+      "target": "js_engine_parseboolexpr",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4962,9 +4881,9 @@
       "source_file": "js/engine.js",
       "source_location": "L781",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_parseboolformulas"
+      "target": "js_engine_parseboolformulas",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -5102,9 +5021,9 @@
       "source_file": "js/engine.js",
       "source_location": "L840",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_synthboolcircuit"
+      "target": "js_engine_synthboolcircuit",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -5152,9 +5071,9 @@
       "source_file": "js/engine.js",
       "source_location": "L690",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine",
-      "target": "js_engine_tokenizebool"
+      "target": "js_engine_tokenizebool",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6139,6 +6058,17 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
+      "source_location": "L723",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_engine_afterstructchange"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
       "source_location": "L340",
       "weight": 1.0,
       "source": "js_interact_oncanvasup",
@@ -6459,9 +6389,9 @@
       "source_file": "js/engine.js",
       "source_location": "L730",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine_parseboolexpr",
-      "target": "js_engine_tokenizebool"
+      "target": "js_engine_tokenizebool",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6470,9 +6400,9 @@
       "source_file": "js/engine.js",
       "source_location": "L804",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine_parseboolformulas",
-      "target": "js_engine_parseboolexpr"
+      "target": "js_engine_parseboolexpr",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6481,9 +6411,9 @@
       "source_file": "js/engine.js",
       "source_location": "L841",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_engine_synthboolcircuit",
-      "target": "js_engine_parseboolformulas"
+      "target": "js_engine_parseboolformulas",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -6666,16 +6596,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/interact.js",
-      "source_location": "L784",
-      "weight": 1.0,
-      "source": "js_interact",
-      "target": "js_interact_droppaletteitem",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
       "source_location": "L634",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -6831,6 +6751,16 @@
       "confidence_score": 1.0,
       "source": "js_interact",
       "target": "js_interact_oncanvasdown"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/interact.js",
+      "source_location": "L699",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "js_interact",
+      "target": "js_interact_oncanvasdrop"
     },
     {
       "relation": "contains",
@@ -7067,17 +6997,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/interact.js",
-      "source_location": "L788",
-      "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
-      "target": "js_interact_mousepos",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
       "source_location": "L395",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7104,6 +7023,17 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "js_interact_oncanvasdown",
+      "target": "js_interact_mousepos"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/interact.js",
+      "source_location": "L707",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "js_interact_oncanvasdrop",
       "target": "js_interact_mousepos"
     },
     {
@@ -8220,17 +8150,6 @@
     {
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L791",
-      "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
-      "target": "js_interact_addat",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
@@ -8293,17 +8212,6 @@
       "weight": 1.0,
       "source": "js_interact_addchipat",
       "target": "js_ui_toast"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/interact.js",
-      "source_location": "L790",
-      "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
-      "target": "js_interact_addchipat",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -8817,9 +8725,9 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L785",
+      "source_location": "L701",
       "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
+      "source": "js_interact_oncanvasdrop",
       "target": "js_model_canedit"
     },
     {
@@ -8828,9 +8736,75 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L789",
+      "source_location": "L717",
       "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_compsize"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L709",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_curcircuit"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L712",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_makecomp"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L714",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_nextlabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L718",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_snap"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L721",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
+      "target": "js_model_touchcircuit"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/interact.js",
+      "source_location": "L708",
+      "weight": 1.0,
+      "source": "js_interact_oncanvasdrop",
       "target": "js_render_screentoworld"
     },
     {
@@ -8839,9 +8813,9 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/interact.js",
-      "source_location": "L785",
+      "source_location": "L701",
       "weight": 1.0,
-      "source": "js_interact_droppaletteitem",
+      "source": "js_interact_oncanvasdrop",
       "target": "js_ui_toast"
     },
     {
@@ -11064,36 +11038,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L39",
-      "weight": 1.0,
-      "source": "js_palette_drag",
-      "target": "js_palette_drag_attach",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L33",
-      "weight": 1.0,
-      "source": "js_palette_drag",
-      "target": "js_palette_drag_inside",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/palette-drag.js",
-      "source_location": "L89",
-      "weight": 1.0,
-      "source": "js_palette_drag",
-      "target": "js_palette_drag_makeghost",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "js/render.js",
       "source_location": "L82",
       "weight": 1.0,
@@ -12577,9 +12521,9 @@
       "source_location": "L619",
       "weight": 1.0,
       "context": "call",
-      "confidence_score": 1.0,
       "source": "js_ui_buildfromformula",
-      "target": "js_ui"
+      "target": "js_ui",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12621,9 +12565,9 @@
       "source_location": "L615",
       "weight": 1.0,
       "context": "call",
-      "confidence_score": 1.0,
       "source": "js_ui_closeformulapanel",
-      "target": "js_ui"
+      "target": "js_ui",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12680,17 +12624,6 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "js/ui.js",
-      "source_location": "L142",
-      "weight": 1.0,
-      "context": "call",
-      "source": "js_ui_initpalettedrag",
-      "target": "js_ui",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "js/ui.js",
       "source_location": "L151",
       "weight": 1.0,
       "context": "call",
@@ -12725,9 +12658,9 @@
       "source_location": "L609",
       "weight": 1.0,
       "context": "call",
-      "confidence_score": 1.0,
       "source": "js_ui_openformulapanel",
-      "target": "js_ui"
+      "target": "js_ui",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -12936,9 +12869,9 @@
       "source_file": "js/ui.js",
       "source_location": "L653",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui_buildfromformula",
-      "target": "js_ui_toast"
+      "target": "js_ui_toast",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -12991,9 +12924,9 @@
       "source_file": "js/ui.js",
       "source_location": "L608",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui_openformulapanel",
-      "target": "js_ui_toast"
+      "target": "js_ui_toast",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -13088,17 +13021,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/ui.js",
-      "source_location": "L180",
-      "weight": 1.0,
-      "source": "js_ui_initui",
-      "target": "js_ui_initpalettedrag",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/ui.js",
       "source_location": "L149",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -13145,9 +13067,9 @@
       "source_file": "js/ui.js",
       "source_location": "L240",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui_setmode",
-      "target": "js_ui_closeformulapanel"
+      "target": "js_ui_closeformulapanel",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -13310,9 +13232,9 @@
       "source_file": "js/ui.js",
       "source_location": "L618",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "js_ui_buildfromformula",
-      "target": "js_ui_closeformulapanel"
+      "target": "js_ui_closeformulapanel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14476,5 +14398,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "72e2a1318bb4e671f381c3bc23dee72bb9fbf330"
+  "built_at_commit": "dc33d674e3b32b0368980c23427843599864ae12"
 }

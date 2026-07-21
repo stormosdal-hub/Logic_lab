@@ -106,6 +106,9 @@ body.sim #palette { opacity: 0.45; pointer-events: none; }
   border-radius: 6px;
   cursor: grab;
   font-size: 13px;
+  /* a sideways drag pulls the part out; a vertical one still scrolls the list */
+  touch-action: pan-y;
+  user-select: none;
 }
 .tool:hover { background: var(--panel2); border-color: var(--edge); }
 .tool.selected { background: #0e2f4a; border-color: var(--accent); }
@@ -117,6 +120,27 @@ body.sim #palette { opacity: 0.45; pointer-events: none; }
 }
 .tool .mini:hover { color: var(--text); background: #36424f; }
 .pal-empty { font-size: 12px; color: var(--dim); padding: 2px 6px; font-style: italic; }
+
+/* the part that follows the pointer while dragging out of a palette */
+.pal-ghost {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .55);
+  opacity: .6;
+}
+.pal-ghost.over { opacity: 1; border-color: var(--accent); }
+.pal-ghost canvas { border-radius: 3px; }
 
 #stage { flex: 1; position: relative; min-width: 0; background: #151a21; }
 #canvas { position: absolute; inset: 0; display: block; }
@@ -366,7 +390,18 @@ table.tt tr.tt-row.tt-active { background: rgba(63, 220, 139, 0.18); outline: 1p
   padding: 4px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.5);
 }
-#ctxMenu .ctx-item {
+#anCtxMenu {
+  position: fixed;
+  z-index: 60;
+  min-width: 156px;
+  background: rgba(27, 34, 43, 0.98);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+#ctxMenu .ctx-item,
+#anCtxMenu .ctx-item {
   display: block;
   width: 100%;
   text-align: left;
@@ -379,13 +414,20 @@ table.tt tr.tt-row.tt-active { background: rgba(63, 220, 139, 0.18); outline: 1p
   cursor: pointer;
   position: relative;
 }
-#ctxMenu .ctx-item:hover { background: var(--panel2); }
-#ctxMenu .ctx-item.danger { color: var(--warn); }
-#ctxMenu .ctx-item.danger:hover { background: #3a2230; }
-#ctxMenu .ctx-sep { height: 1px; background: var(--edge); margin: 4px 2px; }
-#ctxMenu .ctx-disabled { padding: 6px 12px; font-size: 12px; font-style: italic; color: var(--dim); cursor: default; }
-#ctxMenu .ctx-arrow { float: right; margin-left: 12px; color: var(--dim); }
-#ctxMenu .ctx-sub {
+#ctxMenu .ctx-item:hover,
+#anCtxMenu .ctx-item:hover { background: var(--panel2); }
+#ctxMenu .ctx-item.danger,
+#anCtxMenu .ctx-item.danger { color: var(--warn); }
+#ctxMenu .ctx-item.danger:hover,
+#anCtxMenu .ctx-item.danger:hover { background: #3a2230; }
+#ctxMenu .ctx-sep,
+#anCtxMenu .ctx-sep { height: 1px; background: var(--edge); margin: 4px 2px; }
+#ctxMenu .ctx-disabled,
+#anCtxMenu .ctx-disabled { padding: 6px 12px; font-size: 12px; font-style: italic; color: var(--dim); cursor: default; }
+#ctxMenu .ctx-arrow,
+#anCtxMenu .ctx-arrow { float: right; margin-left: 12px; color: var(--dim); }
+#ctxMenu .ctx-sub,
+#anCtxMenu .ctx-sub {
   display: none;
   position: absolute;
   left: 100%;
@@ -397,8 +439,10 @@ table.tt tr.tt-row.tt-active { background: rgba(63, 220, 139, 0.18); outline: 1p
   padding: 4px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.5);
 }
-#ctxMenu .ctx-item.has-sub:hover > .ctx-sub { display: block; }
-#ctxMenu.flip-left .ctx-sub { left: auto; right: 100%; }
+#ctxMenu .ctx-item.has-sub:hover > .ctx-sub,
+#anCtxMenu .ctx-item.has-sub:hover > .ctx-sub { display: block; }
+#ctxMenu.flip-left .ctx-sub,
+#anCtxMenu.flip-left .ctx-sub { left: auto; right: 100%; }
 
 /* ---------- toast ---------- */
 #toast {
@@ -524,17 +568,16 @@ button.primary.live { background: var(--on); border-color: var(--on); }
 #anPalette { width: 184px; background: var(--panel); border-right: 1px solid var(--edge); padding: 10px; overflow: auto; flex-shrink: 0; }
 #anPalette h3 { margin: 12px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--dim); }
 #anPalette h3:first-child { margin-top: 0; }
-.an-part { display: block; width: 100%; text-align: left; margin-bottom: 6px; background: var(--panel2); color: var(--text); border: 1px solid var(--edge); padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+/* touch-action: a sideways drag pulls the part out, a vertical one scrolls */
+.an-part { display: block; width: 100%; text-align: left; margin-bottom: 6px; background: var(--panel2); color: var(--text); border: 1px solid var(--edge); padding: 8px 10px; border-radius: 6px; cursor: grab; font-size: 13px; touch-action: pan-y; }
 .an-part:hover { border-color: var(--accent); }
 .an-part.active { background: #0e3a5f; border-color: var(--accent); color: #fff; }
 .an-hint { color: var(--dim); font-size: 11px; line-height: 1.5; margin-top: 12px; }
 
-#anStage { flex: 1; position: relative; min-width: 0; overflow: hidden; }
+#anStage { flex: 1; position: relative; min-width: 0; overflow: hidden; background: #151a21; }
 #anCanvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 
-#anCtxMenu { position: fixed; z-index: 60; background: var(--panel2); border: 1px solid var(--edge); border-radius: 6px; padding: 4px; min-width: 152px; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
-.an-ctx-item { padding: 7px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
-.an-ctx-item:hover { background: var(--accent); color: #06121f; }
+/* (#anCtxMenu shares the digital menu's styling — see "context menu" above) */
 
 #anMeters { position: absolute; inset: 0; pointer-events: none; z-index: 20; }
 .an-meter { position: absolute; pointer-events: auto; width: 152px; background: var(--panel2); border: 1px solid var(--accent); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.55); overflow: hidden; }

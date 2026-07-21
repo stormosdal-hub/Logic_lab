@@ -129,11 +129,14 @@
       }),
     ].filter(Boolean);
 
+    function closeEverything() { apps.forEach(function (a) { a.closeAll(); }); }
+
     // closing all drawers when the tab changes keeps each app tidy
     var tabbar = document.getElementById("tabbar");
-    if (tabbar) tabbar.addEventListener("click", function () {
-      apps.forEach(function (a) { a.closeAll(); });
-    });
+    if (tabbar) tabbar.addEventListener("click", closeEverything);
+
+    // dragging a part out of the palette needs the sheet visible
+    window.MobileDrawers = { closeAll: closeEverything };
   }
 
   if (document.readyState === "loading")

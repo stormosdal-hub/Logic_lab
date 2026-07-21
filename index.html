@@ -115,7 +115,7 @@
         <h2>How to use Logic Lab <button id="helpClose">✕</button></h2>
         <h3>Building (Edit mode)</h3>
         <ul>
-          <li><b>Add components:</b> drag them from the left panel onto the worksheet. Gates use IEC symbols (<code>&amp;</code>=AND, <code>≥1</code>=OR, <code>=1</code>=XOR, <code>1</code>=NOT/buffer; a circle on the output = inverted).</li>
+          <li><b>Add components:</b> drag them from the left panel onto the worksheet — or click a part and then click the sheet, or right-click empty sheet and pick one from the menu. Gates use IEC symbols (<code>&amp;</code>=AND, <code>≥1</code>=OR, <code>=1</code>=XOR, <code>1</code>=NOT/buffer; a circle on the output = inverted).</li>
           <li><b>Wires:</b> drag from one pin to another pin (output → input). Wires run with 90° bends — <b>drag any segment sideways</b> to route it around components (dragging the end segments adds extra bends).</li>
           <li><b>Buses &amp; tri-state:</b> a <b>Tri-state Buffer</b> passes its data through when the enable input is high, and goes <b>high-impedance (Hi-Z)</b> — drawn as a dashed amber wire — when disabled. Hold <kbd>Shift</kbd> while dropping a wire onto an input to add a <i>second</i> driver, so several tri-state outputs can share one wire (a bus). Enable only one driver at a time; if two disagree the status shows <b>⚠ SHORT CIRCUIT</b>.</li>
           <li><b>Junctions:</b> drag a <b>Junction (bus tap)</b> onto the sheet to make a shared bus point. Wire several tri-state outputs <i>into</i> the dot (they merge automatically — no Shift needed), then wire <i>from</i> the dot to whatever reads the bus. The dot's colour follows the resolved bus value.</li>
@@ -131,7 +131,7 @@
           <li><b>Palette:</b> click a category heading to collapse or expand it (<b>Latches &amp; flip-flops</b> and <b>Registers &amp; counters</b> start collapsed).</li>
           <li><b>Copy / cut / paste:</b> select component(s) and use <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>X</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd>. Pasted inputs/outputs get a suffix (<code>(1)</code>, <code>(2)</code>…) if their label is already in use.</li>
           <li><b>View:</b> mouse-wheel zooms, drag empty space to pan.</li>
-          <li><b>On a phone / tablet:</b> <b>tap a part</b> in the palette then <b>tap the sheet</b> to drop it (tap the part again or press away to disarm). <b>Drag</b> with one finger to pan, <b>pinch</b> with two to zoom, and <b>press-and-hold</b> a component for its menu (Delete / Rotate / Rename / Look inside). For box-select and moving groups, turn on the <b>⇧ Select</b> button — it acts like holding Shift.</li>
+          <li><b>On a phone / tablet:</b> <b>drag a part</b> straight out of the palette onto the sheet (a sideways pull grabs the part; an up-and-down one still scrolls the list), or <b>tap a part</b> then <b>tap the sheet</b> to drop it (tap the part again or press away to disarm). <b>Drag</b> with one finger to pan, <b>pinch</b> with two to zoom, and <b>press-and-hold</b> a component for its menu (Delete / Rotate / Rename / Look inside). For box-select and moving groups, turn on the <b>⇧ Select</b> button — it acts like holding Shift.</li>
         </ul>
         <h3>Custom components (ICs)</h3>
         <ul>
@@ -193,6 +193,7 @@
 <script src="js/builtins.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/touch.js"></script>
+<script src="js/palette-drag.js"></script>
 <script src="js/render.js"></script>
 <script src="js/interact.js"></script>
 <script src="js/ui.js"></script>

@@ -70,6 +70,21 @@ Analog.bindCanvas = function () {
     });
 };
 
+/* Drop a new part on the sheet at a world point, labelled and selected.
+   Palette drag, click-to-place and the right-click quick-add all land here. */
+Analog.addPartAt = function (type, wx, wy) {
+  const App = Analog.App;
+  if (App.mode !== "edit") return null;
+  const c = Analog.makeComp(type, Analog.snap(wx), Analog.snap(wy));
+  const lb = Analog.autoLabel(type);
+  if (lb) c.label = lb;
+  App.circ.comps.push(c);
+  App.selection = [c];
+  Analog.snapshot();
+  Analog.requestRender();
+  return c;
+};
+
 function _anDown(e) {
   const App = Analog.App;
   Analog.hideCtxMenu();
@@ -81,16 +96,7 @@ function _anDown(e) {
   if (App.wiring) return;
 
   // placement tool active
-  if (App.tool && App.mode === "edit") {
-    const c = Analog.makeComp(App.tool, Analog.snap(w.x), Analog.snap(w.y));
-    const lb = Analog.autoLabel(App.tool);
-    if (lb) c.label = lb;
-    App.circ.comps.push(c);
-    App.selection = [c];
-    Analog.snapshot();
-    Analog.requestRender();
-    return;
-  }
+  if (App.tool && App.mode === "edit") { Analog.addPartAt(App.tool, w.x, w.y); return; }
 
   // sim mode: click a meter → readout window; click a switch → flip it;
   // grab a potentiometer → drag its wiper
@@ -266,7 +272,9 @@ function _anContext(e) {
   const c = Analog.hitComp(w.x, w.y);
   if (c) { App.selection = [c]; Analog.requestRender(); Analog.showCtxMenu(c, e.clientX, e.clientY); return; }
   const wr = Analog.hitWire(w.x, w.y);
-  if (wr) Analog.showWireMenu(wr, e.clientX, e.clientY);
+  if (wr) { Analog.showWireMenu(wr, e.clientX, e.clientY); return; }
+  // empty sheet: pick a part straight out of the menu, dropped where you clicked
+  if (App.mode === "edit") Analog.showAddMenu(w.x, w.y, e.clientX, e.clientY);
 }
 
 function _anWheel(e) {

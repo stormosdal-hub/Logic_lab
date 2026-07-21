@@ -9,6 +9,11 @@ if (typeof Analog === "undefined") { var Analog = {}; }
 
 /* (GRID / snap live in model.js so the routing helpers stay pure) */
 
+/* sheet background — matched to the digital tab's canvas so both sheets read
+   as the same worksheet (COL.bg / COL.grid in render.js) */
+const AN_BG = "#151a21";
+const AN_GRID = "#222b36";
+
 /* view transform helpers */
 Analog.screenToWorld = function (sx, sy) {
   const v = Analog.App.view;
@@ -35,19 +40,24 @@ Analog.render = function () {
   const W = cv.width / dpr, H = cv.height / dpr, sim = App.mode === "sim";
   const res = sim ? App.result : null;
 
+  const v = App.view;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  g.fillStyle = "#0f1420";
+  g.fillStyle = AN_BG;
   g.fillRect(0, 0, W, H);
 
-  const v = App.view;
-  g.setTransform(v.scale * dpr, 0, 0, v.scale * dpr, v.ox * dpr, v.oy * dpr);
+  // grid dots — drawn in screen space like the digital sheet, so they stay
+  // crisp 2px dots at any zoom (and thin out instead of swarming when small)
+  const step = Analog.GRID * v.scale;
+  if (step >= 9) {
+    g.fillStyle = AN_GRID;
+    const x0 = ((v.ox % step) + step) % step;
+    const y0 = ((v.oy % step) + step) % step;
+    for (let x = x0; x < W; x += step)
+      for (let y = y0; y < H; y += step)
+        g.fillRect(x - 1, y - 1, 2, 2);
+  }
 
-  // grid
-  const x0 = -v.ox / v.scale, y0 = -v.oy / v.scale, x1 = x0 + W / v.scale, y1 = y0 + H / v.scale;
-  g.fillStyle = "#1b2436";
-  const G = Analog.GRID;
-  for (let x = Math.floor(x0 / G) * G; x < x1; x += G)
-    for (let y = Math.floor(y0 / G) * G; y < y1; y += G) g.fillRect(x - 0.5, y - 0.5, 1, 1);
+  g.setTransform(v.scale * dpr, 0, 0, v.scale * dpr, v.ox * dpr, v.oy * dpr);
 
   // wires (orthogonal polylines)
   g.lineWidth = 3; g.lineCap = "round"; g.lineJoin = "round";
@@ -172,7 +182,7 @@ function _drawComp(g, c, sim, res) {
   g.save();
   g.translate(c.x, c.y);
   g.rotate((c.rot & 3) * Math.PI / 2);
-  g.lineWidth = 2.5; g.strokeStyle = "#cdd8ea"; g.fillStyle = "#0f1420";
+  g.lineWidth = 2.5; g.strokeStyle = "#cdd8ea"; g.fillStyle = AN_BG;
   g.lineCap = "round";
 
   if (c.type === "RES") {
