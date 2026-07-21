@@ -14,6 +14,22 @@ if (typeof Analog === "undefined") { var Analog = {}; }
 const AN_BG = "#151a21";
 const AN_GRID = "#222b36";
 
+/* ---- current-flow animation ----
+   Dots ride each wire in the direction of conventional current, at a speed set by
+   how much current that wire carries *relative to the busiest wire in the circuit*.
+   A per-circuit scale (rather than an absolute one) is what makes it readable: a
+   µA circuit animates as legibly as an amp one, and what you read off it is which
+   branch carries more — the probe tooltip still gives the absolute number.
+
+   The reference decays toward the present instead of tracking the instantaneous
+   peak, so an AC circuit visibly slows to a stop and reverses each half-cycle
+   rather than always running flat out. */
+const AN_FLOW_GAP = 26;       // nominal world-px between dots on a wire
+const AN_FLOW_SPEED = 115;    // world-px/second at full current
+const AN_FLOW_MIN = 0.002;    // quieter than this fraction of the reference → no dots
+const AN_FLOW_DECAY = 1.2;    // seconds for the speed reference to fade
+const AN_FLOW_COL = "#eaf3ff";
+
 /* view transform helpers */
 Analog.screenToWorld = function (sx, sy) {
   const v = Analog.App.view;
@@ -40,6 +56,14 @@ Analog.render = function () {
   const W = cv.width / dpr, H = cv.height / dpr, sim = App.mode === "sim";
   const res = sim ? App.result : null;
 
+  // wall-clock delta drives the flow animation, so it runs at the same rate no
+  // matter what triggered this frame (clamped, so a backgrounded tab can't jump)
+  const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+  App._flowDt = App._flowT ? Math.min(0.1, (now - App._flowT) / 1000) : 0;
+  App._flowT = now;
+  // per-wire current: the flow dots ride it, the hover probe reports it
+  App._flowCur = sim && res && res.ok ? Analog.wireCurrents(App.circ, res) : null;
+
   const v = App.view;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
   g.fillStyle = AN_BG;
@@ -60,9 +84,11 @@ Analog.render = function () {
   g.setTransform(v.scale * dpr, 0, 0, v.scale * dpr, v.ox * dpr, v.oy * dpr);
 
   // wires (orthogonal polylines)
+  const paths = [];
   g.lineWidth = 3; g.lineCap = "round"; g.lineJoin = "round";
   for (const w of App.circ.wires) {
     const pts = Analog.wirePath(App.circ, w);
+    paths.push(pts);
     if (pts.length < 2) continue;
     g.strokeStyle = sim && res && res.ok ? _anVColor(res.volt(w.from.c, w.from.t)) : "#8aa0c0";
     g.beginPath();
@@ -70,6 +96,10 @@ Analog.render = function () {
     for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
     g.stroke();
   }
+
+  // current flowing along the wires — drawn over them but under the parts, so a
+  // dot slides beneath a component the way the wire itself does
+  if (sim && App.flow) _drawFlow(g, App, paths);
 
   // components
   for (const c of App.circ.comps) _drawComp(g, c, sim, res);
@@ -125,6 +155,59 @@ Analog.render = function () {
   _drawProbe(g, App, res);
 };
 
+/* Point at arc-length `s` along a polyline. */
+function _atArc(pts, s) {
+  for (let i = 1; i < pts.length; i++) {
+    const dx = pts[i].x - pts[i - 1].x, dy = pts[i].y - pts[i - 1].y;
+    const len = Math.hypot(dx, dy);
+    if (s <= len || i === pts.length - 1) {
+      const t = len ? Math.max(0, Math.min(1, s / len)) : 0;
+      return { x: pts[i - 1].x + dx * t, y: pts[i - 1].y + dy * t };
+    }
+    s -= len;
+  }
+  return pts[pts.length - 1];
+}
+
+/* Animate the current: dots marching along each wire. `w._flow` is the phase,
+   kept as a fraction of one dot spacing so it survives the wire being re-routed
+   or the parts being moved. Spacing is the wire's length divided by a whole
+   number of dots, so one dot leaves the far end exactly as another enters — no
+   flicker on short wires, and nothing to reset when the geometry changes. */
+function _drawFlow(g, App, paths) {
+  const cur = App._flowCur;
+  if (!cur) return;
+  let peak = 0;
+  for (const i of cur.values()) { const a = Math.abs(i); if (a > peak) peak = a; }
+  App.flowRef = Math.max(peak, (App.flowRef || 0) * Math.exp(-(App._flowDt || 0) / AN_FLOW_DECAY));
+  const ref = App.flowRef;
+  if (!(ref > 0)) return;
+
+  g.save();
+  g.fillStyle = AN_FLOW_COL;
+  App.circ.wires.forEach((w, wi) => {
+    const I = cur.get(w) || 0, u = Math.abs(I) / ref;
+    const pts = paths[wi];
+    if (u < AN_FLOW_MIN || !pts || pts.length < 2) return;
+
+    let L = 0;
+    for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    if (L < 1) return;
+
+    const n = Math.max(1, Math.round(L / AN_FLOW_GAP)), gap = L / n;
+    const step = Math.sign(I) * AN_FLOW_SPEED * Math.pow(u, 0.55) * (App._flowDt || 0) / gap;
+    const ph = (w._flow || 0) + step;
+    w._flow = ph - Math.floor(ph);                       // keep the phase in [0, 1)
+
+    g.globalAlpha = 0.35 + 0.65 * Math.pow(u, 0.35);     // faint on the quiet branches
+    for (let k = 0; k < n; k++) {
+      const p = _atArc(pts, (w._flow + k) * gap);
+      g.beginPath(); g.arc(p.x, p.y, 2.6, 0, 7); g.fill();
+    }
+  });
+  g.restore();
+}
+
 /* Lines of text for the sim-mode hover probe, from the hovered target. */
 function _probeLines(App, res, p) {
   if (!res || !res.ok) return null;
@@ -135,7 +218,10 @@ function _probeLines(App, res, p) {
   }
   if (p.kind === "wire") {
     if (!circ.wires.includes(p.w)) return null;
-    return [Analog.fmt(res.volt(p.w.from.c, p.w.from.t), "V")];
+    const lines = [Analog.fmt(res.volt(p.w.from.c, p.w.from.t), "V")];
+    const I = App._flowCur && App._flowCur.get(p.w);
+    if (I != null) lines.push("I " + Analog.fmt(Math.abs(I), "A"));
+    return lines;
   }
   const c = p.comp;
   if (!circ.comps.includes(c)) return null;

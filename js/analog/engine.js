@@ -278,6 +278,36 @@ function _anSolveMode(circ, mode, dt, time) {
     else if (c.type === "RELAY") i = vdiff(c) / Math.max(c.value, 1e-3);   // coil current
     cur.set(c, i);
   }
+  // Per-terminal currents, positive = flowing OUT of that terminal into the wires.
+  // The element current above is one number per part, but the flow animation has to
+  // know what each terminal contributes — and a pot, relay or transistor has its own
+  // internal topology. They sum to zero across a component (KCL); ground is left out
+  // because the datum, not a drawn wire, carries its return.
+  const tcur = new Map();
+  const setT = (c, t, v) => tcur.set(c.id + ":" + t, v);
+  for (const c of circ.comps) {
+    const def = Analog.TYPES[c.type] || {};
+    const i = cur.get(c) || 0;
+    if (c.type === "GND") continue;
+    if (def.pot) {
+      const { raw, rwb } = _potR(c);
+      const iaw = (termV(c.id, 0) - termV(c.id, 1)) / raw, iwb = (termV(c.id, 1) - termV(c.id, 2)) / rwb;
+      setT(c, 0, -iaw); setT(c, 1, iaw - iwb); setT(c, 2, iwb);
+    } else if (def.relay) {
+      const ik = (termV(c.id, 2) - termV(c.id, 3)) / (c._on ? _SW_RON : _SW_ROFF);
+      setT(c, 0, -i); setT(c, 1, i); setT(c, 2, -ik); setT(c, 3, ik);   // coil, then contact
+    } else if (def.bjt) {
+      const sg = def.npn ? 1 : -1, bf = c.value > 0 ? c.value : def.bf;
+      const vbe = sg * (termV(c.id, 1) - termV(c.id, 2)), vbc = sg * (termV(c.id, 1) - termV(c.id, 0));
+      const ebe = Math.exp(Math.min(vbe / _VT, 80)), ebc = Math.exp(Math.min(vbc / _VT, 80));
+      const ib = def.is * (ebe - 1) / bf + def.is * (ebc - 1) / def.br;   // base current into the device
+      setT(c, 0, -i); setT(c, 1, -sg * ib); setT(c, 2, i + sg * ib);
+    } else if (def.isrc || c.type === "DCV" || c.type === "ACV" || c.type === "SQV") {
+      setT(c, 0, i); setT(c, 1, -i);        // sources deliver their current out of terminal 0
+    } else {
+      setT(c, 0, -i); setT(c, 1, i);        // passives: positive current enters terminal 0
+    }
+  }
   // advance reactive state for the next step
   if (mode === "tran")
     for (const c of circ.comps) {
@@ -299,9 +329,71 @@ function _anSolveMode(circ, mode, dt, time) {
     ok: true, mode, nodes,
     volt: (cid, t) => termV(cid, t),
     current: c => cur.get(c) || 0,
+    termCurrent: (c, t) => tcur.get(c.id + ":" + t) || 0,
     meter: c => (c.type === "AM" ? (cur.get(c) || 0) : vdiff(c)),   // VM/SCOPE read differential voltage
   };
 }
+
+/* Signed current in every wire — positive means it runs from `w.from` to `w.to`.
+   Used by the flow animation (and the wire probe).
+
+   MNA solves for node voltages, which say nothing about how a node's current
+   splits between the individual wires that make it up. But those wires form a
+   graph whose vertices (terminals) have known injections, and on a tree that
+   forces the answer: each wire carries the net injection of everything hanging
+   off its far side. Wires that close a loop *within one node* are left at zero —
+   the split between ideal parallel conductors is genuinely undefined.
+
+   This works over wire-connected clusters rather than electrical nodes, since
+   two ground symbols are one node but are not wired to each other. A GND
+   terminal is the slack in its cluster: it absorbs whatever is left over,
+   because its return path is the datum rather than a wire on the sheet. */
+Analog.wireCurrents = function (circ, res) {
+  const out = new Map();
+  for (const w of circ.wires) out.set(w, 0);
+  if (!res || !res.ok || !res.termCurrent) return out;
+
+  const key = (cid, t) => cid + ":" + t;
+  const adj = new Map();
+  const edge = (k, w, o) => { const a = adj.get(k); if (a) a.push({ w, o }); else adj.set(k, [{ w, o }]); };
+  for (const w of circ.wires) {
+    const a = key(w.from.c, w.from.t), b = key(w.to.c, w.to.t);
+    edge(a, w, b); edge(b, w, a);
+  }
+
+  const inj = new Map(), datum = new Set();
+  for (const c of circ.comps)
+    for (let t = 0, n = Analog.numTerminals(c); t < n; t++) {
+      const k = key(c.id, t);
+      if (c.type === "GND") datum.add(k); else inj.set(k, res.termCurrent(c, t));
+    }
+
+  const seen = new Set();
+  for (const start of adj.keys()) {
+    if (seen.has(start)) continue;
+    // spanning tree of this cluster, breadth-first so parents precede children
+    const order = [start], pw = new Map(), pk = new Map();
+    seen.add(start);
+    for (let qi = 0; qi < order.length; qi++)
+      for (const e of adj.get(order[qi]) || []) {
+        if (seen.has(e.o)) continue;
+        seen.add(e.o); pw.set(e.o, e.w); pk.set(e.o, order[qi]); order.push(e.o);
+      }
+    // any grounds here share the leftover current so the cluster balances
+    let sum = 0, gnds = 0;
+    for (const k of order) { if (datum.has(k)) gnds++; else sum += inj.get(k) || 0; }
+    const share = gnds ? -sum / gnds : 0;
+    const acc = new Map();
+    for (const k of order) acc.set(k, datum.has(k) ? share : (inj.get(k) || 0));
+    // leaves first: push each subtree's net current up through the wire holding it
+    for (let i = order.length - 1; i > 0; i--) {
+      const k = order[i], w = pw.get(k), f = acc.get(k), p = pk.get(k);
+      acc.set(p, acc.get(p) + f);
+      out.set(w, key(w.from.c, w.from.t) === k ? f : -f);
+    }
+  }
+  return out;
+};
 
 /* DC operating point (resistive; C open, L short). Relay contacts and fuses are
    discrete functions of their own current, so re-solve until every state settles. */

@@ -602,5 +602,154 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   check("removeWire: split after", nodes.nodeAt(r1.id, 1) !== nodes.nodeAt(r2.id, 0));
 }
 
+/* ---- 29. per-terminal currents sum to zero (KCL across a component) ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const p = A.makeComp("POT", 100, 0, { value: 1000, ratio: 0.25 });
+  const g = A.makeComp("GND", 200, 0);
+  const k = A.makeComp("RELAY", 300, 0, { value: 200 });
+  const load = A.makeComp("RES", 400, 0, { value: 1000 });
+  c.comps.push(v, p, g, k, load);
+  A.addWire(c, v, 0, p, 0);     // + — pot end A
+  A.addWire(c, p, 1, k, 0);     // wiper — relay coil +
+  A.addWire(c, k, 1, g, 0);     // coil − — gnd
+  A.addWire(c, p, 2, g, 0);     // pot end B — gnd
+  A.addWire(c, v, 1, g, 0);
+  A.addWire(c, v, 0, k, 2);     // + — contact in  (an unwired contact floats the matrix)
+  A.addWire(c, k, 3, load, 0);  // contact out — load — gnd
+  A.addWire(c, load, 1, g, 0);
+  const s = A.solveDC(c);
+  check("terminals: solves", s.ok);
+  const sumT = comp => {
+    let t = 0;
+    for (let i = 0; i < A.numTerminals(comp); i++) t += s.termCurrent(comp, i);
+    return t;
+  };
+  check("terminals: pot KCL closes", near(sumT(p), 0, 1e-9));
+  check("terminals: relay KCL closes", near(sumT(k), 0, 1e-9));
+  check("terminals: source KCL closes", near(sumT(v), 0, 1e-9));
+  // a passive takes current in at terminal 0, a source delivers it out of terminal 0
+  check("terminals: pot end A draws current in", s.termCurrent(p, 0) < 0);
+  check("terminals: source delivers out of +", s.termCurrent(v, 0) > 0);
+}
+
+/* ---- 30. wire currents: a series loop carries one current everywhere ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(v, r, g);
+  const wa = A.addWire(c, v, 0, r, 0);
+  const wb = A.addWire(c, r, 1, g, 0);
+  const wc = A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  const f = A.wireCurrents(c, s);
+  check("flow: + rail carries 10 mA toward the resistor", near(f.get(wa), 0.01, 1e-9));
+  check("flow: return leg carries 10 mA into ground", near(f.get(wb), 0.01, 1e-9));
+  check("flow: source return runs ground → −", near(f.get(wc), -0.01, 1e-9));
+}
+
+/* ---- 31. wire currents split at a junction and follow the branch ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const r1 = A.makeComp("RES", 100, 0, { value: 1000 });    // 10 mA
+  const r2 = A.makeComp("RES", 100, 100, { value: 2000 });  // 5 mA
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(v, r1, r2, g);
+  const trunk = A.addWire(c, v, 0, r1, 0);     // source → first branch
+  const tap = A.addWire(c, r1, 0, r2, 0);      // …and on to the second
+  A.addWire(c, r1, 1, g, 0);
+  A.addWire(c, r2, 1, g, 0);
+  A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  const f = A.wireCurrents(c, s);
+  check("flow: trunk carries both branches", near(f.get(trunk), 0.015, 1e-9));
+  check("flow: tap carries only the far branch", near(f.get(tap), 0.005, 1e-9));
+}
+
+/* ---- 32. an open switch stops the flow; closing it starts it ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const sw = A.makeComp("SW", 100, 0);
+  const r = A.makeComp("RES", 200, 0, { value: 1000 });
+  const g = A.makeComp("GND", 300, 0);
+  c.comps.push(v, sw, r, g);
+  const w1 = A.addWire(c, v, 0, sw, 0);
+  A.addWire(c, sw, 1, r, 0);
+  A.addWire(c, r, 1, g, 0);
+  A.addWire(c, v, 1, g, 0);
+  const open = A.wireCurrents(c, A.solveDC(c));
+  check("flow: open switch → no current in the wire", Math.abs(open.get(w1)) < 1e-6);
+  sw.closed = true;
+  const shut = A.wireCurrents(c, A.solveDC(c));
+  check("flow: closed switch → ~10 mA", near(shut.get(w1), 0.01, 1e-5));
+}
+
+/* ---- 33. flow direction reverses with the source ---- */
+{
+  const mk = polarity => {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 5 * polarity });
+    const r = A.makeComp("RES", 100, 0, { value: 500 });
+    const g = A.makeComp("GND", 200, 0);
+    c.comps.push(v, r, g);
+    const w = A.addWire(c, v, 0, r, 0);
+    A.addWire(c, r, 1, g, 0);
+    A.addWire(c, v, 1, g, 0);
+    return A.wireCurrents(c, A.solveDC(c)).get(w);
+  };
+  check("flow: forward source drives from → to", mk(1) > 0);
+  check("flow: reversed source flips the sign", mk(-1) < 0);
+  check("flow: magnitudes match", near(Math.abs(mk(1)), Math.abs(mk(-1)), 1e-12));
+}
+
+/* ---- 34. an unwired / unsolvable sheet yields a zeroed map, not a crash ---- */
+{
+  const c = A.newCircuit();
+  const r = A.makeComp("RES", 0, 0, { value: 100 });
+  const r2 = A.makeComp("RES", 100, 0, { value: 100 });
+  c.comps.push(r, r2);
+  const w = A.addWire(c, r, 1, r2, 0);
+  const bad = A.solveDC(c);          // no ground
+  check("flow: ungrounded sheet doesn't solve", !bad.ok);
+  const f = A.wireCurrents(c, bad);
+  check("flow: unsolved → every wire reads zero", f.get(w) === 0);
+  check("flow: null result is safe", A.wireCurrents(c, null).get(w) === 0);
+}
+
+/* ---- 35. transistor: wire currents agree with the element currents around it ----
+   A real cross-check — the collector wire's current is derived from the BJT's
+   per-terminal split, the resistor's from Ohm's law, and they must match. ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const rc = A.makeComp("RES", 100, 0, { value: 1000 });
+  const rb = A.makeComp("RES", 100, 100, { value: 100000 });
+  const q = A.makeComp("NPN", 200, 50, { value: 100 });
+  const g = A.makeComp("GND", 300, 0);
+  c.comps.push(v, rc, rb, q, g);
+  A.addWire(c, v, 0, rc, 0);
+  const wCol = A.addWire(c, rc, 1, q, 0);
+  A.addWire(c, v, 0, rb, 0);
+  const wBase = A.addWire(c, rb, 1, q, 1);
+  const wEmit = A.addWire(c, q, 2, g, 0);
+  A.addWire(c, v, 1, g, 0);
+  const s = A.solveDC(c);
+  check("bjt: biases up", s.ok);
+  const f = A.wireCurrents(c, s);
+  const ic = s.current(rc), ib = s.current(rb);
+  check("bjt: conducting", ic > 1e-4 && ib > 1e-8);
+  check("bjt: collector wire = collector resistor current", near(f.get(wCol), ic, 1e-9));
+  check("bjt: base wire = base resistor current", near(f.get(wBase), ib, 1e-9));
+  check("bjt: emitter wire carries Ic + Ib to ground", near(f.get(wEmit), ic + ib, 1e-7));
+  let sum = 0;
+  for (let i = 0; i < 3; i++) sum += s.termCurrent(q, i);
+  check("bjt: terminal KCL closes", near(sum, 0, 1e-9));
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

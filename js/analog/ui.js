@@ -12,7 +12,7 @@ Analog.App = {
   mode: "edit", circ: null,
   view: { ox: 120, oy: 120, scale: 1 },
   selection: [], tool: null, wiring: null, hover: null, drag: null,
-  probe: null, clip: null,
+  probe: null, clip: null, flow: true, flowRef: 0,
   result: null, meters: [], canvas: null, ctx: null, _raf: 0, dpr: 1,
 };
 
@@ -74,7 +74,7 @@ Analog.initTabs = function () {
     for (const b of bar.querySelectorAll(".tab")) b.classList.toggle("active", b === btn);
     document.getElementById("digitalApp").classList.toggle("hidden", tab !== "digital");
     document.getElementById("analogApp").classList.toggle("hidden", tab !== "analog");
-    if (tab === "analog") { Analog.init(); Analog.resize(); Analog.requestRender(); }
+    if (tab === "analog") { Analog.init(); Analog.resize(); Analog.syncFlowLoop(); Analog.requestRender(); }
   });
 };
 
@@ -92,6 +92,7 @@ Analog.init = function () {
 
   document.getElementById("anModeBtn").addEventListener("click", Analog.toggleMode);
   document.getElementById("anRunBtn").addEventListener("click", Analog.toggleRun);
+  document.getElementById("anFlowBtn").addEventListener("click", Analog.toggleFlow);
   document.getElementById("anNewBtn").addEventListener("click", () => {
     if (App.mode === "sim") Analog.toggleMode();
     App.circ = Analog.newCircuit(); App.selection = []; App.result = null;
@@ -150,7 +151,9 @@ Analog.buildPalette = function () {
     "sideways to re-route it; right-click a wire to straighten or delete it. " +
     "<kbd>Shift</kbd>+drag box-selects; <kbd>R</kbd> rotates, <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo, " +
     "<kbd>Ctrl</kbd>+<kbd>C</kbd>/<kbd>V</kbd> copy/paste. Add a <b>Ground</b> for a reference. " +
-    "While simulating: hover anything to probe it, click switches, drag a potentiometer.";
+    "While simulating: hover anything to probe it, click switches, drag a potentiometer. " +
+    "<b>Flow dots</b> travel the way the current does, faster on the branches carrying more of it " +
+    "(speed is relative to the busiest wire — the <b>◦◦ Flow</b> button turns them off).";
   host.appendChild(hint);
 };
 /* Drag a part out of the palette onto the sheet (pointer-based, so it works
@@ -306,6 +309,7 @@ Analog.toggleMode = function () {
 Analog.enterSim = function () {
   const App = Analog.App, S = Analog.Sim;
   S.time = 0;
+  App.flowRef = 0;              // each run rescales the flow animation to its own currents
   Analog.initTransient(App.circ);
   for (const c of App.circ.comps) if (Analog.isScope(c)) c._trace = [];
   S.transient = Analog.isTransient(App.circ);
@@ -331,6 +335,38 @@ Analog.exitSim = function () {
   document.getElementById("anTime").classList.add("hidden");
   Analog.resolve();   // clears result + status back to edit mode
   Analog.snapshot();  // capture any structural edits made while simulating
+};
+
+/* ---- current-flow animation ----
+   A transient run already redraws every step, so the dots ride along for free
+   (and freeze when it's paused). A static DC solve draws once and stops, so it
+   needs a frame loop of its own — started only while there's something to
+   animate, so an idle or unsolvable sheet costs nothing. */
+Analog.syncFlowLoop = function () {
+  const App = Analog.App, S = Analog.Sim;
+  const want = App.flow && App.mode === "sim" && !S.transient && App.result && App.result.ok;
+  if (want && !S.flowRaf) {
+    const tick = () => {
+      S.flowRaf = 0;
+      const A2 = Analog.App;
+      if (!(A2.flow && A2.mode === "sim" && !Analog.Sim.transient && A2.result && A2.result.ok)) return;
+      if (document.getElementById("analogApp").classList.contains("hidden")) return;   // other tab is up
+      Analog.render();
+      S.flowRaf = requestAnimationFrame(tick);
+    };
+    S.flowRaf = requestAnimationFrame(tick);
+  } else if (!want && S.flowRaf) {
+    cancelAnimationFrame(S.flowRaf); S.flowRaf = 0;
+  }
+};
+Analog.toggleFlow = function () {
+  const App = Analog.App;
+  App.flow = !App.flow;
+  const b = document.getElementById("anFlowBtn");
+  b.classList.toggle("active", App.flow);
+  b.title = App.flow ? "Hide the current-flow animation" : "Show current flowing through the wires as moving dots";
+  Analog.syncFlowLoop();
+  Analog.requestRender();
 };
 Analog.startRun = function () {
   const S = Analog.Sim;
@@ -382,6 +418,7 @@ Analog.resolve = function () {
   else if (!App.result.ok) { st.textContent = "⚠ " + App.result.error; st.className = "an-status err"; }
   else { st.textContent = "▶ solved"; st.className = "an-status ok"; }
   Analog.refreshMeters();
+  Analog.syncFlowLoop();
   Analog.requestRender();
 };
 
