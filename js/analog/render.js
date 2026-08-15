@@ -155,6 +155,59 @@ Analog.render = function () {
   _drawProbe(g, App, res);
 };
 
+/* ---- palette symbols ----
+   Ink bounds of a symbol in its own coordinates, measured by drawing it once to
+   a scratch canvas and scanning for opaque pixels. `compBox` only knows where
+   the terminals are, which frames some parts badly (a ground is drawn entirely
+   below its single terminal), and hand-declared extents would quietly drift as
+   symbols get edited. Measured once per type, then cached. */
+const _symBounds = {};
+/* A throwaway part used only for painting a tile. `_icon` tells the symbol code
+   to drop annotations that would be illegible at that size. */
+function _iconComp(type) { const c = Analog.makeComp(type, 0, 0); c._icon = true; return c; }
+
+function _symbolBounds(type) {
+  if (_symBounds[type]) return _symBounds[type];
+  const S = 90, N = 2 * S;
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = N;
+  const g = cv.getContext("2d");
+  g.translate(S, S);
+  _drawSymbol(g, _iconComp(type), false, null);
+  const px = g.getImageData(0, 0, N, N).data;
+  let x0 = N, y0 = N, x1 = -1, y1 = -1;
+  for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++)
+      if (px[(y * N + x) * 4 + 3] > 8) {
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        if (y > y1) y1 = y;
+      }
+  const b = x1 < x0 ? { x: -20, y: -20, w: 40, h: 40 }
+    : { x: x0 - S, y: y0 - S, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+  return (_symBounds[type] = b);
+}
+
+/* Paint a component's schematic symbol into a small canvas, scaled to fit and
+   centred — used for the palette tiles and the drag ghost. Tall symbols (a DPDT
+   is twice as high as it is wide) grow the box up to `maxPy` rather than
+   shrinking to a smudge in a landscape tile. */
+Analog.paintSymbol = function (cv, type, px = 46, py = 30, maxPy = 54) {
+  const b = _symbolBounds(type);
+  py = Math.max(py, Math.min(maxPy, Math.round(px * b.h / b.w)));
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(px * dpr); cv.height = Math.round(py * dpr);
+  cv.style.width = px + "px"; cv.style.height = py + "px";
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, px, py);
+  const s = Math.min((px - 3) / b.w, (py - 3) / b.h);
+  g.translate(px / 2 - (b.x + b.w / 2) * s, py / 2 - (b.y + b.h / 2) * s);
+  g.scale(s, s);
+  _drawSymbol(g, _iconComp(type), false, null);
+};
+
 /* Point at arc-length `s` along a polyline. */
 function _atArc(pts, s) {
   for (let i = 1; i < pts.length; i++) {
@@ -210,12 +263,18 @@ function _drawFlow(g, App, paths) {
 
 /* Lines of text for the sim-mode hover probe, from the hovered target. */
 function _probeLines(App, res, p) {
-  if (!res || !res.ok) return null;
   const circ = App.circ;
+  // terminals name themselves even in edit mode — that's when you're wiring them
   if (p.kind === "term") {
-    if (!Analog.compById(circ, p.c)) return null;
-    return [Analog.fmt(res.volt(p.c, p.t), "V")];
+    const tc = Analog.compById(circ, p.c);
+    if (!tc) return null;
+    const lines = [];
+    const nm = Analog.terminalName(tc, p.t);
+    if (nm) lines.push(nm);
+    if (res && res.ok) lines.push(Analog.fmt(res.volt(p.c, p.t), "V"));
+    return lines.length ? lines : null;
   }
+  if (!res || !res.ok) return null;
   if (p.kind === "wire") {
     if (!circ.wires.includes(p.w)) return null;
     const lines = [Analog.fmt(res.volt(p.w.from.c, p.w.from.t), "V")];
@@ -233,6 +292,14 @@ function _probeLines(App, res, p) {
   if (def.bjt) return ["Ic " + Analog.fmt(I, "A"), "Vce " + Analog.fmt(V(0, 2), "V"), "Vbe " + Analog.fmt(V(1, 2), "V")];
   if (def.relay) return ["coil " + Analog.fmt(Math.abs(V(0, 1)) / Math.max(c.value, 1e-3), "A"),
     "contact " + (c._on ? "closed" : "open")];
+  if (def.spdt) {
+    const lines = ["COM → " + (c.closed ? "NO" : "NC")];
+    if ((def.poles || 1) > 1)   // ganged poles carry their own currents
+      for (let p = 0; p < def.poles; p++)
+        lines.push("pole " + (p + 1) + " " + Analog.fmt(Math.abs(res.termCurrent(c, p * 3)), "A"));
+    else lines.push("I " + Analog.fmt(Math.abs(I), "A"));
+    return lines;
+  }
   if (def.pot) return ["wiper " + Math.round(100 * (c.ratio == null ? 0.5 : c.ratio)) + "% · " + Analog.fmt(res.volt(c.id, 1), "V"),
     "drag ← → to adjust"];
   const lines = ["V " + Analog.fmt(V(0, 1), "V"), "I " + Analog.fmt(I, "A")];
@@ -242,7 +309,7 @@ function _probeLines(App, res, p) {
 
 function _drawProbe(g, App, res) {
   const p = App.probe;
-  if (!p || App.mode !== "sim") return;
+  if (!p) return;   // edit mode only ever sets a terminal probe (to name the pin)
   const lines = _probeLines(App, res, p);
   if (!lines || !lines.length) return;
   const dpr = App.dpr || 1;
@@ -264,10 +331,20 @@ function _drawProbe(g, App, res) {
 }
 
 function _drawComp(g, c, sim, res) {
-  const def = Analog.TYPES[c.type];
   g.save();
   g.translate(c.x, c.y);
   g.rotate((c.rot & 3) * Math.PI / 2);
+  _drawSymbol(g, c, sim, res);
+  g.restore();
+  _drawLabels(g, c, sim, res);
+}
+
+/* The schematic symbol on its own, drawn in the component's local (already
+   translated & rotated) frame. Split out of _drawComp so the palette tiles and
+   the drag ghost paint the very same symbol — a tile can't drift out of step
+   with what actually lands on the sheet. */
+function _drawSymbol(g, c, sim, res) {
+  const def = Analog.TYPES[c.type];
   g.lineWidth = 2.5; g.strokeStyle = "#cdd8ea"; g.fillStyle = AN_BG;
   g.lineCap = "round";
 
@@ -397,6 +474,35 @@ function _drawComp(g, c, sim, res) {
     g.beginPath(); g.moveTo(-13, by); g.lineTo(13, by); g.stroke();     // bridging bar
     g.beginPath(); g.moveTo(0, by); g.lineTo(0, by - 8); g.stroke();    // stem
     g.beginPath(); g.arc(0, by - 11, 3, 0, 7); g.stroke();             // cap
+  } else if (def.spdt) {
+    // changeover: COM on the left, NC above / NO below on the right, one such
+    // pole per [COM, NC, NO] triple. Each lever rests on NC and swings to NO.
+    const T = def.terminals, mids = [];
+    for (let p = 0; p < def.terminals.length; p += 3) {
+      const com = T[p], nc = T[p + 1], no = T[p + 2];
+      const piv = com.x + 16, post = nc.x - 16, land = c.closed ? no.y : nc.y;
+      g.strokeStyle = "#cdd8ea";
+      g.beginPath(); g.moveTo(com.x, com.y); g.lineTo(piv, com.y); g.stroke();          // COM lead
+      g.beginPath();
+      g.moveTo(post, nc.y); g.lineTo(nc.x, nc.y);
+      g.moveTo(post, no.y); g.lineTo(no.x, no.y);
+      g.stroke();                                                                        // contact leads
+      g.fillStyle = "#cdd8ea";
+      for (const q of [[piv, com.y], [post, nc.y], [post, no.y]]) { g.beginPath(); g.arc(q[0], q[1], 2.5, 0, 7); g.fill(); }
+      g.beginPath(); g.moveTo(piv, com.y); g.lineTo(post, land); g.stroke();             // lever
+      mids.push((com.y + land) / 2);
+      if (!c._icon) {   // illegible at palette size, and it shrinks the tile's symbol
+        g.fillStyle = "#7e93b2"; g.font = "9px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+        g.fillText("NC", nc.x - 10, nc.y - 11);
+        g.fillText("NO", no.x - 10, no.y + 11);
+      }
+    }
+    // ganged poles throw together — show the mechanical linkage
+    if (mids.length > 1 && !c._icon) {
+      g.save(); g.setLineDash([3, 3]); g.lineWidth = 1.2; g.strokeStyle = "#5a6a85";
+      g.beginPath(); g.moveTo(0, Math.min(...mids)); g.lineTo(0, Math.max(...mids)); g.stroke();
+      g.restore();
+    }
   } else if (c.type === "RELAY") {
     const on = sim && res && res.ok && !!c._on;
     // coil (left) between terminals 0 & 1
@@ -410,8 +516,12 @@ function _drawComp(g, c, sim, res) {
     g.save(); g.setLineDash([3, 3]); g.lineWidth = 1.2; g.strokeStyle = on ? "#ffd166" : "#5a6a85";   // actuator
     g.beginPath(); g.moveTo(-10, 0); g.lineTo(22, 0); g.stroke(); g.restore();
   }
-  g.restore();
+}
 
+/* Designator and value/reading text, drawn upright in world space (never rotated
+   with the part) below and above its bounding box. */
+function _drawLabels(g, c, sim, res) {
+  const def = Analog.TYPES[c.type];
   // designator (R1, C2, …) above the part
   const box = Analog.compBox(c);
   if (c.label) {

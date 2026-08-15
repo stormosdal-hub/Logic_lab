@@ -565,11 +565,14 @@ button.primary.live { background: var(--on); border-color: var(--on); }
 .an-status.err { color: var(--warn); }
 
 #anMain { flex: 1; display: flex; min-height: 0; }
-#anPalette { width: 184px; background: var(--panel); border-right: 1px solid var(--edge); padding: 10px; overflow: auto; flex-shrink: 0; }
+#anPalette { width: 198px; background: var(--panel); border-right: 1px solid var(--edge); padding: 8px; overflow: auto; flex-shrink: 0; }
 #anPalette h3 { margin: 12px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--dim); }
 #anPalette h3:first-child { margin-top: 0; }
 /* touch-action: a sideways drag pulls the part out, a vertical one scrolls */
-.an-part { display: block; width: 100%; text-align: left; margin-bottom: 6px; background: var(--panel2); color: var(--text); border: 1px solid var(--edge); padding: 8px 10px; border-radius: 6px; cursor: grab; font-size: 13px; touch-action: pan-y; }
+/* tiles carry the part's schematic symbol next to its name (Analog.paintSymbol) */
+.an-part { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; margin-bottom: 5px; background: var(--panel2); color: var(--text); border: 1px solid var(--edge); padding: 4px 6px; border-radius: 6px; cursor: grab; font-size: 13px; touch-action: pan-y; }
+.an-part canvas { flex-shrink: 0; border-radius: 3px; background: #182130; }
+.an-part span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .an-part:hover { border-color: var(--accent); }
 .an-part.active { background: #0e3a5f; border-color: var(--accent); color: #fff; }
 .an-hint { color: var(--dim); font-size: 11px; line-height: 1.5; margin-top: 12px; }

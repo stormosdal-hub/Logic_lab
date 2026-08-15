@@ -41,6 +41,8 @@ const AN_PALETTE = [
   { group: "Switches & relays", items: [
     { type: "SW", label: "Switch" },
     { type: "PUSH", label: "Push Button" },
+    { type: "SPDT", label: "Switch (SPDT)" },
+    { type: "DPDT", label: "Switch (DPDT)" },
     { type: "RELAY", label: "Relay (NO)" },
   ]},
   { group: "Reference & meters", items: [
@@ -56,7 +58,7 @@ const AN_PREFIX = {
   RES: "R", POT: "R", CAP: "C", IND: "L", LAMP: "LP", FUSE: "F",
   DCV: "V", ACV: "V", SQV: "V", ISRC: "I",
   DIODE: "D", ZENER: "D", LED: "D", NPN: "Q", PNP: "Q",
-  SW: "S", PUSH: "S", RELAY: "K",
+  SW: "S", PUSH: "S", SPDT: "S", DPDT: "S", RELAY: "K",
 };
 
 const AN_SAVE_KEY = "logiclab.analog.v1";
@@ -134,7 +136,14 @@ Analog.buildPalette = function () {
     host.appendChild(h);
     for (const item of grp.items) {
       const b = document.createElement("button");
-      b.className = "an-part"; b.dataset.type = item.type; b.textContent = item.label;
+      b.className = "an-part"; b.dataset.type = item.type;
+      b.title = "Drag onto the sheet (or click, then click the sheet)";
+      const cv = document.createElement("canvas");
+      Analog.paintSymbol(cv, item.type);
+      b.appendChild(cv);
+      const nm = document.createElement("span");
+      nm.textContent = item.label;
+      b.appendChild(nm);
       b.addEventListener("click", () => {
         Analog.App.tool = Analog.App.tool === item.type ? null : item.type;
         Analog.updatePaletteSel();
@@ -168,6 +177,7 @@ Analog.initPaletteDrag = function () {
     canvas: () => Analog.App.canvas,
     enabled: () => Analog.App.mode === "edit",
     label: type => (Analog.TYPES[type] && Analog.TYPES[type].name) || type,
+    ghost: type => { const cv = document.createElement("canvas"); Analog.paintSymbol(cv, type, 44, 28); return cv; },
     drop: (type, cx, cy) => {
       const m = Analog.mousePos({ clientX: cx, clientY: cy });
       const w = Analog.screenToWorld(m.x, m.y);
@@ -452,7 +462,12 @@ Analog.showCtxMenu = function (c, sx, sy) {
     c.ratio = Math.max(0, Math.min(1, v / 100));
     Analog.snapshot(); Analog.afterEdit();
   } });
-  if (Analog.isSwitch(c)) items.push({ label: c.closed ? "◯ Open" : "● Close", fn: () => { c.closed = !c.closed; Analog.snapshot(); Analog.afterEdit(); } });
+  if (Analog.isSwitch(c)) items.push({
+    // a changeover switch is never "open" — it just sits on the other contact
+    label: Analog.TYPES[c.type].spdt ? (c.closed ? "⤒ Throw to NC" : "⤓ Throw to NO")
+      : (c.closed ? "◯ Open" : "● Close"),
+    fn: () => { c.closed = !c.closed; Analog.snapshot(); Analog.afterEdit(); },
+  });
   if (c.type === "FUSE" && c._blown) items.push({ label: "🔧 Replace fuse", fn: () => { c._blown = false; Analog.afterEdit(); } });
   items.push({ label: "🏷 Rename…", fn: () => {
     const s = prompt("Label (empty to remove):", c.label || "");

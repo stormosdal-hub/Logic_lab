@@ -751,5 +751,179 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   check("bjt: terminal KCL closes", near(sum, 0, 1e-9));
 }
 
+/* ---- 36. SPDT changeover switch: COM feeds NC at rest, NO when thrown ---- */
+{
+  const build = () => {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 10 });
+    const s = A.makeComp("SPDT", 100, 0);
+    const rnc = A.makeComp("RES", 200, -100, { value: 1000 });   // on the NC contact
+    const rno = A.makeComp("RES", 200, 100, { value: 2000 });    // on the NO contact
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, s, rnc, rno, g);
+    c.wNc = A.addWire(c, s, 1, rnc, 0);
+    c.wNo = A.addWire(c, s, 2, rno, 0);
+    A.addWire(c, v, 0, s, 0);        // + — COM
+    A.addWire(c, rnc, 1, g, 0);
+    A.addWire(c, rno, 1, g, 0);
+    A.addWire(c, v, 1, g, 0);
+    return Object.assign(c, { v, s, rnc, rno });
+  };
+
+  const rest = build();
+  let r = A.solveDC(rest);
+  check("spdt: solves at rest", r.ok);
+  check("spdt: rest → NC branch carries 10 mA", near(r.current(rest.rnc), 0.01, 1e-5));
+  check("spdt: rest → NO branch is dead", Math.abs(r.current(rest.rno)) < 1e-6);
+  check("spdt: rest → COM sees the NC current", near(Math.abs(r.current(rest.s)), 0.01, 1e-5));
+
+  const thrown = build();
+  thrown.s.closed = true;
+  r = A.solveDC(thrown);
+  check("spdt: solves when thrown", r.ok);
+  check("spdt: thrown → NO branch carries 5 mA", near(r.current(thrown.rno), 0.005, 1e-5));
+  check("spdt: thrown → NC branch is dead", Math.abs(r.current(thrown.rnc)) < 1e-6);
+
+  // per-terminal split and the wire flow follow the lever
+  let sum = 0;
+  for (let i = 0; i < 3; i++) sum += r.termCurrent(thrown.s, i);
+  check("spdt: terminal KCL closes", near(sum, 0, 1e-9));
+  const f = A.wireCurrents(thrown, r);
+  check("spdt: flow leaves the NO contact", near(f.get(thrown.wNo), 0.005, 1e-5));
+  check("spdt: no flow on the NC contact", Math.abs(f.get(thrown.wNc)) < 1e-6);
+
+  // an unwired contact must not float the matrix
+  const bare = A.newCircuit();
+  const bv = A.makeComp("DCV", 0, 0, { value: 5 });
+  const bs = A.makeComp("SPDT", 100, 0);
+  const br = A.makeComp("RES", 200, 0, { value: 500 });
+  const bg = A.makeComp("GND", 300, 0);
+  bare.comps.push(bv, bs, br, bg);
+  A.addWire(bare, bv, 0, bs, 0);
+  A.addWire(bare, bs, 1, br, 0);     // NC wired, NO left dangling
+  A.addWire(bare, br, 1, bg, 0);
+  A.addWire(bare, bv, 1, bg, 0);
+  const bres = A.solveDC(bare);
+  check("spdt: dangling NO contact still solves", bres.ok);
+  check("spdt: dangling contact passes 10 mA through NC", near(bres.current(br), 0.01, 1e-5));
+
+  // it round-trips like any other switch
+  const round = A.deserializeCircuit(A.serializeCircuit(thrown));
+  check("spdt: lever position serializes", round.comps.find(x => x.type === "SPDT").closed === true);
+  check("spdt: three terminals", A.numTerminals(bs) === 3);
+}
+
+/* ---- 37. DPDT: two ganged poles throw together and stay independent ---- */
+{
+  // one supply per pole, each feeding its own NC/NO pair of loads
+  const build = () => {
+    const c = A.newCircuit();
+    const g = A.makeComp("GND", 500, 0);
+    const s = A.makeComp("DPDT", 200, 0);
+    const v1 = A.makeComp("DCV", 0, -100, { value: 10 });
+    const v2 = A.makeComp("DCV", 0, 100, { value: 20 });
+    const a1 = A.makeComp("RES", 350, -160, { value: 1000 });   // pole 1 NC
+    const b1 = A.makeComp("RES", 350, -60, { value: 2000 });    // pole 1 NO
+    const a2 = A.makeComp("RES", 350, 60, { value: 4000 });     // pole 2 NC
+    const b2 = A.makeComp("RES", 350, 160, { value: 5000 });    // pole 2 NO
+    c.comps.push(g, s, v1, v2, a1, b1, a2, b2);
+    A.addWire(c, v1, 0, s, 0);   // supply 1 → COM 1
+    A.addWire(c, s, 1, a1, 0);   // NC 1
+    A.addWire(c, s, 2, b1, 0);   // NO 1
+    A.addWire(c, v2, 0, s, 3);   // supply 2 → COM 2
+    A.addWire(c, s, 4, a2, 0);   // NC 2
+    A.addWire(c, s, 5, b2, 0);   // NO 2
+    for (const r of [a1, b1, a2, b2]) A.addWire(c, r, 1, g, 0);
+    A.addWire(c, v1, 1, g, 0);
+    A.addWire(c, v2, 1, g, 0);
+    return Object.assign(c, { s, a1, b1, a2, b2 });
+  };
+
+  check("dpdt: six terminals", A.numTerminals(A.makeComp("DPDT", 0, 0)) === 6);
+  check("dpdt: two poles", A.TYPES.DPDT.poles === 2);
+
+  const rest = build();
+  let r = A.solveDC(rest);
+  check("dpdt: solves at rest", r.ok);
+  check("dpdt: rest → pole 1 feeds NC (10 mA)", near(r.current(rest.a1), 0.01, 1e-5));
+  check("dpdt: rest → pole 2 feeds NC (5 mA)", near(r.current(rest.a2), 0.005, 1e-5));
+  check("dpdt: rest → pole 1 NO dead", Math.abs(r.current(rest.b1)) < 1e-6);
+  check("dpdt: rest → pole 2 NO dead", Math.abs(r.current(rest.b2)) < 1e-6);
+
+  const thrown = build();
+  thrown.s.closed = true;
+  r = A.solveDC(thrown);
+  // both poles move together — that's what "ganged" means
+  check("dpdt: thrown → pole 1 feeds NO (5 mA)", near(r.current(thrown.b1), 0.005, 1e-5));
+  check("dpdt: thrown → pole 2 feeds NO (4 mA)", near(r.current(thrown.b2), 0.004, 1e-5));
+  check("dpdt: thrown → pole 1 NC dead", Math.abs(r.current(thrown.a1)) < 1e-6);
+  check("dpdt: thrown → pole 2 NC dead", Math.abs(r.current(thrown.a2)) < 1e-6);
+
+  // the poles are electrically separate: pole 2 runs at its own supply voltage
+  check("dpdt: poles isolated", near(r.volt(thrown.s.id, 0), 10, 1e-4) && near(r.volt(thrown.s.id, 3), 20, 1e-4));
+
+  // per-terminal split: each COM carries only its own pole's current
+  check("dpdt: COM 1 carries pole 1 only", near(Math.abs(r.termCurrent(thrown.s, 0)), 0.005, 1e-5));
+  check("dpdt: COM 2 carries pole 2 only", near(Math.abs(r.termCurrent(thrown.s, 3)), 0.004, 1e-5));
+  let sum = 0;
+  for (let i = 0; i < 6; i++) sum += r.termCurrent(thrown.s, i);
+  check("dpdt: terminal KCL closes", near(sum, 0, 1e-9));
+  check("dpdt: element current is both poles", near(Math.abs(r.current(thrown.s)), 0.009, 1e-5));
+
+  // dangling contacts are fine, and the lever position round-trips
+  const bare = A.newCircuit();
+  const bv = A.makeComp("DCV", 0, 0, { value: 5 });
+  const bs = A.makeComp("DPDT", 100, 0);
+  const br = A.makeComp("RES", 200, 0, { value: 500 });
+  const bg = A.makeComp("GND", 300, 0);
+  bare.comps.push(bv, bs, br, bg);
+  A.addWire(bare, bv, 0, bs, 0);
+  A.addWire(bare, bs, 1, br, 0);    // only pole 1 NC used; pole 2 entirely unwired
+  A.addWire(bare, br, 1, bg, 0);
+  A.addWire(bare, bv, 1, bg, 0);
+  const bres = A.solveDC(bare);
+  check("dpdt: unused pole doesn't float the matrix", bres.ok);
+  check("dpdt: wired pole still passes 10 mA", near(bres.current(br), 0.01, 1e-5));
+
+  const round = A.deserializeCircuit(A.serializeCircuit(thrown));
+  check("dpdt: lever position serializes", round.comps.find(x => x.type === "DPDT").closed === true);
+  check("dpdt: terminals are named", A.terminalName(bs, 0) === "COM 1" && A.terminalName(bs, 5) === "NO 2");
+  check("terminalName: null when a part needs none", A.terminalName(A.makeComp("RES", 0, 0), 0) === null);
+}
+
+/* ---- 38. a floating section must not take the whole sheet down ----
+   Parts you have dropped but not wired yet (and a switch's unused pole) have no
+   galvanic path to ground, which makes the nodal matrix singular. The GMIN leak
+   anchors them at 0 V so the rest of the circuit still solves exactly. ---- */
+{
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const g = A.makeComp("GND", 200, 0);
+  c.comps.push(v, r, g);
+  A.addWire(c, v, 0, r, 0);
+  A.addWire(c, r, 1, g, 0);
+  A.addWire(c, v, 1, g, 0);
+  check("floating: baseline solves", A.solveDC(c).ok);
+
+  const stray = A.makeComp("RES", 400, 400, { value: 220 });
+  c.comps.push(stray, A.makeComp("VM", 400, 300), A.makeComp("RELAY", 500, 400),
+    A.makeComp("DPDT", 600, 400), A.makeComp("CAP", 700, 400, { value: 1e-6 }));
+  const s = A.solveDC(c);
+  check("floating: unwired parts don't break the solve", s.ok);
+  check("floating: wired circuit still exact", near(s.current(r), 0.01, 1e-9));
+  check("floating: stray part sits at 0 V", near(s.volt(stray.id, 0), 0, 1e-6));
+  check("floating: stray part carries no current", Math.abs(s.current(stray)) < 1e-9);
+
+  // a genuinely shorted source is still reported rather than silently solved
+  const sc = A.newCircuit();
+  const sv = A.makeComp("DCV", 0, 0, { value: 10 });
+  const sg = A.makeComp("GND", 200, 0);
+  sc.comps.push(sv, sg);
+  A.addWire(sc, sv, 0, sv, 1);      // dead short across the source
+  A.addWire(sc, sv, 1, sg, 0);
+  check("floating: shorted source still errors", !A.solveDC(sc).ok);
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

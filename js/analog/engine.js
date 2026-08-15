@@ -21,6 +21,14 @@ Analog.Sim = { active: false, running: false, result: null };
 
 const _VT = 0.025852;   // thermal voltage kT/q at ~300 K
 const _SW_RON = 1e-3, _SW_ROFF = 1e9;   // closed / open contact resistance (switches, relay contacts)
+/* A 100 GΩ leak from every node to the datum (SPICE's GMIN). Any section with no
+   galvanic path to ground makes the nodal matrix singular, which would otherwise
+   take the *whole* sheet down: an unwired part someone has just dropped, a DPDT's
+   unused pole, a relay whose contacts aren't hooked up. This anchors them at 0 V
+   so the rest of the circuit still solves. Well above _anSolve's 1e-12 pivot
+   threshold (so those nodes are solvable) and far too small to perturb a real
+   reading — 1e-8 of a mA in a kΩ circuit. */
+const _GND_LEAK = 1e-11;
 
 /* Fraction of the current square-wave period elapsed (0..1); high for the first half. */
 function _sqPhase(c, time) { const f = c.freq || 0; return ((time * f) % 1 + 1) % 1; }
@@ -28,6 +36,20 @@ function _sqPhase(c, time) { const f = c.freq || 0; return ((time * f) % 1 + 1) 
 /* Effective zener breakdown offset: the exponential adds ≈0.7 V of knee at mA-level
    currents (vt·ln(I/Is)), so shift it down to land conduction at the nameplate Vz. */
 function _zenerVz(c, def) { return Math.max(0.1, (c.value > 0 ? c.value : def.value) - 0.7); }
+
+/* A changeover switch's two contact resistances: the common sits on NC until
+   `closed` throws it over to NO, so exactly one of them is ever conducting.
+   All poles are ganged, so one pair of values covers the whole switch. */
+function _spdtR(c) {
+  return c.closed ? { rnc: _SW_ROFF, rno: _SW_RON } : { rnc: _SW_RON, rno: _SW_ROFF };
+}
+
+/* Index of each pole's COM terminal — terminals run [COM, NC, NO] per pole. */
+function _spdtPoles(c) {
+  const n = Analog.TYPES[c.type].poles || 1, out = [];
+  for (let p = 0; p < n; p++) out.push(p * 3);
+  return out;
+}
 
 /* A potentiometer's two half-resistances (end A → wiper, wiper → end B),
    each clamped away from zero so a full-scale wiper can't short a node. */
@@ -106,6 +128,7 @@ function _anBuild(circ, mode, dt, time, gv, nlState) {
   const sz = n + vsrc.length;
   const A = Array.from({ length: sz }, () => new Array(sz).fill(0));
   const z = new Array(sz).fill(0);
+  for (let k = 0; k < n; k++) A[k][k] += _GND_LEAK;   // keep floating sections solvable
   const stampG = (a, b, g) => { if (a >= 0) A[a][a] += g; if (b >= 0) A[b][b] += g; if (a >= 0 && b >= 0) { A[a][b] -= g; A[b][a] -= g; } };
   const inject = (a, b, I) => { if (a >= 0) z[a] += I; if (b >= 0) z[b] -= I; };   // current source flowing a→b
 
@@ -131,6 +154,13 @@ function _anBuild(circ, mode, dt, time, gv, nlState) {
   for (const c of circ.comps) {
     if (c.type === "SW" || c.type === "PUSH")
       stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / (c.closed ? _SW_RON : _SW_ROFF));
+    else if (Analog.TYPES[c.type].spdt) {   // each COM rests on its NC, throws to its NO
+      const { rnc, rno } = _spdtR(c);
+      for (const p of _spdtPoles(c)) {
+        stampG(vi(nodes.nodeAt(c.id, p)), vi(nodes.nodeAt(c.id, p + 1)), 1 / rnc);
+        stampG(vi(nodes.nodeAt(c.id, p)), vi(nodes.nodeAt(c.id, p + 2)), 1 / rno);
+      }
+    }
     else if (c.type === "FUSE")
       stampG(vi(nodes.nodeAt(c.id, 0)), vi(nodes.nodeAt(c.id, 1)), 1 / (c._blown ? _SW_ROFF : _SW_RON));
     else if (c.type === "RELAY") {
@@ -275,6 +305,11 @@ function _anSolveMode(circ, mode, dt, time) {
       i = sg * (d.is * (ebe - ebc) - d.is * (ebc - 1) / d.br);
     }
     else if (c.type === "SW" || c.type === "PUSH") i = vdiff(c) / (c.closed ? _SW_RON : _SW_ROFF);
+    else if (Analog.TYPES[c.type].spdt) {                                  // total carried by all poles
+      const { rnc, rno } = _spdtR(c);
+      for (const p of _spdtPoles(c))
+        i += (termV(c.id, p) - termV(c.id, p + 1)) / rnc + (termV(c.id, p) - termV(c.id, p + 2)) / rno;
+    }
     else if (c.type === "RELAY") i = vdiff(c) / Math.max(c.value, 1e-3);   // coil current
     cur.set(c, i);
   }
@@ -302,6 +337,12 @@ function _anSolveMode(circ, mode, dt, time) {
       const ebe = Math.exp(Math.min(vbe / _VT, 80)), ebc = Math.exp(Math.min(vbc / _VT, 80));
       const ib = def.is * (ebe - 1) / bf + def.is * (ebc - 1) / def.br;   // base current into the device
       setT(c, 0, -i); setT(c, 1, -sg * ib); setT(c, 2, i + sg * ib);
+    } else if (def.spdt) {
+      const { rnc, rno } = _spdtR(c);
+      for (const p of _spdtPoles(c)) {
+        const inc = (termV(c.id, p) - termV(c.id, p + 1)) / rnc, ino = (termV(c.id, p) - termV(c.id, p + 2)) / rno;
+        setT(c, p, -(inc + ino)); setT(c, p + 1, inc); setT(c, p + 2, ino);
+      }
     } else if (def.isrc || c.type === "DCV" || c.type === "ACV" || c.type === "SQV") {
       setT(c, 0, i); setT(c, 1, -i);        // sources deliver their current out of terminal 0
     } else {

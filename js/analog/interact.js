@@ -196,11 +196,18 @@ function _anMove(e) {
     Analog.requestRender(); return;
   }
 
-  // hover feedback for terminals (edit)
+  // hover feedback for terminals (edit) — plus a tooltip naming the pin, anchored
+  // to the terminal rather than the cursor so it doesn't need a render per move
   if (App.mode === "edit") {
     const h = Analog.hitTerminal(w.x, w.y);
     if ((h && (!App.hover || h.c !== App.hover.c || h.t !== App.hover.t)) || (!h && App.hover)) {
-      App.hover = h; Analog.requestRender();
+      App.hover = h;
+      App.probe = null;
+      if (h) {
+        const tp = Analog.terminalPos(Analog.compById(App.circ, h.c), h.t);
+        App.probe = { kind: "term", c: h.c, t: h.t, sx: tp.x * App.view.scale + App.view.ox, sy: tp.y * App.view.scale + App.view.oy };
+      }
+      Analog.requestRender();
     }
     return;
   }

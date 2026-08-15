@@ -18,7 +18,8 @@ Analog.TYPES = {
   RES: { name: "Resistor",     terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1000,  unit: "Ω", min: 1e-3 },
   // potentiometer: 0 = end A, 1 = wiper (top), 2 = end B. `value` = total resistance,
   // `c.ratio` (0–1) = wiper position from end A. Stamped as two series resistors.
-  POT: { name: "Potentiometer", terminals: [{ x: -34, y: 0 }, { x: 0, y: -26 }, { x: 34, y: 0 }], value: 10000, unit: "Ω", pot: true },
+  POT: { name: "Potentiometer", terminals: [{ x: -34, y: 0 }, { x: 0, y: -26 }, { x: 34, y: 0 }], value: 10000, unit: "Ω", pot: true,
+    termNames: ["End A", "Wiper", "End B"] },
   CAP: { name: "Capacitor",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1e-6,  unit: "F", reactive: true },
   IND: { name: "Inductor",     terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 1e-3,  unit: "H", reactive: true },
   // lamp: electrically a resistor; its glow tracks dissipated power against `watts`.
@@ -26,32 +27,45 @@ Analog.TYPES = {
   // fuse: near-zero resistance until |I| exceeds `value` (amps) — then it blows open
   // (`c._blown`, reset when a simulation starts or via "Replace fuse").
   FUSE: { name: "Fuse",        terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 1,     unit: "A", fuse: true },
-  DCV: { name: "DC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V" },
-  ACV: { name: "AC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V", freq: 60, reactive: true },
+  DCV: { name: "DC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V", termNames: ["+", "−"] },
+  ACV: { name: "AC Source",    terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,     unit: "V", freq: 60, reactive: true, termNames: ["+", "−"] },
   // square-wave source: ±value at `freq` (50% duty, +value at t = 0)
-  SQV: { name: "Square Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,    unit: "V", freq: 60, reactive: true, square: true },
+  SQV: { name: "Square Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,    unit: "V", freq: 60, reactive: true, square: true, termNames: ["+", "−"] },
   // ideal DC current source: `value` amps out of terminal 0 (+) through the circuit
-  ISRC: { name: "Current Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 0.01, unit: "A", isrc: true },
+  ISRC: { name: "Current Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 0.01, unit: "A", isrc: true, termNames: ["+ (out)", "−"] },
   GND: { name: "Ground",       terminals: [{ x: 0, y: -22 }],                  value: 0,     unit: "" },
-  VM:  { name: "Voltmeter",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "V", meter: true },
-  AM:  { name: "Ammeter",      terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "A", meter: true },
+  VM:  { name: "Voltmeter",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "V", meter: true, termNames: ["+", "−"] },
+  AM:  { name: "Ammeter",      terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "A", meter: true, termNames: ["+", "−"] },
   SCOPE: { name: "Oscilloscope", terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,   unit: "V", meter: true, scope: true },
   // ---- nonlinear (Newton-Raphson) devices ----
   // anode = terminal 0, cathode = terminal 1. Shockley diode I = Is·(exp(V/nVt)−1).
-  DIODE: { name: "Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-14, n: 1 },
+  DIODE: { name: "Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-14, n: 1, termNames: ["Anode", "Cathode"] },
   // zener: Shockley forward + a reverse exponential that breaks down near `value`
   // volts (the nameplate Vz; editable). Same Newton-Raphson path as the diode.
-  ZENER: { name: "Zener Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 5.1, unit: "V", nonlinear: true, is: 1e-14, n: 1, zener: true },
-  LED:   { name: "LED",   terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-18, n: 2, led: true },
+  ZENER: { name: "Zener Diode", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 5.1, unit: "V", nonlinear: true, is: 1e-14, n: 1, zener: true, termNames: ["Anode", "Cathode"] },
+  LED:   { name: "LED",   terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "V", nonlinear: true, is: 1e-18, n: 2, led: true, termNames: ["Anode", "Cathode"] },
   // BJT terminals: 0 = collector, 1 = base, 2 = emitter. Ebers-Moll transport model.
-  NPN: { name: "NPN Transistor", terminals: [{ x: 34, y: -28 }, { x: -34, y: 0 }, { x: 34, y: 28 }], value: 100, unit: "β", nonlinear: true, bjt: true, npn: true,  is: 1e-14, bf: 100, br: 1 },
-  PNP: { name: "PNP Transistor", terminals: [{ x: 34, y: -28 }, { x: -34, y: 0 }, { x: 34, y: 28 }], value: 100, unit: "β", nonlinear: true, bjt: true, npn: false, is: 1e-14, bf: 100, br: 1 },
+  NPN: { name: "NPN Transistor", terminals: [{ x: 34, y: -28 }, { x: -34, y: 0 }, { x: 34, y: 28 }], value: 100, unit: "β", nonlinear: true, bjt: true, npn: true,  is: 1e-14, bf: 100, br: 1, termNames: ["Collector", "Base", "Emitter"] },
+  PNP: { name: "PNP Transistor", terminals: [{ x: 34, y: -28 }, { x: -34, y: 0 }, { x: 34, y: 28 }], value: 100, unit: "β", nonlinear: true, bjt: true, npn: false, is: 1e-14, bf: 100, br: 1, termNames: ["Collector", "Base", "Emitter"] },
   // ---- switches & relays (linear: a resistor that flips between on/off resistance) ----
   SW:   { name: "Switch",      terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "", switchable: true },
   PUSH: { name: "Push Button", terminals: [{ x: -30, y: 0 }, { x: 30, y: 0 }], value: 0, unit: "", switchable: true, momentary: true },
+  // Changeover switches — terminals come in [COM, NC, NO] triples, one per pole,
+  // and `poles` says how many. The lever(s) rest on NC; `c.closed` means "thrown
+  // over to NO", and on a DPDT both poles are ganged so they throw together.
+  // Each contact stamps its own on/off conductance, so a COM is always tied to
+  // exactly one of its two contacts (and a dangling contact can't float).
+  SPDT: { name: "Switch (SPDT)", terminals: [{ x: -30, y: 0 }, { x: 30, y: -20 }, { x: 30, y: 20 }],
+    value: 0, unit: "", switchable: true, spdt: true, poles: 1,
+    termNames: ["COM", "NC", "NO"] },
+  DPDT: { name: "Switch (DPDT)", terminals: [{ x: -30, y: -40 }, { x: 30, y: -60 }, { x: 30, y: -20 },
+                                             { x: -30, y: 40 }, { x: 30, y: 20 }, { x: 30, y: 60 }],
+    value: 0, unit: "", switchable: true, spdt: true, poles: 2,
+    termNames: ["COM 1", "NC 1", "NO 1", "COM 2", "NC 2", "NO 2"] },
   // relay terminals: 0/1 = coil (a resistor), 2/3 = normally-open contact that closes
   // when the coil current reaches the pull-in threshold. `value` = coil resistance (Ω).
-  RELAY: { name: "Relay (NO)", terminals: [{ x: -34, y: -24 }, { x: -34, y: 24 }, { x: 34, y: -24 }, { x: 34, y: 24 }], value: 100, unit: "Ω", relay: true, pull: 0.02 },
+  RELAY: { name: "Relay (NO)", terminals: [{ x: -34, y: -24 }, { x: -34, y: 24 }, { x: 34, y: -24 }, { x: 34, y: 24 }], value: 100, unit: "Ω", relay: true, pull: 0.02,
+    termNames: ["Coil +", "Coil −", "Contact A", "Contact B"] },
 };
 
 Analog.isMeter = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c.type].meter); };
@@ -88,6 +102,14 @@ Analog.makeComp = function (type, x, y, opts = {}) {
 };
 
 Analog.numTerminals = function (c) { return Analog.TYPES[c.type].terminals.length; };
+
+/* Human name of a terminal ("COM 1", "Base", "Anode"…), or null for parts whose
+   pins need no explaining. Shown by the hover probe so a six-pin switch can be
+   wired without counting terminals. */
+Analog.terminalName = function (c, t) {
+  const n = Analog.TYPES[c.type].termNames;
+  return (n && n[t]) || null;
+};
 
 /* Rotate a logical offset `rot` quarter-turns clockwise (screen space). */
 function _anRot(p, rot) {

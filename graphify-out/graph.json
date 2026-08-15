@@ -59,7 +59,7 @@
       "label": "_sqPhase()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L26",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "analog_engine_sqphase",
       "community": 22,
@@ -69,17 +69,37 @@
       "label": "_zenerVz()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L30",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "analog_engine_zenervz",
       "community": 22,
       "norm_label": "_zenervz()"
     },
     {
+      "label": "_spdtR()",
+      "file_type": "code",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "analog_engine_spdtr",
+      "community": 22,
+      "norm_label": "_spdtr()"
+    },
+    {
+      "label": "_spdtPoles()",
+      "file_type": "code",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "analog_engine_spdtpoles",
+      "community": 22,
+      "norm_label": "_spdtpoles()"
+    },
+    {
       "label": "_potR()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L34",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "analog_engine_potr",
       "community": 22,
@@ -89,7 +109,7 @@
       "label": "_anLimitJ()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L43",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "analog_engine_anlimitj",
       "community": 22,
@@ -99,7 +119,7 @@
       "label": "_anSolve()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L57",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "analog_engine_ansolve",
       "community": 22,
@@ -109,7 +129,7 @@
       "label": "_anBuild()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L86",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "analog_engine_anbuild",
       "community": 22,
@@ -119,7 +139,7 @@
       "label": "_anSolveMode()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L227",
+      "source_location": "L257",
       "_origin": "ast",
       "id": "analog_engine_ansolvemode",
       "community": 22,
@@ -159,7 +179,7 @@
       "label": "_anUp()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L225",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "analog_interact_anup",
       "community": 23,
@@ -169,7 +189,7 @@
       "label": "_anContext()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L266",
+      "source_location": "L273",
       "_origin": "ast",
       "id": "analog_interact_ancontext",
       "community": 23,
@@ -179,7 +199,7 @@
       "label": "_anWheel()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L280",
+      "source_location": "L287",
       "_origin": "ast",
       "id": "analog_interact_anwheel",
       "community": 23,
@@ -189,7 +209,7 @@
       "label": "_anKey()",
       "file_type": "code",
       "source_file": "js/analog/interact.js",
-      "source_location": "L291",
+      "source_location": "L298",
       "_origin": "ast",
       "id": "analog_interact_ankey",
       "community": 23,
@@ -209,7 +229,7 @@
       "label": "_anRot()",
       "file_type": "code",
       "source_file": "js/analog/model.js",
-      "source_location": "L93",
+      "source_location": "L115",
       "_origin": "ast",
       "id": "analog_model_anrot",
       "community": 27,
@@ -219,7 +239,7 @@
       "label": "AN_SAVE_FIELDS",
       "file_type": "code",
       "source_file": "js/analog/model.js",
-      "source_location": "L241",
+      "source_location": "L263",
       "_origin": "ast",
       "id": "analog_model_an_save_fields",
       "community": 27,
@@ -246,10 +266,40 @@
       "norm_label": "_anvcolor()"
     },
     {
+      "label": "_symBounds",
+      "file_type": "code",
+      "source_file": "js/analog/render.js",
+      "source_location": "L164",
+      "_origin": "ast",
+      "id": "analog_render_symbounds",
+      "community": 24,
+      "norm_label": "_symbounds"
+    },
+    {
+      "label": "_iconComp()",
+      "file_type": "code",
+      "source_file": "js/analog/render.js",
+      "source_location": "L167",
+      "_origin": "ast",
+      "id": "analog_render_iconcomp",
+      "community": 24,
+      "norm_label": "_iconcomp()"
+    },
+    {
+      "label": "_symbolBounds()",
+      "file_type": "code",
+      "source_file": "js/analog/render.js",
+      "source_location": "L169",
+      "_origin": "ast",
+      "id": "analog_render_symbolbounds",
+      "community": 24,
+      "norm_label": "_symbolbounds()"
+    },
+    {
       "label": "_atArc()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L159",
+      "source_location": "L212",
       "_origin": "ast",
       "id": "analog_render_atarc",
       "community": 24,
@@ -259,7 +309,7 @@
       "label": "_drawFlow()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L177",
+      "source_location": "L230",
       "_origin": "ast",
       "id": "analog_render_drawflow",
       "community": 24,
@@ -269,7 +319,7 @@
       "label": "_probeLines()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L212",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "analog_render_probelines",
       "community": 24,
@@ -279,7 +329,7 @@
       "label": "_drawProbe()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L243",
+      "source_location": "L310",
       "_origin": "ast",
       "id": "analog_render_drawprobe",
       "community": 24,
@@ -289,11 +339,31 @@
       "label": "_drawComp()",
       "file_type": "code",
       "source_file": "js/analog/render.js",
-      "source_location": "L266",
+      "source_location": "L333",
       "_origin": "ast",
       "id": "analog_render_drawcomp",
       "community": 24,
       "norm_label": "_drawcomp()"
+    },
+    {
+      "label": "_drawSymbol()",
+      "file_type": "code",
+      "source_file": "js/analog/render.js",
+      "source_location": "L346",
+      "_origin": "ast",
+      "id": "analog_render_drawsymbol",
+      "community": 24,
+      "norm_label": "_drawsymbol()"
+    },
+    {
+      "label": "_drawLabels()",
+      "file_type": "code",
+      "source_file": "js/analog/render.js",
+      "source_location": "L523",
+      "_origin": "ast",
+      "id": "analog_render_drawlabels",
+      "community": 24,
+      "norm_label": "_drawlabels()"
     },
     {
       "label": "ui.js",
@@ -319,7 +389,7 @@
       "label": "AN_PREFIX",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L55",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "analog_ui_an_prefix",
       "community": 25,
@@ -329,7 +399,7 @@
       "label": "_anMenuLevel()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L497",
+      "source_location": "L512",
       "_origin": "ast",
       "id": "analog_ui_anmenulevel",
       "community": 25,
@@ -339,7 +409,7 @@
       "label": "_anShowMenu()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L525",
+      "source_location": "L540",
       "_origin": "ast",
       "id": "analog_ui_anshowmenu",
       "community": 25,
@@ -349,7 +419,7 @@
       "label": "_anParse()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L539",
+      "source_location": "L554",
       "_origin": "ast",
       "id": "analog_ui_anparse",
       "community": 25,
@@ -359,7 +429,7 @@
       "label": "_anDrawScope()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L613",
+      "source_location": "L628",
       "_origin": "ast",
       "id": "analog_ui_andrawscope",
       "community": 25,
@@ -369,7 +439,7 @@
       "label": "_anDragWindow()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L641",
+      "source_location": "L656",
       "_origin": "ast",
       "id": "analog_ui_andragwindow",
       "community": 25,
@@ -382,7 +452,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "js_builtins",
-      "community": 5,
+      "community": 3,
       "norm_label": "builtins.js"
     },
     {
@@ -392,7 +462,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "js_builtins_definebuiltin",
-      "community": 5,
+      "community": 3,
       "norm_label": "definebuiltin()"
     },
     {
@@ -402,7 +472,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "js_builtins_registerbuiltindefs",
-      "community": 5,
+      "community": 3,
       "norm_label": "registerbuiltindefs()"
     },
     {
@@ -462,7 +532,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "js_engine_inputvals",
-      "community": 4,
+      "community": 1,
       "norm_label": "inputvals()"
     },
     {
@@ -1702,7 +1772,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "js_model_settopcircuit",
-      "community": 5,
+      "community": 3,
       "norm_label": "settopcircuit()"
     },
     {
@@ -1712,7 +1782,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "js_model_curview",
-      "community": 3,
+      "community": 2,
       "norm_label": "curview()"
     },
     {
@@ -1832,7 +1902,7 @@
       "source_location": "L286",
       "_origin": "ast",
       "id": "js_model_registerdef",
-      "community": 5,
+      "community": 3,
       "norm_label": "registerdef()"
     },
     {
@@ -1882,7 +1952,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "js_model_defdependencies",
-      "community": 5,
+      "community": 3,
       "norm_label": "defdependencies()"
     },
     {
@@ -2052,7 +2122,7 @@
       "source_location": "L645",
       "_origin": "ast",
       "id": "js_model_compbox",
-      "community": 2,
+      "community": 1,
       "norm_label": "compbox()"
     },
     {
@@ -2222,7 +2292,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "js_render_activecircuit",
-      "community": 2,
+      "community": 1,
       "norm_label": "activecircuit()"
     },
     {
@@ -2252,7 +2322,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "js_render_fitviewinto",
-      "community": 2,
+      "community": 1,
       "norm_label": "fitviewinto()"
     },
     {
@@ -2672,7 +2742,7 @@
       "source_location": "L1044",
       "_origin": "ast",
       "id": "js_render_hitpin",
-      "community": 2,
+      "community": 1,
       "norm_label": "hitpin()"
     },
     {
@@ -2752,7 +2822,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 5,
+      "community": 3,
       "norm_label": "toast()"
     },
     {
@@ -2842,7 +2912,7 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "js_ui_updatesimui",
-      "community": 5,
+      "community": 4,
       "norm_label": "updatesimui()"
     },
     {
@@ -2852,7 +2922,7 @@
       "source_location": "L296",
       "_origin": "ast",
       "id": "js_ui_updatecrumbs",
-      "community": 5,
+      "community": 2,
       "norm_label": "updatecrumbs()"
     },
     {
@@ -2982,7 +3052,7 @@
       "source_location": "L514",
       "_origin": "ast",
       "id": "js_ui_closeexprpopup",
-      "community": 5,
+      "community": 2,
       "norm_label": "closeexprpopup()"
     },
     {
@@ -3062,7 +3132,7 @@
       "source_location": "L695",
       "_origin": "ast",
       "id": "js_ui_loadlocal",
-      "community": 5,
+      "community": 3,
       "norm_label": "loadlocal()"
     },
     {
@@ -3072,7 +3142,7 @@
       "source_location": "L715",
       "_origin": "ast",
       "id": "js_ui_exportdefs",
-      "community": 5,
+      "community": 3,
       "norm_label": "exportdefs()"
     },
     {
@@ -3409,7 +3479,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L138",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3419,7 +3489,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L150",
+      "source_location": "L158",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3429,7 +3499,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L160",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -4318,6 +4388,26 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/analog/engine.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "analog_engine",
+      "target": "analog_engine_spdtpoles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_engine",
+      "target": "analog_engine_spdtr"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
       "source_location": "L26",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -4366,6 +4456,50 @@
       "confidence_score": 1.0,
       "source": "analog_engine_ansolvemode",
       "target": "analog_engine_zenervz"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L141",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_engine_anbuild",
+      "target": "analog_engine_spdtr"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L290",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_engine_ansolvemode",
+      "target": "analog_engine_spdtr"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L159",
+      "weight": 1.0,
+      "source": "analog_engine_anbuild",
+      "target": "analog_engine_spdtpoles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/engine.js",
+      "source_location": "L310",
+      "weight": 1.0,
+      "source": "analog_engine_ansolvemode",
+      "target": "analog_engine_spdtpoles",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -4518,9 +4652,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L159",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render",
-      "target": "analog_render_atarc",
-      "confidence_score": 1.0
+      "target": "analog_render_atarc"
     },
     {
       "relation": "contains",
@@ -4538,9 +4672,19 @@
       "source_file": "js/analog/render.js",
       "source_location": "L177",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render",
-      "target": "analog_render_drawflow",
-      "confidence_score": 1.0
+      "target": "analog_render_drawflow"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L490",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render",
+      "target": "analog_render_drawlabels"
     },
     {
       "relation": "contains",
@@ -4556,11 +4700,73 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/analog/render.js",
+      "source_location": "L330",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render",
+      "target": "analog_render_drawsymbol"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L167",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render",
+      "target": "analog_render_iconcomp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
       "source_location": "L102",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "analog_render",
       "target": "analog_render_probelines"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L169",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render",
+      "target": "analog_render_symbolbounds"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L164",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render",
+      "target": "analog_render_symbounds"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L176",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render_symbolbounds",
+      "target": "analog_render_iconcomp"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L176",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render_symbolbounds",
+      "target": "analog_render_drawsymbol"
     },
     {
       "relation": "calls",
@@ -4572,6 +4778,28 @@
       "confidence_score": 1.0,
       "source": "analog_render_drawprobe",
       "target": "analog_render_probelines"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L323",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render_drawcomp",
+      "target": "analog_render_drawlabels"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/render.js",
+      "source_location": "L321",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "analog_render_drawcomp",
+      "target": "analog_render_drawsymbol"
     },
     {
       "relation": "contains",
@@ -14516,5 +14744,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "d9a4d5372305c05a4ad021fbdf32c1292e2d24db"
+  "built_at_commit": "39674ebb121e9ab054e041d6cf6aef48292f56f8"
 }
