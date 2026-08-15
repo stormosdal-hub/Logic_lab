@@ -219,7 +219,6 @@ function onCanvasDown(e) {
   const { mx, my } = mousePos(e);
   const pt = screenToWorld(mx, my);
   closeExprPopup();
-  closePanel();
   hideContextMenu();
 
   if (e.button === 1) {

@@ -260,6 +260,7 @@ function setMode(sim) {
   closeFormulaPanel();
   const tl = $("#timeline");
   if (tl && !sim) tl.classList.add("hidden");
+  syncPanelButtons();
   App.wiring = null;
   App.selection = [];
   if (!sim) { App.split.open = false; App.split.stack = []; }   // leaving sim closes the inspector
@@ -326,25 +327,38 @@ function updateCrumbs() {
 
 /* ---------------- dropdown panels ---------------- */
 
+// Light the toolbar button (green) of every panel that's currently open.
+function syncPanelButtons() {
+  const tl = $("#timeline");
+  const set = (id, on) => { const b = $(id); if (b) b.classList.toggle("active", !!on); };
+  set("#inputsBtn", openPanel === "inputs");
+  set("#ttBtn", openPanel === "tt");
+  set("#boolBtn", boolOpen);
+  set("#timelineBtn", tl && !tl.classList.contains("hidden"));
+}
 function togglePanel(kind) {
   if (openPanel === kind) { closePanel(); return; }
   openPanel = kind;
   renderPanel();
+  syncPanelButtons();
 }
 function closePanel() {
   openPanel = null;
   $("#dropPanel").classList.add("hidden");
   // Bool panel moves up to top when inputs panel closes
   if (boolOpen) renderBoolPanel();
+  syncPanelButtons();
 }
 function toggleBoolPanel() {
   boolOpen = !boolOpen;
   if (boolOpen) renderBoolPanel();
   else $("#boolPanel").classList.add("hidden");
+  syncPanelButtons();
 }
 function closeBoolPanel() {
   boolOpen = false;
   $("#boolPanel").classList.add("hidden");
+  syncPanelButtons();
 }
 function refreshLivePanels() {
   if (openPanel === "inputs") renderPanel();
@@ -528,6 +542,7 @@ function toggleTimeline() {
     _tlLabelsKey = "";
     renderTimeline();
   }
+  syncPanelButtons();
 }
 
 function renderTimeline() {
