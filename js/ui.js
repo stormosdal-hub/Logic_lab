@@ -213,6 +213,10 @@ function initUI() {
   $("#importBtn").addEventListener("click", () => $("#importFile").click());
   $("#importFile").addEventListener("change", onImportFile);
 
+  $("#exportSketchBtn").addEventListener("click", exportSketch);
+  $("#importSketchBtn").addEventListener("click", () => $("#importSketchFile").click());
+  $("#importSketchFile").addEventListener("change", onImportSketchFile);
+
   $("#playBtn").addEventListener("click", () => { setRunning(!Sim.running); updateSimUI(); });
   $("#nextBtn").addEventListener("click", () => clockTick());
   $("#prevBtn").addEventListener("click", () => { if (!stepBack()) toast("No earlier state in history."); });
@@ -767,6 +771,68 @@ function onImportFile(e) {
     }
     buildPalette();
     toast("⬆ Imported " + added + " component(s)" + (skipped ? " (" + skipped + " skipped)" : "") + ".");
+  };
+  reader.readAsText(file);
+}
+
+/* ---------------- export / import the whole worksheet ---------------- */
+
+// Custom-component defs the top worksheet uses (transitively), so the file is self-contained.
+function sketchDeps() {
+  const deps = new Set();
+  for (const c of App.topCircuit.components) {
+    if (c.type === "CUSTOM" && c.defName) {
+      if (Defs[c.defName] && !Defs[c.defName].builtin) deps.add(c.defName);
+      defDependencies(c.defName, deps);
+    }
+  }
+  return [...deps].map(n => {
+    const d = Defs[n];
+    return { name: d.name, short: d.short, circuit: d.circuit, inputs: d.inputs, outputs: d.outputs };
+  });
+}
+
+function exportSketch() {
+  const circ = App.topCircuit;
+  if (!circ.components.length) { toast("The worksheet is empty — nothing to export."); return; }
+  const defs = sketchDeps();
+  const json = JSON.stringify({ format: "logic-lab-sketch", version: 1, sheet: serializeCircuit(circ), defs }, null, 2);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  a.download = "logic-lab-sketch.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("⬇ Exported worksheet (" + circ.components.length + " parts" +
+    (defs.length ? ", " + defs.length + " component def" + (defs.length > 1 ? "s" : "") : "") + ").");
+}
+
+function onImportSketchFile(e) {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); }
+    catch { toast("Not a valid JSON file."); return; }
+    if (!data || !data.sheet) { toast("No sketch found in this file (use Import ICs for component files)."); return; }
+    if (App.topCircuit.components.length &&
+        !confirm("Replace the current worksheet with the imported sketch?")) return;
+    if (App.mode === "sim") setMode(false);
+    // Register any bundled component defs that aren't already known (builtins and existing defs untouched).
+    let added = 0;
+    for (const d of (data.defs || [])) {
+      if (!d.name || !d.circuit || !d.inputs || !d.outputs) continue;
+      if (Defs[d.name]) continue;
+      registerDef({ name: d.name, short: d.short || d.name, builtin: false, circuit: d.circuit, inputs: d.inputs, outputs: d.outputs });
+      added++;
+    }
+    setTopCircuit(deserializeCircuit(data.sheet));
+    buildPalette();
+    updateCrumbs();
+    requestRender();
+    toast("⬆ Imported sketch (" + App.topCircuit.components.length + " parts" +
+      (added ? ", " + added + " new component" + (added > 1 ? "s" : "") : "") + ").");
   };
   reader.readAsText(file);
 }

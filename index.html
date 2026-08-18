@@ -35,9 +35,12 @@
     <span class="sep"></span>
     <button id="makeICBtn" title="Turn the current worksheet into a reusable component">📦 Create IC</button>
     <button id="formulaBtn" title="Type a boolean algebra formula and build it as a gate circuit">ƒ Formula</button>
-    <button id="exportBtn" title="Export all custom components as a JSON file">⬇ Export</button>
-    <button id="importBtn" title="Import custom components from a JSON file">⬆ Import</button>
+    <button id="exportBtn" title="Export all custom components (ICs) as a JSON file">⬇ Export ICs</button>
+    <button id="importBtn" title="Import custom components (ICs) from a JSON file">⬆ Import ICs</button>
     <input type="file" id="importFile" accept=".json,application/json" hidden>
+    <button id="exportSketchBtn" title="Export the current worksheet as a JSON file (parts, wires and any components it uses)">⬇ Export sketch</button>
+    <button id="importSketchBtn" title="Load a worksheet from a JSON file, replacing the current one">⬆ Import sketch</button>
+    <input type="file" id="importSketchFile" accept=".json,application/json" hidden>
   </div>
 
   <div class="group hidden" id="simTools">
@@ -139,7 +142,7 @@
           <li>Your chips appear under <b>My Components</b> — drag them out like any other part, and use them inside new chips.</li>
           <li><b>Double-click a chip</b> to look inside it (read-only). In <b>edit</b> mode it opens in place (use the breadcrumb bar to go back).</li>
           <li><b>Side-by-side inspector (sim mode):</b> drag the handle on the left edge of the worksheet to pull out a second canvas like a curtain. Double-click any chip while simulating to show its insides there — so you watch the inside and the outside live at the same time. The inspector pans (drag), zooms (wheel), drills deeper (double-click a nested chip), and you can toggle its inputs by clicking them. Drag the divider to resize, double-click it (or press <kbd>Esc</kbd>) to close.</li>
-          <li><b>⬇ / ✕</b> on a custom component exports / deletes it. Use toolbar Export/Import to move components between sessions as JSON files.</li>
+          <li><b>⬇ / ✕</b> on a custom component exports / deletes it. Use toolbar <b>Export/Import ICs</b> to move components between sessions as JSON files, or <b>Export/Import sketch</b> to save and reload the whole worksheet (it bundles any components it uses).</li>
         </ul>
         <h3>Simulating</h3>
         <ul>
