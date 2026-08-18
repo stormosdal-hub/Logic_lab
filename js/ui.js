@@ -365,7 +365,10 @@ function closeBoolPanel() {
   syncPanelButtons();
 }
 function refreshLivePanels() {
-  if (openPanel === "inputs") renderPanel();
+  // Re-render whichever dropdown is open so it tracks live state — the inputs
+  // panel's toggles and the truth table's active-row highlight both follow the
+  // circuit as inputs change on the sheet.
+  if (openPanel) renderPanel();
   if (boolOpen) renderBoolPanel();
 }
 
@@ -470,12 +473,16 @@ function renderTTPanel(el) {
     html += `<div class="err">${escapeHtml(tt.error)}</div>`;
   } else {
     html += `<div class="note tt-click-hint">Click any row to apply those inputs to the circuit.</div>`;
+    // Which row matches the circuit's current inputs — so the highlight tracks
+    // live input toggles on the sheet, not just clicks in the table.
+    const curBits = tt.ins.map(c => !!c.state);
+    const activeRow = tt.rows.findIndex(r => r.bits.every((b, i) => b === curBits[i]));
     html += `<table class="tt"><thead><tr>`;
     for (const c of tt.ins) html += `<th>${escapeHtml(c.label)}</th>`;
     tt.outs.forEach((o, i) => html += `<th class="${i === 0 ? "outcol" : ""}">${escapeHtml(o.label)}</th>`);
     html += `</tr></thead><tbody>`;
     tt.rows.forEach((r, rowIdx) => {
-      html += `<tr class="tt-row" data-row="${rowIdx}">`;
+      html += `<tr class="tt-row${rowIdx === activeRow ? " tt-active" : ""}" data-row="${rowIdx}">`;
       for (const b of r.bits) html += `<td class="${b ? "one" : "zero"}">${b ? 1 : 0}</td>`;
       r.outs.forEach((b, i) => {
         let cls = i === 0 ? "outcol " : "", txt;
@@ -499,10 +506,9 @@ function renderTTPanel(el) {
       const tr = e.target.closest(".tt-row");
       if (!tr) return;
       const rowIdx = +tr.dataset.row;
+      // applyTTRow re-settles → refreshLivePanels re-renders the table with the
+      // matching row highlighted (same path as toggling an input on the sheet).
       applyTTRow(tt.ins, tt.rows[rowIdx].bits);
-      // Highlight the active row
-      el.querySelectorAll(".tt-row").forEach(r => r.classList.remove("tt-active"));
-      tr.classList.add("tt-active");
     });
   }
 
