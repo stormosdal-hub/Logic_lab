@@ -77,10 +77,16 @@ function buildPalette() {
     },
     {
       title: "My components",
-      items: customDefs().map(d => ({ kind: "chip", defName: d.name, name: d.name, custom: true })),
+      items: userDefs().map(d => ({ kind: "chip", defName: d.name, name: d.name, custom: true })),
       emptyText: "Build a circuit and press “📦 Create IC”",
     },
   ];
+  // loaded from library/*.json every startup — only shown when there are any
+  if (libraryDefs().length)
+    cats.push({
+      title: "Library",
+      items: libraryDefs().map(d => ({ kind: "chip", defName: d.name, name: d.name, library: true })),
+    });
 
   for (const cat of cats) {
     const collapsed = !!PAL_COLLAPSED[cat.title];
@@ -111,16 +117,20 @@ function buildPalette() {
       nm.className = "tname";
       nm.textContent = item.name;
       t.appendChild(nm);
-      if (item.custom) {
+      if (item.custom || item.library) {
         const ex = document.createElement("button");
         ex.className = "mini"; ex.textContent = "⬇"; ex.title = "Export this component as JSON";
         ex.addEventListener("click", e => { e.stopPropagation(); exportDefs([item.defName], item.defName); });
+        t.appendChild(ex);
+      }
+      if (item.custom) {
+        // no ✕ on a library part: it lives in a file and would return on reload
         const del = document.createElement("button");
         del.className = "mini"; del.textContent = "✕"; del.title = "Delete this component";
         del.addEventListener("click", e => { e.stopPropagation(); deleteCustomDef(item.defName); });
-        t.appendChild(ex);
         t.appendChild(del);
       }
+      if (item.library) t.title = "From the library folder — always loaded";
       t._item = item;
       // drag onto the sheet (PaletteDrag, see initUI); a plain click without
       // travel arms the part for tap-to-place instead
@@ -163,7 +173,35 @@ function updatePaletteSelection() {
     el.classList.toggle("selected", !!tool && sameTool(el._item, tool));
 }
 
+/* ---------------- always-loaded library components ----------------
+   `library/library.js` (generated from library/*.json by
+   tools/build-library.mjs) declares window.LOGIC_LAB_LIBRARY. Registered at
+   startup before the saved sheet, and flagged `library: true` so they stay out
+   of browser storage and can't be deleted from inside the app — the file on
+   disk is the source of truth, and anything else would come back on reload. */
+function loadLibraryDefs() {
+  const lib = typeof window !== "undefined" && window.LOGIC_LAB_LIBRARY;
+  const defs = lib && Array.isArray(lib.defs) ? lib.defs : [];
+  let n = 0;
+  for (const d of defs) {
+    if (!d || !d.name || !d.circuit || !d.inputs || !d.outputs) continue;
+    if (Defs[d.name] && Defs[d.name].builtin) continue;   // never shadow a built-in
+    registerDef({
+      name: d.name, short: d.short || d.name, builtin: false, library: true,
+      circuit: d.circuit, inputs: d.inputs, outputs: d.outputs,
+    });
+    n++;
+  }
+  return n;
+}
+function libraryDefs() { return Object.values(Defs).filter(d => d.library); }
+function userDefs() { return Object.values(Defs).filter(d => !d.builtin && !d.library); }
+
 function deleteCustomDef(name) {
+  if (Defs[name] && Defs[name].library) {
+    toast("“" + name + "” comes from the library folder — delete its file and rebuild to remove it.");
+    return;
+  }
   const used = defInUse(name);
   if (used) { toast("Cannot delete “" + name + "” — it is used by " + used + "."); return; }
   if (!confirm("Delete component “" + name + "”?")) return;
@@ -206,7 +244,7 @@ function initUI() {
     else if (e.key === "Escape") closeFormulaPanel();
   });
   $("#exportBtn").addEventListener("click", () => {
-    const defs = customDefs();
+    const defs = userDefs();   // library ones are already files on disk
     if (!defs.length) { toast("No custom components to export yet."); return; }
     exportDefs(defs.map(d => d.name), "logic-lab-components");
   });
@@ -707,7 +745,9 @@ function saveLocal() {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       v: 1,
       sheet: serializeCircuit(App.topCircuit),
-      defs: customDefs().map(d => ({
+      // library components are reloaded from their files each startup — storing
+      // them too would leave a stale copy behind when a file is removed
+      defs: userDefs().map(d => ({
         name: d.name, short: d.short, circuit: d.circuit, inputs: d.inputs, outputs: d.outputs,
       })),
     }));
@@ -724,7 +764,7 @@ function loadLocal(silent) {
   if (!data || !data.sheet) return false;
   if (App.mode === "sim") setMode(false);
   for (const d of (data.defs || [])) {
-    if (Defs[d.name] && Defs[d.name].builtin) continue;
+    if (Defs[d.name] && (Defs[d.name].builtin || Defs[d.name].library)) continue;   // disk wins
     registerDef({ name: d.name, short: d.short || d.name, builtin: false, circuit: d.circuit, inputs: d.inputs, outputs: d.outputs });
   }
   setTopCircuit(deserializeCircuit(data.sheet));
@@ -770,7 +810,8 @@ function onImportFile(e) {
     let added = 0, skipped = 0;
     for (const d of defs) {
       if (!d.name || !d.circuit || !d.inputs || !d.outputs) { skipped++; continue; }
-      if (Defs[d.name] && Defs[d.name].builtin) { skipped++; continue; }
+      // built-ins and library components come from elsewhere and always win
+      if (Defs[d.name] && (Defs[d.name].builtin || Defs[d.name].library)) { skipped++; continue; }
       if (Defs[d.name] && !confirm("Component “" + d.name + "” already exists. Replace it?")) { skipped++; continue; }
       registerDef({ name: d.name, short: d.short || d.name, builtin: false, circuit: d.circuit, inputs: d.inputs, outputs: d.outputs });
       added++;

@@ -1,12 +1,12 @@
 # Graph Report - logic-lab  (2026-08-20)
 
 ## Corpus Check
-- 20 files · ~76,286 words
+- 20 files · ~78,850 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 415 nodes · 995 edges · 22 communities (18 shown, 4 thin omitted)
-- Extraction: 71% EXTRACTED · 29% INFERRED · 0% AMBIGUOUS · INFERRED: 284 edges (avg confidence: 0.8)
+- 416 nodes · 997 edges · 23 communities (19 shown, 4 thin omitted)
+- Extraction: 72% EXTRACTED · 28% INFERRED · 0% AMBIGUOUS · INFERRED: 284 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -25,6 +25,7 @@
 - [[_COMMUNITY_Test Suite|Test Suite]]
 - [[_COMMUNITY_MCP Server|MCP Server]]
 - [[_COMMUNITY_Builtin Registry|Builtin Registry]]
+- [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Bus & Junction Logic|Bus & Junction Logic]]
 - [[_COMMUNITY_Address Components|Address Components]]
 - [[_COMMUNITY_LED Matrix|LED Matrix]]
@@ -54,10 +55,10 @@
   js/analog/engine.js → test/analog.js
 - `releaseMomentaryInputs()` --calls--> `toggleInput()`  [INFERRED]
   js/ui.js → js/engine.js
+- `onCanvasDown()` --calls--> `hitUI()`  [INFERRED]
+  js/interact.js → js/render.js
 - `drawSelection()` --calls--> `isBus()`  [INFERRED]
   js/render.js → js/model.js
-- `afterSimChange() Post-Simulation Hook` --conceptually_related_to--> `Canvas Setup (initCanvas / RAF loop)`  [INFERRED]
-  CLAUDE.md → .claude/agents/renderer.md
 
 ## Import Cycles
 - None detected.
@@ -67,31 +68,31 @@
 - **Headless Node.js Test Architecture (no DOM)** — claude_puremodules, agents_qa_vmtestrunner, agents_qa_qaagent [EXTRACTED 1.00]
 - **Simulation Settlement Pipeline** — claude_gaussseidelsim, agents_sim_engine_passcircuit, agents_sim_engine_simobject [EXTRACTED 1.00]
 
-## Communities (22 total, 4 thin omitted)
+## Communities (23 total, 4 thin omitted)
 
 ### Community 0 - "Chip Definitions & Builtins"
-Cohesion: 0.06
-Nodes (52): 4-bit Ripple Counter, 4-bit Register, 4-bit Shift Register, 74HC595 Shift Register IC, Components Agent, defineBuiltin DSL, D Flip-Flop, D Latch (+44 more)
+Cohesion: 0.08
+Nodes (38): Canvas Setup (initCanvas / RAF loop), Color Scheme (COL), Component Drawing (drawComp), Wire Rendering (drawWire), Hit Testing (hitPin / hitComp / hitWire), Palette Icons (paintToolIcon), Renderer Agent, uiHits Array (+30 more)
 
 ### Community 1 - "Component Data Model"
-Cohesion: 0.09
-Nodes (64): busValue(), inputVals(), matrixLit(), addrWidth(), compBox(), compSize(), defaultWireRoute(), isGate() (+56 more)
+Cohesion: 0.08
+Nodes (66): busValue(), inputVals(), matrixLit(), addrWidth(), compBox(), compSize(), defaultWireRoute(), isGate() (+58 more)
 
 ### Community 2 - "Interaction & Navigation"
-Cohesion: 0.10
-Nodes (48): buildMenuLevel(), compMenuItems(), copySelection(), currentTool(), dragWireSegment(), dropPaletteItem(), goToLevel(), hideContextMenu() (+40 more)
+Cohesion: 0.08
+Nodes (72): afterStructChange(), synthBoolCircuit(), addAt(), addChipAt(), buildMenuLevel(), compMenuItems(), copySelection(), dedupeLabel() (+64 more)
 
 ### Community 3 - "Edit Operations & Wiring"
-Cohesion: 0.09
-Nodes (50): defineBuiltin(), registerBuiltinDefs(), afterStructChange(), synthBoolCircuit(), addAt(), addChipAt(), dedupeLabel(), deleteSelection() (+42 more)
+Cohesion: 0.12
+Nodes (23): exprTreeForOutputPin(), seedDemo(), ADDR_TYPES, addWire(), addWireBus(), App, buildAddrData(), compById() (+15 more)
 
 ### Community 4 - "Simulation Engine"
-Cohesion: 0.08
-Nodes (50): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+42 more)
+Cohesion: 0.09
+Nodes (45): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+37 more)
 
 ### Community 5 - "Boolean Expressions & Timeline"
-Cohesion: 0.09
-Nodes (38): timelineSignals(), topOutputExprs(), busValsToHex(), builtinDefs(), createDefFromCircuit(), customDefs(), defDependencies(), defInUse() (+30 more)
+Cohesion: 0.08
+Nodes (44): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), currentTool(), atTop(), builtinDefs() (+36 more)
 
 ### Community 6 - "MCP Package Config"
 Cohesion: 0.20
@@ -108,6 +109,10 @@ Nodes (3): init(), make(), wireApp()
 ### Community 9 - "Builtin Registry"
 Cohesion: 0.50
 Nodes (3): Highlights, ⚡ Logic Lab, Run it
+
+### Community 10 - "Community 10"
+Cohesion: 0.23
+Nodes (14): 4-bit Ripple Counter, 4-bit Register, 4-bit Shift Register, 74HC595 Shift Register IC, Components Agent, defineBuiltin DSL, D Flip-Flop, D Latch (+6 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.22
@@ -126,8 +131,8 @@ Cohesion: 0.26
 Nodes (9): _anVColor(), _drawComp(), _drawLabels(), _drawProbe(), _drawSymbol(), _iconComp(), _probeLines(), _symbolBounds() (+1 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.25
-Nodes (5): AN_PALETTE, AN_PREFIX, AN_UNIT_ROWS, _anMenuLevel(), _anShowMenu()
+Cohesion: 0.24
+Nodes (7): AN_PALETTE, AN_PREFIX, AN_UNIT_ROWS, _anDrawTrace(), _anMenuLevel(), _anShowMenu(), _anTraceAt()
 
 ## Knowledge Gaps
 - **44 isolated node(s):** `AN_SAVE_FIELDS`, `_symBounds`, `AN_PALETTE`, `AN_PREFIX`, `AN_UNIT_ROWS` (+39 more)
@@ -137,11 +142,11 @@ Nodes (5): AN_PALETTE, AN_PREFIX, AN_UNIT_ROWS, _anMenuLevel(), _anShowMenu()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Edit Operations & Wiring`, `Simulation Engine`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Edit Operations & Wiring`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
+- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Simulation Engine`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **Why does `afterStructChange()` connect `Edit Operations & Wiring` to `Interaction & Navigation`, `Simulation Engine`?**
+- **Why does `afterStructChange()` connect `Interaction & Navigation` to `Simulation Engine`?**
   _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `$()` (e.g. with `hideContextMenu()` and `showContextMenu()`) actually correct?**
   _`$()` has 2 INFERRED edges - model-reasoned connections that need verification._

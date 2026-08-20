@@ -29,6 +29,12 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      # Rebuild the always-loaded component bundle from library/*.json, so
+      # dropping in an exported IC and pushing is enough — no need to remember
+      # to run tools/build-library.mjs first. (Node ships on the runner.)
+      - name: Build component library
+        run: node tools/build-library.mjs
+
       # Publish the repo verbatim — this is a dependency-free static site,
       # so no build step and (thanks to .nojekyll) no Jekyll processing.
       - name: Upload site artifact

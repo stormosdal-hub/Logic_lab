@@ -17,6 +17,7 @@ function seedDemo() {
 
 window.addEventListener("DOMContentLoaded", () => {
   registerBuiltinDefs();
+  loadLibraryDefs();   // library/*.json, bundled into library/library.js
   setTopCircuit(newCircuit());
   initCanvas();
   initInteractions();

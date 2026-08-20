@@ -1227,5 +1227,96 @@ T.registerBuiltinDefs();
   check("bool synth: layout has no overlapping components", hit === 0);
 }
 
+/* ---- library bundler (tools/build-library.mjs) ----
+   The always-loaded components in library/*.json are bundled into a script,
+   because a file:// page can't fetch a sibling file. Exercise the bundler on a
+   throwaway directory: it has to survive whatever lands in that folder. */
+{
+  const fsx = require("fs"), osx = require("os"), cp = require("child_process");
+  const tmp = fsx.mkdtempSync(path.join(osx.tmpdir(), "lablib-"));
+  const script = path.join(__dirname, "..", "tools", "build-library.mjs");
+  // capture the child's output rather than letting its warnings pollute this log
+  const run = () => {
+    const r = cp.spawnSync(process.execPath, [script, tmp], { encoding: "utf8" });
+    return { out: r.stdout || "", warn: r.stderr || "", code: r.status };
+  };
+  // evaluate the generated bundle the way a browser <script> would
+  const loadBundle = () => {
+    const w = {};
+    vm.runInNewContext(fsx.readFileSync(path.join(tmp, "library.js"), "utf8"), { window: w });
+    return w.LOGIC_LAB_LIBRARY;
+  };
+  const defFile = (name, extra = {}) => JSON.stringify({
+    format: "logic-lab-components", version: 1,
+    defs: [Object.assign({ name, short: name, circuit: { components: [], wires: [] }, inputs: [], outputs: [] }, extra)],
+  });
+
+  check("library: exits cleanly on an empty folder", run().code === 0);
+  check("library: builds a bundle for an empty folder", fsx.existsSync(path.join(tmp, "library.js")));
+  check("library: empty bundle declares the global", !!loadBundle());
+  check("library: empty bundle has no components", loadBundle().defs.length === 0);
+
+  fsx.writeFileSync(path.join(tmp, "adder.json"), defFile("Adder"));
+  fsx.writeFileSync(path.join(tmp, "latch.json"), defFile("Latch"));
+  run();
+  let b = loadBundle();
+  check("library: picks up both files", b.defs.length === 2);
+  check("library: keeps the names", b.defs.map(d => d.name).sort().join(",") === "Adder,Latch");
+  check("library: carries the pin lists", b.defs.every(d => Array.isArray(d.inputs) && Array.isArray(d.outputs)));
+
+  // a file that isn't valid JSON must not take the whole build down
+  fsx.writeFileSync(path.join(tmp, "broken.json"), "{ not json at all");
+  let w = run().warn;
+  check("library: bad JSON is skipped, the rest still build", loadBundle().defs.length === 2);
+  check("library: and it says which file was bad", /broken\.json/.test(w));
+  fsx.unlinkSync(path.join(tmp, "broken.json"));
+
+  // neither must a JSON file that isn't a Logic Lab export
+  fsx.writeFileSync(path.join(tmp, "random.json"), '{"hello":"world"}');
+  w = run().warn;
+  check("library: a non-export JSON file is skipped", loadBundle().defs.length === 2);
+  check("library: and it explains why", /defs/.test(w) && /random\.json/.test(w));
+  fsx.unlinkSync(path.join(tmp, "random.json"));
+
+  // a malformed component inside an otherwise fine file is dropped on its own
+  fsx.writeFileSync(path.join(tmp, "partial.json"), JSON.stringify({
+    defs: [{ name: "NoCircuit" }, { name: "Good", short: "G", circuit: { components: [], wires: [] }, inputs: [], outputs: [] }],
+  }));
+  w = run().warn;
+  check("library: a malformed component is warned about", /malformed/.test(w));
+  b = loadBundle();
+  check("library: a malformed component is dropped", !b.defs.some(d => d.name === "NoCircuit"));
+  check("library: its healthy sibling still loads", b.defs.some(d => d.name === "Good"));
+  fsx.unlinkSync(path.join(tmp, "partial.json"));
+
+  // the same component in two files appears once, not twice
+  fsx.writeFileSync(path.join(tmp, "copy.json"), defFile("Adder"));
+  w = run().warn;
+  b = loadBundle();
+  check("library: a duplicate name warns and names both files",
+    /Adder/.test(w) && /adder\.json/.test(w));
+  check("library: a duplicate name is kept once", b.defs.filter(d => d.name === "Adder").length === 1);
+  fsx.unlinkSync(path.join(tmp, "copy.json"));
+
+  // a sketch export also carries defs — those are library material too
+  fsx.writeFileSync(path.join(tmp, "sheet.json"), JSON.stringify({
+    format: "logic-lab-sketch", version: 1, sheet: { components: [], wires: [] },
+    defs: [{ name: "FromSketch", short: "FS", circuit: { components: [], wires: [] }, inputs: [], outputs: [] }],
+  }));
+  run();
+  check("library: components bundled in a sketch export are picked up",
+    loadBundle().defs.some(d => d.name === "FromSketch"));
+
+  // removing a file removes its component on the next build
+  fsx.unlinkSync(path.join(tmp, "adder.json"));
+  fsx.unlinkSync(path.join(tmp, "sheet.json"));
+  run();
+  b = loadBundle();
+  check("library: deleting a file drops its component", !b.defs.some(d => d.name === "Adder"));
+  check("library: the remaining one stays", b.defs.length === 1 && b.defs[0].name === "Latch");
+
+  fsx.rmSync(tmp, { recursive: true, force: true });
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

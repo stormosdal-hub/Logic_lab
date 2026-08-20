@@ -143,6 +143,7 @@
           <li><b>Double-click a chip</b> to look inside it (read-only). In <b>edit</b> mode it opens in place (use the breadcrumb bar to go back).</li>
           <li><b>Side-by-side inspector (sim mode):</b> drag the handle on the left edge of the worksheet to pull out a second canvas like a curtain. Double-click any chip while simulating to show its insides there — so you watch the inside and the outside live at the same time. The inspector pans (drag), zooms (wheel), drills deeper (double-click a nested chip), and you can toggle its inputs by clicking them. Drag the divider to resize, double-click it (or press <kbd>Esc</kbd>) to close.</li>
           <li><b>⬇ / ✕</b> on a custom component exports / deletes it. Use toolbar <b>Export/Import ICs</b> to move components between sessions as JSON files, or <b>Export/Import sketch</b> to save and reload the whole worksheet (it bundles any components it uses).</li>
+          <li><b>Always-loaded components:</b> drop an exported <code>.json</code> into the project's <code>library/</code> folder and run <code>node tools/build-library.mjs</code>. It then appears under <b>Library</b> every time the app starts — see <code>library/README.md</code>.</li>
         </ul>
         <h3>Simulating</h3>
         <ul>
@@ -212,6 +213,10 @@
   </div>
 </div>
 
+<!-- Always-loaded components, generated from library/*.json by
+     tools/build-library.mjs. A <script> is used rather than fetching the JSON
+     because a file:// page can't read a sibling file — see library/README.md. -->
+<script src="library/library.js"></script>
 <script src="js/model.js"></script>
 <script src="js/builtins.js"></script>
 <script src="js/engine.js"></script>

@@ -15,9 +15,9 @@
     "semantic_hash": ""
   },
   "js/main.js": {
-    "mtime": 1783200668.2701268,
-    "ast_hash": "90ebd45576470d6446c13499857b5696",
-    "semantic_hash": "90ebd45576470d6446c13499857b5696"
+    "mtime": 1787243256.4936526,
+    "ast_hash": "7bdfe603217eaf183ad3a92670dc1429",
+    "semantic_hash": ""
   },
   "js/model.js": {
     "mtime": 1783215026.0783691,
@@ -30,18 +30,18 @@
     "semantic_hash": ""
   },
   "js/ui.js": {
-    "mtime": 1787033666.8661537,
-    "ast_hash": "b243044c19c06093f532db012874187a",
+    "mtime": 1787243252.9956548,
+    "ast_hash": "6dc9b7c3e829ee3e1932524e5dfc25e8",
     "semantic_hash": ""
   },
   "test/smoke.js": {
-    "mtime": 1784110514.538204,
-    "ast_hash": "e20dfd9d47a55d13e1df962d4628966d",
+    "mtime": 1787243457.6685276,
+    "ast_hash": "4647737265520053a4db49bf7661f2e8",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1787231316.9495845,
-    "ast_hash": "666c09b10233e59696d1baf3870ae994",
+    "mtime": 1787243513.9774911,
+    "ast_hash": "e79edb8d532cb82c50f808eaf8980c47",
     "semantic_hash": ""
   },
   "README.md": {
@@ -50,8 +50,8 @@
     "semantic_hash": "8617109f48f775451bb823b905d91a6f"
   },
   "index.html": {
-    "mtime": 1787230953.02089,
-    "ast_hash": "636334ca636744ceba580b320af0fb02",
+    "mtime": 1787243493.7655044,
+    "ast_hash": "0e1c4ee98c80ed146af510e783fb59b4",
     "semantic_hash": ""
   },
   "test/sim_view.html": {
@@ -105,8 +105,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/deploy.yml": {
-    "mtime": 1783204605.2402613,
-    "ast_hash": "2bef2acbf98bbf1ff6ddc0fca5f76f2d",
+    "mtime": 1787243261.7226496,
+    "ast_hash": "ed9cbb05e873d2a076ac5e37c7ebeddb",
     "semantic_hash": ""
   },
   "icon.svg": {
@@ -117,6 +117,21 @@
   "js/palette-drag.js": {
     "mtime": 1784621046.550156,
     "ast_hash": "f893efef50689da7a0b50744cdbc59f5",
+    "semantic_hash": ""
+  },
+  "library/library.js": {
+    "mtime": 1787243488.7715075,
+    "ast_hash": "dd5e02fd6d03a364e904c547b786b9c8",
+    "semantic_hash": ""
+  },
+  "tools/build-library.mjs": {
+    "mtime": 1787243406.68756,
+    "ast_hash": "9cfd539b27dee546bed6ababe0214450",
+    "semantic_hash": ""
+  },
+  "library/README.md": {
+    "mtime": 1787243192.8086903,
+    "ast_hash": "9e487dc5d3cb47472581a00a6b80ebca",
     "semantic_hash": ""
   }
 }

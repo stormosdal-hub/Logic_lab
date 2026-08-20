@@ -28,6 +28,7 @@ All tests must pass before marking any task complete.
 | `js/touch.js` | **Shared** touch→pointer bridge (`TouchBridge.attach`): turns touch into the existing mouse handlers + pinch-zoom + press-and-hold menu. Used by both apps. |
 | `js/mobile.js` | **Shared** mobile off-canvas drawers: on narrow screens (`@media (max-width:820px)`) the toolbar + palette collapse to slide-out drawers with floating pull-tabs (`☰`/`▸`). Pure DOM, browser-only, wires both apps. Desktop is untouched (handles are `display:none` above the breakpoint). |
 | `test/smoke.js` | Headless Node.js test suite (loads model + engine + builtins via vm) |
+| `tools/build-library.mjs` | Bundles `library/*.json` → `library/library.js` (always-loaded components) |
 
 **Analog app** (all namespaced under one `Analog` object, so it can't collide with the digital globals):
 
@@ -83,6 +84,8 @@ All tests must pass before marking any task complete.
 **Rotation:** components may have a `rot` property (0–3, ×90° clockwise). `pinPos()` returns on-screen (rotated) positions so wires connect correctly; `pinPosLogical()` returns the unrotated frame used inside the body-drawing functions (the body is drawn under a canvas transform applied in `drawComp`). `compBox()` gives the axis-aligned bounding box after rotation — use it (not `compSize`) for hit testing, selection rects, and fit-to-view. Currently only `TRI` is rotatable (right-click → Rotate); the enable pin sits on the side of the triangle. Rotation persists via `serializeCircuit`.
 
 **Right-click menu:** right-click no longer deletes immediately — `onCanvasContext` builds a context menu (`#ctxMenu`) via `compMenuItems()` / `showContextMenu()` with Delete, Rotate (TRI), Rename (IN/OUT), and Look inside (CUSTOM).
+
+**Always-loaded component library (`library/`).** Exported ICs dropped into `library/` are registered at every startup and shown in their own **Library** palette section. They are **not fetched at runtime**: a `file://` page can't read a sibling file (Chrome blocks it cross-origin, and no page can list a directory), and the project's whole premise is opening `index.html` directly. So `tools/build-library.mjs` bundles `library/*.json` into `library/library.js`, which declares `window.LOGIC_LAB_LIBRARY` and loads via a plain `<script>` — that works on `file://` *and* on the deployed site. The `.json` files stay the source of truth; the bundle is derived and the Pages workflow regenerates it on deploy, so committing a `.json` is enough for the live site. `loadLibraryDefs()` (ui.js, called from `main.js` before `loadLocal`) registers each with `library: true`, which means: excluded from `saveLocal` (a stale copy would outlive its file), skipped by `loadLocal`/`onImportFile` on a name clash (**disk wins**), no ✕ on the palette tile (it would return on reload), and left out of "Export ICs" (they're already files). `userDefs()` / `libraryDefs()` split `customDefs()`; `sketchDeps` still bundles them so an exported *sketch* stays portable. Built-ins always win over a library name.
 
 **Pin ordering** on chips is top-to-bottom by `y`, then `x` — position components in `builtins.js` accordingly.
 
