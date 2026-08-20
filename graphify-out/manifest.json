@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1787219389.4649153,
-    "ast_hash": "fa6447c9c72e40cb01e4cfaa72311e67",
+    "mtime": 1787231316.9495845,
+    "ast_hash": "666c09b10233e59696d1baf3870ae994",
     "semantic_hash": ""
   },
   "README.md": {
@@ -50,8 +50,8 @@
     "semantic_hash": "8617109f48f775451bb823b905d91a6f"
   },
   "index.html": {
-    "mtime": 1786955942.0236442,
-    "ast_hash": "0ea3f1dd55c84d3f89f1a9e13a3281e4",
+    "mtime": 1787230953.02089,
+    "ast_hash": "636334ca636744ceba580b320af0fb02",
     "semantic_hash": ""
   },
   "test/sim_view.html": {
@@ -65,13 +65,13 @@
     "semantic_hash": ""
   },
   "js/analog/engine.js": {
-    "mtime": 1787219226.0270069,
-    "ast_hash": "ed3ba19e1bfc1957b98bd6e30d3a44cb",
+    "mtime": 1787230947.689895,
+    "ast_hash": "f20317e482705a9a9cf4a7e8ea04dcbf",
     "semantic_hash": ""
   },
   "js/analog/interact.js": {
-    "mtime": 1787213402.0053306,
-    "ast_hash": "14020df92600328a98dc8db865edc9ac",
+    "mtime": 1787223433.5457985,
+    "ast_hash": "168ffeba2dcb0beab1af7fb14bad41d2",
     "semantic_hash": ""
   },
   "js/analog/model.js": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "js/analog/ui.js": {
-    "mtime": 1787213415.3633249,
-    "ast_hash": "fd0a0e648af66c95f83ba3df6a3ae126",
+    "mtime": 1787231260.14363,
+    "ast_hash": "054a8a7df99e667394f78faaf0d49b09",
     "semantic_hash": ""
   },
   "test/analog.js": {
-    "mtime": 1787219295.3809683,
-    "ast_hash": "5ab4209bdfc193b62d442d3582321d1c",
+    "mtime": 1787231142.109727,
+    "ast_hash": "86911de53d3c9b7f9fa45cbd9d9b1779",
     "semantic_hash": ""
   },
   "js/touch.js": {

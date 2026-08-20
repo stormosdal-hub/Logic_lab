@@ -1194,5 +1194,130 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   }
 }
 
+/* ---- 41. Pinned display units (⚙ Units) ---- */
+{
+  // by default every unit auto-scales, which is what makes a reading hop about
+  check("units: auto picks the prefix per value", A.fmt(0.0125, "A") === "12.5 mA");
+  check("units: auto drops to µA on its own", A.fmt(1.25e-5, "A") === "12.5 µA");
+
+  A.unitFix.A = "m";
+  check("units: pinned to mA stays mA", A.fmt(0.0125, "A") === "12.5 mA");
+  check("units: a µA-sized value still reads in mA", A.fmt(1.25e-5, "A") === "0.013 mA");
+  check("units: an amp-sized value still reads in mA", A.fmt(2.5, "A") === "2500 mA");
+  check("units: pinning A leaves V alone", A.fmt(1.25e-5, "V") === "12.5 µV");
+
+  A.unitFix.A = "";
+  check("units: pinned to the base unit", A.fmt(0.0125, "A") === "0.013 A");
+  A.unitFix.A = "µ";
+  check("units: pinned to µA", A.fmt(0.0125, "A") === "12500 µA");
+  A.unitFix.A = "n";
+  check("units: pinned to nA", A.fmt(1.25e-5, "A") === "12500 nA");
+
+  // a value far below the pinned scale rounds to zero rather than lying about it
+  A.unitFix.A = "k";
+  check("units: far below the pinned scale reads 0", A.fmt(0.0125, "A") === "0 kA");
+
+  // non-finite and unknown-prefix inputs stay safe
+  A.unitFix.A = "m";
+  check("units: null is still an em dash", A.fmt(null, "A") === "—");
+  check("units: NaN is still an em dash", A.fmt(NaN, "A") === "—");
+  check("units: negatives keep their sign", A.fmt(-0.0125, "A") === "-12.5 mA");
+  A.unitFix.A = "zzz";                       // not a real prefix → fall back to auto
+  check("units: an unknown prefix falls back to auto", A.fmt(0.0125, "A") === "12.5 mA");
+
+  delete A.unitFix.A;
+  check("units: clearing restores auto-scaling", A.fmt(1.25e-5, "A") === "12.5 µA");
+  check("units: units with no pin are untouched", A.fmt(4700, "Ω") === "4.7 kΩ");
+}
+
+/* ---- 42. Recorded history: capture a moment and replay it exactly ---- */
+{
+  // RC charging through a relay coil, with a fuse — reactive + both stateful parts
+  const c = A.newCircuit();
+  const v = A.makeComp("DCV", 0, 0, { value: 10 });
+  const r = A.makeComp("RES", 100, 0, { value: 1000 });
+  const cap = A.makeComp("CAP", 200, 0, { value: 1e-6 });
+  const am = A.makeComp("AM", 300, 0);
+  const g = A.makeComp("GND", 400, 0);
+  c.comps.push(v, r, cap, am, g);
+  A.addWire(c, v, 0, r, 0); A.addWire(c, r, 1, cap, 0);
+  A.addWire(c, cap, 1, am, 0); A.addWire(c, am, 1, g, 0); A.addWire(c, v, 1, g, 0);
+
+  const idx = A.frameIndex(c);
+  check("history: index covers every component", idx.comps.length === c.comps.length);
+  check("history: index covers every terminal",
+    idx.terms.length === c.comps.reduce((n, x) => n + A.numTerminals(x), 0));
+
+  A.initTransient(c);
+  const frames = [], live = [];
+  const dt = 1e-5;
+  for (let i = 1; i <= 300; i++) {
+    const res = A.stepTransient(c, dt, i * dt);
+    frames.push(A.captureFrame(idx, c, res, i * dt));
+    live.push({
+      t: i * dt,
+      vcap: res.volt(cap.id, 0) - res.volt(cap.id, 1),
+      ir: res.current(r),
+      meter: res.meter(am),
+      term: res.termCurrent(r, 0),
+      wires: [...A.wireCurrents(c, res).values()],
+    });
+  }
+  check("history: recorded every step", frames.length === 300);
+
+  // a replayed frame must be indistinguishable from the result it came from
+  let vOk = true, iOk = true, mOk = true, tOk = true, wOk = true, tsOk = true;
+  for (let i = 0; i < frames.length; i++) {
+    const rr = A.frameResult(idx, frames[i]), L = live[i];
+    if (!near(rr.volt(cap.id, 0) - rr.volt(cap.id, 1), L.vcap, 1e-12)) vOk = false;
+    if (!near(rr.current(r), L.ir, 1e-12)) iOk = false;
+    if (!near(rr.meter(am), L.meter, 1e-12)) mOk = false;
+    if (!near(rr.termCurrent(r, 0), L.term, 1e-12)) tOk = false;
+    if (!near(rr.time, L.t, 1e-15)) tsOk = false;
+    const w = [...A.wireCurrents(c, rr).values()];
+    if (w.length !== L.wires.length || w.some((x, k) => !near(x, L.wires[k], 1e-12))) wOk = false;
+  }
+  check("history: replays terminal voltages exactly", vOk);
+  check("history: replays element currents exactly", iOk);
+  check("history: replays the meter reading exactly", mOk);
+  check("history: replays per-terminal currents exactly", tOk);
+  check("history: replays the wire currents (flow animation) exactly", wOk);
+  check("history: carries its timestamp", tsOk);
+  check("history: a replayed frame reports ok", A.frameResult(idx, frames[0]).ok === true);
+  check("history: and marks itself as a replay", A.frameResult(idx, frames[0]).replay === true);
+
+  // the capacitor really was charging, so those equalities aren't comparing zeros
+  const first = A.frameResult(idx, frames[0]), last = A.frameResult(idx, frames[299]);
+  const vFirst = first.volt(cap.id, 0) - first.volt(cap.id, 1);
+  const vLast = last.volt(cap.id, 0) - last.volt(cap.id, 1);
+  check("history: the run actually moved", vLast > vFirst + 1 && vLast > 5);
+
+  // stepping back doesn't disturb the live solver state
+  const vcBefore = cap._vc;
+  A.frameResult(idx, frames[10]);
+  check("history: replaying leaves the solver state alone", cap._vc === vcBefore);
+
+  // discrete device state is restored, not left at the live value
+  {
+    const c2 = A.newCircuit();
+    const v2 = A.makeComp("DCV", 0, 0, { value: 12 });
+    const f2 = A.makeComp("FUSE", 100, 0, { value: 0.02 });    // 20 mA rating
+    const r2 = A.makeComp("RES", 200, 0, { value: 10000 });    // 1.2 mA — safe at first
+    const g2 = A.makeComp("GND", 300, 0);
+    c2.comps.push(v2, f2, r2, g2);
+    A.addWire(c2, v2, 0, f2, 0); A.addWire(c2, f2, 1, r2, 0);
+    A.addWire(c2, r2, 1, g2, 0); A.addWire(c2, v2, 1, g2, 0);
+    const i2 = A.frameIndex(c2);
+    const intact = A.captureFrame(i2, c2, A.solveDC(c2), 0);
+    check("history: fuse intact at the first moment", f2._blown === false);
+    r2.value = 100;                                            // 120 mA — overload
+    const blown = A.captureFrame(i2, c2, A.solveDC(c2), 1);
+    A.applyFrameState(i2, c2, intact);
+    check("history: replaying an earlier moment un-blows the fuse", f2._blown === false);
+    A.applyFrameState(i2, c2, blown);
+    check("history: and returning restores it", f2._blown === true);
+  }
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

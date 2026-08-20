@@ -461,6 +461,73 @@ Analog.wireCurrents = function (circ, res) {
   return out;
 };
 
+/* ---- recorded history (stepping back through a run) ----
+   A transient run throws each solved step away the moment it is drawn, so there is
+   nothing to go back to. These keep a compact snapshot per displayed frame — the
+   terminal voltages, element currents, per-terminal currents and the discrete
+   relay/fuse states — as parallel typed arrays against an index built once per run
+   (topology cannot change mid-run: a structural edit restarts it). `frameResult`
+   turns one back into exactly the shape `solveDC`/`stepTransient` return, so every
+   reader — meters, part labels, the hover probe, the flow animation — shows a past
+   moment without knowing it is looking at a recording. */
+Analog.frameIndex = function (circ) {
+  const comps = [], terms = [], ci = new Map(), ti = new Map();
+  for (const c of circ.comps) {
+    ci.set(c.id, comps.length); comps.push(c.id);
+    for (let t = 0, n = Analog.numTerminals(c); t < n; t++) {
+      ti.set(c.id + ":" + t, terms.length); terms.push(c.id + ":" + t);
+    }
+  }
+  return { comps, terms, ci, ti, nodeCount: Analog.buildNodes(circ).count };
+};
+
+Analog.captureFrame = function (idx, circ, res, time) {
+  const f = {
+    t: time,
+    v: new Float64Array(idx.terms.length),
+    tc: new Float64Array(idx.terms.length),
+    c: new Float64Array(idx.comps.length),
+    st: new Uint8Array(idx.comps.length),
+  };
+  for (const c of circ.comps) {
+    const k = idx.ci.get(c.id);
+    if (k == null) continue;
+    f.c[k] = res.current(c);
+    f.st[k] = (c._on ? 1 : 0) | (c._blown ? 2 : 0);
+    for (let t = 0, n = Analog.numTerminals(c); t < n; t++) {
+      const j = idx.ti.get(c.id + ":" + t);
+      if (j == null) continue;
+      f.v[j] = res.volt(c.id, t);
+      f.tc[j] = res.termCurrent(c, t);
+    }
+  }
+  return f;
+};
+
+Analog.frameResult = function (idx, f) {
+  const volt = (cid, t) => { const j = idx.ti.get(cid + ":" + t); return j == null ? 0 : f.v[j]; };
+  const cur = c => { const k = idx.ci.get(c.id); return k == null ? 0 : f.c[k]; };
+  return {
+    ok: true, mode: "tran", replay: true, time: f.t,
+    nodes: { count: idx.nodeCount },
+    volt, current: cur,
+    termCurrent: (c, t) => { const j = idx.ti.get(c.id + ":" + t); return j == null ? 0 : f.tc[j]; },
+    meter: c => (c.type === "AM" ? cur(c) : volt(c.id, 0) - volt(c.id, 1)),
+  };
+};
+
+/* Put the discrete device states back the way they were at that moment, so a
+   relay that had not pulled in yet is drawn open and a fuse reads intact. */
+Analog.applyFrameState = function (idx, circ, f) {
+  for (const c of circ.comps) {
+    const k = idx.ci.get(c.id);
+    if (k == null) continue;
+    const def = Analog.TYPES[c.type] || {};
+    if (def.relay) c._on = !!(f.st[k] & 1);
+    if (def.fuse) c._blown = !!(f.st[k] & 2);
+  }
+};
+
 /* DC operating point (resistive; C open, L short). Relay contacts and fuses are
    discrete functions of their own current, so re-solve until every state settles. */
 Analog.solveDC = function (circ) {
@@ -504,9 +571,33 @@ Analog.characteristicTime = function (circ) {
   return tau > 0 ? tau : 1e-3;
 };
 
-/* Format a value with an SI prefix and unit (e.g. 1500 Ω → "1.5 kΩ"). */
+/* SI prefixes, biggest first — the scales a reading can be pinned to. */
+Analog.SI = [
+  { p: "G", m: 1e9 }, { p: "M", m: 1e6 }, { p: "k", m: 1e3 }, { p: "", m: 1 },
+  { p: "m", m: 1e-3 }, { p: "µ", m: 1e-6 }, { p: "n", m: 1e-9 }, { p: "p", m: 1e-12 },
+];
+
+/* Pin a unit to one SI prefix instead of auto-scaling it by magnitude, so a live
+   reading holds still instead of hopping between mA and µA while you watch it.
+   Keyed by unit symbol ("A", "V", "W"), value is the prefix ("" = the base unit);
+   a missing key means auto. Set through the ⚙ Units panel. */
+Analog.unitFix = {};
+
+/* Format a value with an SI prefix and unit (e.g. 1500 Ω → "1.5 kΩ"), or on the
+   unit's pinned scale if one is set. */
 Analog.fmt = function (v, unit) {
   if (v == null || !isFinite(v)) return "—";
+  const fix = unit == null ? null : Analog.unitFix[unit];
+  if (fix != null) {
+    const e = Analog.SI.find(x => x.p === fix);
+    if (e) {
+      // a pinned scale has to cope with values far off it, so allow an extra
+      // decimal below 1 rather than rounding a small reading away to nothing
+      const s = v / e.m, m = Math.abs(s);
+      const q = m >= 100 ? s.toFixed(0) : m >= 10 ? s.toFixed(1) : m >= 1 ? s.toFixed(2) : s.toFixed(3);
+      return parseFloat(q) + " " + fix + unit;
+    }
+  }
   const a = Math.abs(v);
   let s = v, p = "";
   if (a >= 1e9)      { s = v / 1e9;  p = "G"; }

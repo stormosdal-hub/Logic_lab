@@ -320,7 +320,11 @@ function _anKey(e) {
   if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || "")) return;
   const ctrl = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
 
-  if (e.key === "Escape") { App.tool = null; App.wiring = null; App.hover = null; Analog.hideCtxMenu(); Analog.updatePaletteSel(); Analog.requestRender(); }
+  if (e.key === "Escape") {
+    App.tool = null; App.wiring = null; App.hover = null;
+    Analog.hideCtxMenu(); Analog.openUnitsPanel(false);
+    Analog.updatePaletteSel(); Analog.requestRender();
+  }
   else if (ctrl && k === "z") { e.preventDefault(); e.shiftKey ? Analog.redo() : Analog.undo(); }
   else if (ctrl && k === "y") { e.preventDefault(); Analog.redo(); }
   else if (ctrl && k === "c") { Analog.copySelection(); }

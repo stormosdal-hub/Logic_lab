@@ -63,6 +63,19 @@ const AN_PREFIX = {
 };
 
 const AN_SAVE_KEY = "logiclab.analog.v1";
+const AN_UNITS_KEY = "logiclab.analog.units.v1";
+const AN_TRACE_CAP = 6000;    // samples kept per meter trace (one per solver step)
+const AN_HIST_CAP = 1500;     // recorded moments kept for stepping back (one per drawn frame)
+
+/* Units a reading can be pinned to (⚙ Units). Only the live quantities are here —
+   a resistor's 4.7 kΩ never moves, but its current hops scale as the circuit runs.
+   `eg` is the sample value shown beside each row so a choice is legible before you
+   commit to it. */
+const AN_UNIT_ROWS = [
+  { unit: "A", label: "Current", prefixes: ["k", "", "m", "µ", "n", "p"], eg: 0.0125 },
+  { unit: "V", label: "Voltage", prefixes: ["k", "", "m", "µ"], eg: 3.3 },
+  { unit: "W", label: "Power", prefixes: ["k", "", "m", "µ", "n"], eg: 0.25 },
+];
 
 let _anInited = false;
 
@@ -104,6 +117,8 @@ Analog.init = function () {
     Analog.snapshot();
     Analog.requestRender();
   });
+  Analog.initUnitsPanel();
+  Analog.initTimeNav();
   document.getElementById("anSaveBtn").addEventListener("click", Analog.saveSheet);
   document.getElementById("anLoadBtn").addEventListener("click", Analog.loadSheet);
   document.getElementById("anUndoBtn").addEventListener("click", Analog.undo);
@@ -322,8 +337,12 @@ Analog.enterSim = function () {
   S.time = 0;
   App.flowRef = 0;              // each run rescales the flow animation to its own currents
   Analog.initTransient(App.circ);
-  for (const c of App.circ.comps) if (Analog.isScope(c)) c._trace = [];
+  for (const c of App.circ.comps) if (Analog.isMeter(c)) c._trace = [];
   S.transient = Analog.isTransient(App.circ);
+  // a fresh recording each run — the index is safe to build once, since any
+  // structural edit comes back through here and rebuilds it
+  S.hist = { idx: Analog.frameIndex(App.circ), frames: [], pos: -1 };
+  S.liveResult = null; S.liveTime = 0;
   document.getElementById("anRunBtn").classList.toggle("hidden", !S.transient);
   document.getElementById("anTime").classList.toggle("hidden", !S.transient);
   if (S.transient) {
@@ -332,11 +351,13 @@ Analog.enterSim = function () {
     S.window = tau * 4;
     S.stepsPerFrame = Math.max(1, Math.round((tau / S.dt) / 120));   // ~run one τ in ~2 s
     App.result = Analog.stepTransient(App.circ, S.dt, S.time);
-    Analog.recordScopes();
+    Analog.recordTraces();
+    Analog.recordFrame();
     Analog.startRun();
   } else {
     Analog.resolve();   // static DC operating point
   }
+  Analog.syncTimeNav();
 };
 Analog.exitSim = function () {
   const S = Analog.Sim;
@@ -344,6 +365,8 @@ Analog.exitSim = function () {
   if (S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; }
   document.getElementById("anRunBtn").classList.add("hidden");
   document.getElementById("anTime").classList.add("hidden");
+  S.hist = null;
+  Analog.syncTimeNav();
   Analog.resolve();   // clears result + status back to edit mode
   Analog.snapshot();  // capture any structural edits made while simulating
 };
@@ -381,6 +404,7 @@ Analog.toggleFlow = function () {
 };
 Analog.startRun = function () {
   const S = Analog.Sim;
+  if (S.hist && S.hist.pos >= 0) Analog.goLive();   // resuming leaves the recording
   S.running = true;
   document.getElementById("anRunBtn").textContent = "⏸ Pause";
   if (!S.raf) S.raf = requestAnimationFrame(Analog._frame);
@@ -390,6 +414,7 @@ Analog.pauseRun = function () {
   S.running = false;
   if (S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; }
   document.getElementById("anRunBtn").textContent = "▶ Run";
+  Analog.syncTimeNav();
 };
 Analog.toggleRun = function () { Analog.Sim.running ? Analog.pauseRun() : Analog.startRun(); };
 Analog._frame = function () {
@@ -400,24 +425,130 @@ Analog._frame = function () {
     S.time += S.dt;
     App.result = Analog.stepTransient(App.circ, S.dt, S.time);
     if (!App.result.ok) { S.running = false; break; }
-    Analog.recordScopes();
+    Analog.recordTraces();
   }
-  document.getElementById("anTime").textContent = "t = " + Analog.fmt(S.time, "s");
+  Analog.recordFrame();
   const st = document.getElementById("anStatus");
   if (App.result.ok) { st.textContent = "▶ running"; st.className = "an-status ok"; }
   else { st.textContent = "⚠ " + App.result.error; st.className = "an-status err"; }
+  Analog.syncTimeNav();
   Analog.refreshMeters();
   Analog.render();
   if (S.running) S.raf = requestAnimationFrame(Analog._frame);
 };
-Analog.recordScopes = function () {
+/* Every meter records a trace, not just oscilloscopes — a voltmeter/ammeter's
+   Graph tab plots the same samples. */
+Analog.recordTraces = function () {
   const App = Analog.App, S = Analog.Sim;
   if (!App.result || !App.result.ok) return;
   for (const c of App.circ.comps) {
-    if (!Analog.isScope(c)) continue;
+    if (!Analog.isMeter(c)) continue;
     (c._trace || (c._trace = [])).push({ t: S.time, v: App.result.meter(c) });
-    if (c._trace.length > 6000) c._trace.shift();
+    if (c._trace.length > AN_TRACE_CAP) c._trace.shift();
   }
+};
+
+/* ---- time travel: step back through a recorded run ----
+   One snapshot per *displayed* frame (not per solver step) — that's the sequence
+   you actually watched, and it keeps the cost bounded. Reviewing is a view onto
+   the recording, not a rewind of the solver: the reactive state stays at the live
+   end, so pressing Run picks up exactly where it left off instead of silently
+   discarding everything after the point you were inspecting. */
+Analog.recordFrame = function () {
+  const App = Analog.App, S = Analog.Sim, h = S.hist;
+  if (!h || !h.idx || !App.result || !App.result.ok) return;
+  h.frames.push(Analog.captureFrame(h.idx, App.circ, App.result, S.time));
+  if (h.frames.length > AN_HIST_CAP) h.frames.shift();
+  S.liveResult = App.result;
+  S.liveTime = S.time;
+};
+
+/* The moment being reviewed, or null when we're at the live end. */
+Analog.reviewTime = function () {
+  const h = Analog.Sim.hist;
+  return h && h.pos >= 0 && h.frames[h.pos] ? h.frames[h.pos].t : null;
+};
+
+/* Show the circuit as it was at recorded frame `i`. */
+Analog.reviewAt = function (i) {
+  const App = Analog.App, S = Analog.Sim, h = S.hist;
+  if (!h || !h.frames.length) return;
+  i = Math.max(0, Math.min(h.frames.length - 1, i));
+  if (S.running) Analog.pauseRun();
+  h.pos = i;
+  const f = h.frames[i];
+  Analog.applyFrameState(h.idx, App.circ, f);
+  App.result = Analog.frameResult(h.idx, f);
+  S.time = f.t;
+  Analog.syncTimeNav();
+  Analog.refreshMeters();
+  Analog.render();
+};
+
+/* Return to the live end of the run (where the solver actually is). */
+Analog.goLive = function () {
+  const App = Analog.App, S = Analog.Sim, h = S.hist;
+  if (!h) return;
+  h.pos = -1;
+  const f = h.frames[h.frames.length - 1];
+  if (f) Analog.applyFrameState(h.idx, App.circ, f);
+  if (S.liveResult) App.result = S.liveResult;
+  if (S.liveTime != null) S.time = S.liveTime;
+  Analog.syncTimeNav();
+  Analog.refreshMeters();
+  Analog.render();
+};
+
+Analog.stepFrames = function (d) {
+  const h = Analog.Sim.hist;
+  if (!h || !h.frames.length) return;
+  const from = h.pos >= 0 ? h.pos : h.frames.length - 1;
+  const to = from + d;
+  if (to >= h.frames.length - 1 && h.pos >= 0 && d > 0) Analog.goLive();
+  else Analog.reviewAt(to);
+};
+
+/* Keep the scrubber, the clock and the status line in step with where we are. */
+Analog.syncTimeNav = function () {
+  const S = Analog.Sim, h = S.hist;
+  const nav = document.getElementById("anTimeNav");
+  if (!nav) return;
+  nav.classList.toggle("hidden", !(S.transient && Analog.App.mode === "sim"));
+  const n = h ? h.frames.length : 0;
+  const scrub = document.getElementById("anScrub");
+  const reviewing = !!h && h.pos >= 0;
+  scrub.max = String(Math.max(0, n - 1));
+  scrub.value = String(reviewing ? h.pos : Math.max(0, n - 1));
+  scrub.disabled = n < 2;
+  document.getElementById("anStepBack").disabled = n < 2 || (reviewing && h.pos === 0);
+  document.getElementById("anStepFwd").disabled = n < 2 || !reviewing;
+  document.getElementById("anLiveBtn").disabled = !reviewing;
+  const t = document.getElementById("anTime");
+  if (t) t.textContent = "t = " + Analog.fmt(S.time, "s");
+  // status line: reviewing wins, otherwise leave a solver error alone and let a
+  // live run keep the message _frame just set
+  const st = document.getElementById("anStatus");
+  const res = Analog.App.result;
+  if (st && Analog.App.mode === "sim") {
+    if (reviewing) {
+      st.textContent = "⏱ reviewing t = " + Analog.fmt(S.time, "s");
+      st.className = "an-status review";
+    } else if (res && res.ok && S.transient && !S.running) {
+      st.textContent = "⏸ paused";
+      st.className = "an-status ok";
+    }
+  }
+};
+
+Analog.initTimeNav = function () {
+  document.getElementById("anStepBack").addEventListener("click", () => Analog.stepFrames(-1));
+  document.getElementById("anStepFwd").addEventListener("click", () => Analog.stepFrames(1));
+  document.getElementById("anLiveBtn").addEventListener("click", Analog.goLive);
+  document.getElementById("anScrub").addEventListener("input", e => {
+    const h = Analog.Sim.hist;
+    const i = +e.target.value;
+    if (h && i >= h.frames.length - 1) Analog.goLive(); else Analog.reviewAt(i);
+  });
 };
 
 /* Re-solve the DC operating point (sim mode only) and refresh status + meters. */
@@ -447,6 +578,91 @@ Analog.afterStruct = function () {
   Analog.pruneMeters();
   if (App.mode === "sim") { S.running = false; if (S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; } Analog.enterSim(); }
   Analog.requestRender();
+};
+
+/* ---- ⚙ Units: pin the SI prefix readings are shown in ---- */
+
+/* Persisted separately from the sheet — it's a preference about how you read the
+   circuit, not part of the circuit, so New/Load must not disturb it. */
+Analog.loadUnits = function () {
+  try {
+    const d = JSON.parse(localStorage.getItem(AN_UNITS_KEY));
+    if (d && typeof d === "object")
+      for (const r of AN_UNIT_ROWS)
+        if (typeof d[r.unit] === "string" && Analog.SI.some(s => s.p === d[r.unit]))
+          Analog.unitFix[r.unit] = d[r.unit];
+  } catch (err) { /* corrupt preference — stay on auto */ }
+};
+
+/* Persist the choice and push it through everything that shows a reading. */
+Analog.applyUnits = function () {
+  try { localStorage.setItem(AN_UNITS_KEY, JSON.stringify(Analog.unitFix)); } catch (err) { /* private mode */ }
+  Analog.syncUnitsPanel();
+  Analog.refreshMeters();
+  Analog.requestRender();
+};
+
+Analog.setUnitFix = function (unit, prefix) {
+  if (prefix == null) delete Analog.unitFix[unit];
+  else Analog.unitFix[unit] = prefix;
+  Analog.applyUnits();
+};
+
+Analog.openUnitsPanel = function (open) {
+  const el = document.getElementById("anSettings");
+  if (!el) return;
+  el.classList.toggle("hidden", !open);
+  if (open) Analog.syncUnitsPanel();
+};
+
+/* Keep the dropdowns and their sample readings in step with the current setting. */
+Analog.syncUnitsPanel = function () {
+  for (const r of AN_UNIT_ROWS) {
+    const sel = document.getElementById("anUnit_" + r.unit);
+    if (sel) sel.value = Analog.unitFix[r.unit] == null ? "auto" : Analog.unitFix[r.unit];
+    const eg = document.getElementById("anUnitEg_" + r.unit);
+    if (eg) eg.textContent = Analog.fmt(r.eg, r.unit);
+  }
+  // the button lights while any unit is pinned — that's the state worth seeing
+  // from the toolbar; the panel being open is obvious on its own
+  const btn = document.getElementById("anUnitsBtn");
+  if (btn) btn.classList.toggle("active", AN_UNIT_ROWS.some(r => Analog.unitFix[r.unit] != null));
+};
+
+Analog.initUnitsPanel = function () {
+  Analog.loadUnits();
+  const host = document.getElementById("anUnitRows");
+  if (!host) return;
+  host.innerHTML = "";
+  for (const r of AN_UNIT_ROWS) {
+    const row = document.createElement("div");
+    row.className = "an-unit-row";
+    const lab = document.createElement("label");
+    lab.textContent = r.label;
+    lab.htmlFor = "anUnit_" + r.unit;
+    const sel = document.createElement("select");
+    sel.id = "anUnit_" + r.unit;
+    sel.appendChild(new Option("Auto", "auto"));
+    for (const p of r.prefixes) sel.appendChild(new Option(p + r.unit, p));
+    sel.addEventListener("change", () => Analog.setUnitFix(r.unit, sel.value === "auto" ? null : sel.value));
+    const eg = document.createElement("span");
+    eg.className = "an-unit-eg";
+    eg.id = "anUnitEg_" + r.unit;
+    row.append(lab, sel, eg);
+    host.appendChild(row);
+  }
+  document.getElementById("anUnitsBtn").addEventListener("click", () => {
+    Analog.openUnitsPanel(document.getElementById("anSettings").classList.contains("hidden"));
+  });
+  document.getElementById("anUnitsClose").addEventListener("click", () => Analog.openUnitsPanel(false));
+  document.getElementById("anSettings").addEventListener("click", e => {
+    if (e.target.id === "anSettings") Analog.openUnitsPanel(false);   // click the backdrop
+  });
+  document.getElementById("anUnitsAuto").addEventListener("click", () => {
+    for (const r of AN_UNIT_ROWS) delete Analog.unitFix[r.unit];
+    Analog.applyUnits();
+  });
+  Analog.syncUnitsPanel();
 };
 
 /* ---- right-click context menus ---- */
@@ -600,7 +816,10 @@ Analog.editValue = function (c) {
   Analog.afterEdit();
 };
 
-/* ---- meter readout windows ---- */
+/* ---- meter readout windows ----
+   A voltmeter/ammeter window has two tabs: the live number, and the same reading
+   plotted over the run. An oscilloscope is a graph by definition, so it skips the
+   tabs — but draws through the very same plotter, so the two can't drift apart. */
 Analog.openMeter = function (c) {
   const App = Analog.App;
   if (App.meters.find(x => x.comp === c)) return;
@@ -608,31 +827,47 @@ Analog.openMeter = function (c) {
   const scope = Analog.isScope(c);
   const el = document.createElement("div");
   el.className = "an-meter" + (scope ? " an-scope" : "");
-  el.innerHTML = '<div class="am-head"><span>' + (c.label ? c.label + " · " : "") + Analog.TYPES[c.type].name +
-    '</span><button class="am-close" title="Close">✕</button></div>' +
-    (scope ? '<canvas class="am-plot"></canvas>' : '<div class="am-val">—</div>');
-  el.style.left = (60 + App.meters.length * 22) + "px";
-  el.style.top = (70 + App.meters.length * 22) + "px";
+  el.innerHTML = '<div class="am-head"><span class="am-name"></span>' +
+    '<button class="am-close" title="Close">✕</button></div>' +
+    (scope ? '<canvas class="am-plot"></canvas>'
+      : '<div class="am-tabs"><button class="am-tab active" data-tab="val">Value</button>' +
+        '<button class="am-tab" data-tab="graph">Graph</button></div>' +
+        '<div class="am-val">—</div><canvas class="am-plot hidden"></canvas>');
+  // set as text, not markup — a component label is user input
+  el.querySelector(".am-name").textContent = (c.label ? c.label + " · " : "") + Analog.TYPES[c.type].name;
+  // cascade far enough that the window underneath keeps its title bar and tabs
+  el.style.left = (60 + App.meters.length * 26) + "px";
+  el.style.top = (70 + App.meters.length * 34) + "px";
   host.appendChild(el);
   el.querySelector(".am-close").addEventListener("click", () => {
     el.remove(); App.meters = App.meters.filter(x => x.comp !== c);
   });
   _anDragWindow(el, el.querySelector(".am-head"));
-  const entry = { comp: c, el, scope };
-  if (scope) {
-    entry.canvas = el.querySelector(".am-plot");
-    entry.w = 272; entry.h = 150;
-    const dpr = window.devicePixelRatio || 1;
-    entry.canvas.width = entry.w * dpr; entry.canvas.height = entry.h * dpr;
-    entry.canvas.style.width = entry.w + "px"; entry.canvas.style.height = entry.h + "px";
-  }
+
+  const entry = { comp: c, el, scope, tab: scope ? "graph" : "val" };
+  entry.canvas = el.querySelector(".am-plot");
+  entry.w = scope ? 272 : 220;
+  entry.h = scope ? 150 : 124;
+  const dpr = window.devicePixelRatio || 1;
+  entry.canvas.width = Math.round(entry.w * dpr); entry.canvas.height = Math.round(entry.h * dpr);
+  entry.canvas.style.width = entry.w + "px"; entry.canvas.style.height = entry.h + "px";
+  if (!scope)
+    for (const b of el.querySelectorAll(".am-tab"))
+      b.addEventListener("click", () => {
+        entry.tab = b.dataset.tab;
+        for (const o of el.querySelectorAll(".am-tab")) o.classList.toggle("active", o === b);
+        el.querySelector(".am-val").classList.toggle("hidden", entry.tab !== "val");
+        entry.canvas.classList.toggle("hidden", entry.tab !== "graph");
+        Analog.refreshMeters();
+      });
+
   App.meters.push(entry);
   Analog.refreshMeters();
 };
 Analog.refreshMeters = function () {
   const App = Analog.App;
   for (const m of App.meters) {
-    if (m.scope) { _anDrawScope(m); continue; }
+    if (m.tab === "graph") { _anDrawTrace(m); continue; }
     const v = m.el.querySelector(".am-val");
     if (App.mode === "sim" && App.result && App.result.ok)
       v.textContent = Analog.fmt(App.result.meter(m.comp), Analog.TYPES[m.comp.type].unit);
@@ -640,24 +875,39 @@ Analog.refreshMeters = function () {
   }
 };
 
-/* draw one oscilloscope window: the recorded trace over the last `window` seconds,
-   auto-ranged on the voltage axis, with a zero line and min/max/now labels. */
-function _anDrawScope(m) {
+/* Plot one meter's recorded trace: the last `window` seconds, auto-ranged, with a
+   zero line and min/max/now labels. Shared by the oscilloscope and by the Graph
+   tab of a voltmeter/ammeter — the axis unit comes from the part, so an ammeter
+   plots amps. While a run is being reviewed, the window widens if it has to so the
+   reviewed moment stays on screen, and a cursor marks it with its value. */
+function _anDrawTrace(m) {
   const cv = m.canvas, g = cv.getContext("2d"), S = Analog.Sim;
+  const unit = Analog.TYPES[m.comp.type].unit || "";
   const W = m.w || cv.width, H = m.h || cv.height;
   const dpr = m.w ? cv.width / m.w : 1;
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
   g.fillStyle = "#0a1a12"; g.fillRect(0, 0, W, H);
   const tr = m.comp._trace || [];
-  const tEnd = S.time || (tr.length ? tr[tr.length - 1].t : 1);
+  if (!tr.length) {
+    g.fillStyle = "#5f7d6d"; g.font = "11px sans-serif";
+    g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillText(Analog.Sim.transient ? "no samples yet" : "steady DC — nothing to plot", W / 2, H / 2);
+    return;
+  }
+  const cursor = Analog.reviewTime();                     // null unless reviewing
+  // anchored to the end of the recording, not to the reviewed moment — so the
+  // waveform holds still while you scrub and the cursor moves across it
+  const tEnd = Math.max(tr[tr.length - 1].t, S.liveTime || 0);
   const win = S.window || (tEnd || 1);
-  const tStart = Math.max(0, tEnd - win);
+  let tStart = Math.max(0, tEnd - win);
+  if (cursor != null && cursor < tStart) tStart = cursor;  // keep the moment in view
+  const span = Math.max(tEnd - tStart, 1e-12);
   let ymin = Infinity, ymax = -Infinity;
   for (const s of tr) if (s.t >= tStart) { if (s.v < ymin) ymin = s.v; if (s.v > ymax) ymax = s.v; }
   if (!isFinite(ymin)) { ymin = -1; ymax = 1; }
-  if (ymax - ymin < 1e-9) { ymax += 1; ymin -= 1; }
+  if (ymax - ymin < 1e-12) { ymax += 1; ymin -= 1; }
   const padY = (ymax - ymin) * 0.15; ymin -= padY; ymax += padY;
-  const xOf = t => W * (t - tStart) / (win || 1);
+  const xOf = t => W * (t - tStart) / span;
   const yOf = v => H - H * (v - ymin) / (ymax - ymin);
   if (ymin < 0 && ymax > 0) { g.strokeStyle = "#2f6b4e"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, yOf(0)); g.lineTo(W, yOf(0)); g.stroke(); }
   g.strokeStyle = "#3fdc8b"; g.lineWidth = 1.6; g.beginPath();
@@ -665,10 +915,32 @@ function _anDrawScope(m) {
   for (const s of tr) { if (s.t < tStart) continue; const x = xOf(s.t), y = yOf(s.v); started ? g.lineTo(x, y) : g.moveTo(x, y); started = true; }
   g.stroke();
   g.font = "10px monospace"; g.fillStyle = "#8fb0a0";
-  g.textAlign = "left"; g.textBaseline = "top"; g.fillText(Analog.fmt(ymax, "V"), 3, 2);
-  g.textBaseline = "bottom"; g.fillText(Analog.fmt(ymin, "V"), 3, H - 2);
-  const now = tr.length ? tr[tr.length - 1].v : 0;
-  g.fillStyle = "#3fdc8b"; g.textAlign = "right"; g.textBaseline = "top"; g.fillText(Analog.fmt(now, "V"), W - 3, 2);
+  g.textAlign = "left"; g.textBaseline = "top"; g.fillText(Analog.fmt(ymax, unit), 3, 2);
+  g.textBaseline = "bottom"; g.fillText(Analog.fmt(ymin, unit), 3, H - 2);
+
+  // reading shown top-right: the reviewed sample while scrubbing, else the latest
+  let now = tr[tr.length - 1].v;
+  if (cursor != null) {
+    const s = _anTraceAt(tr, cursor);
+    if (s) now = s.v;
+    const x = Math.max(0, Math.min(W, xOf(cursor)));
+    g.strokeStyle = "#ffd166"; g.lineWidth = 1;
+    g.setLineDash([3, 3]);
+    g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke();
+    g.setLineDash([]);
+    if (s) { g.fillStyle = "#ffd166"; g.beginPath(); g.arc(x, yOf(s.v), 3, 0, 7); g.fill(); }
+  }
+  g.fillStyle = cursor != null ? "#ffd166" : "#3fdc8b";
+  g.textAlign = "right"; g.textBaseline = "top"; g.fillText(Analog.fmt(now, unit), W - 3, 2);
+}
+
+/* The recorded sample nearest a time (traces are in time order → binary search). */
+function _anTraceAt(tr, t) {
+  if (!tr.length) return null;
+  let lo = 0, hi = tr.length - 1;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (tr[mid].t < t) lo = mid + 1; else hi = mid; }
+  const a = tr[lo], b = lo > 0 ? tr[lo - 1] : a;
+  return Math.abs(a.t - t) <= Math.abs(b.t - t) ? a : b;
 }
 function _anDragWindow(win, handle) {
   handle.addEventListener("mousedown", e => {

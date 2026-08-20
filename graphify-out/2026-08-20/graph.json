@@ -59,7 +59,7 @@
       "label": "_sqPhase()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L34",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "analog_engine_sqphase",
       "community": 22,
@@ -69,7 +69,7 @@
       "label": "_zenerVz()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L38",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "analog_engine_zenervz",
       "community": 22,
@@ -79,7 +79,7 @@
       "label": "_spdtR()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L43",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "analog_engine_spdtr",
       "community": 22,
@@ -89,7 +89,7 @@
       "label": "_spdtPoles()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L48",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "analog_engine_spdtpoles",
       "community": 22,
@@ -99,7 +99,7 @@
       "label": "_potR()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L56",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "analog_engine_potr",
       "community": 22,
@@ -109,7 +109,7 @@
       "label": "_anLimitJ()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L65",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "analog_engine_anlimitj",
       "community": 22,
@@ -119,7 +119,7 @@
       "label": "_anSolve()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L79",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "analog_engine_ansolve",
       "community": 22,
@@ -129,7 +129,7 @@
       "label": "_anBuild()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L108",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "analog_engine_anbuild",
       "community": 22,
@@ -139,7 +139,7 @@
       "label": "_anSolveMode()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L257",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "analog_engine_ansolvemode",
       "community": 22,
@@ -406,10 +406,20 @@
       "norm_label": "an_prefix"
     },
     {
+      "label": "AN_UNIT_ROWS",
+      "file_type": "code",
+      "source_file": "js/analog/ui.js",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "analog_ui_an_unit_rows",
+      "community": 25,
+      "norm_label": "an_unit_rows"
+    },
+    {
       "label": "_anMenuLevel()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L529",
+      "source_location": "L626",
       "_origin": "ast",
       "id": "analog_ui_anmenulevel",
       "community": 25,
@@ -419,7 +429,7 @@
       "label": "_anShowMenu()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L557",
+      "source_location": "L654",
       "_origin": "ast",
       "id": "analog_ui_anshowmenu",
       "community": 25,
@@ -429,7 +439,7 @@
       "label": "_anParse()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L571",
+      "source_location": "L668",
       "_origin": "ast",
       "id": "analog_ui_anparse",
       "community": 25,
@@ -439,7 +449,7 @@
       "label": "_anDrawScope()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L645",
+      "source_location": "L742",
       "_origin": "ast",
       "id": "analog_ui_andrawscope",
       "community": 25,
@@ -449,7 +459,7 @@
       "label": "_anDragWindow()",
       "file_type": "code",
       "source_file": "js/analog/ui.js",
-      "source_location": "L673",
+      "source_location": "L770",
       "_origin": "ast",
       "id": "analog_ui_andragwindow",
       "community": 25,
@@ -462,7 +472,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "js_builtins",
-      "community": 5,
+      "community": 3,
       "norm_label": "builtins.js"
     },
     {
@@ -472,7 +482,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "js_builtins_definebuiltin",
-      "community": 5,
+      "community": 3,
       "norm_label": "definebuiltin()"
     },
     {
@@ -482,7 +492,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "js_builtins_registerbuiltindefs",
-      "community": 5,
+      "community": 3,
       "norm_label": "registerbuiltindefs()"
     },
     {
@@ -542,7 +552,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "js_engine_inputvals",
-      "community": 4,
+      "community": 1,
       "norm_label": "inputvals()"
     },
     {
@@ -872,7 +882,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 3,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -982,7 +992,7 @@
       "source_location": "L840",
       "_origin": "ast",
       "id": "js_engine_synthboolcircuit",
-      "community": 4,
+      "community": 3,
       "norm_label": "synthboolcircuit()"
     },
     {
@@ -1052,7 +1062,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_interact_currenttool",
-      "community": 5,
+      "community": 2,
       "norm_label": "currenttool()"
     },
     {
@@ -1342,7 +1352,7 @@
       "source_location": "L559",
       "_origin": "ast",
       "id": "js_interact_selectedcomps",
-      "community": 3,
+      "community": 2,
       "norm_label": "selectedcomps()"
     },
     {
@@ -1352,7 +1362,7 @@
       "source_location": "L564",
       "_origin": "ast",
       "id": "js_interact_copyselection",
-      "community": 3,
+      "community": 2,
       "norm_label": "copyselection()"
     },
     {
@@ -1492,7 +1502,7 @@
       "source_location": "L800",
       "_origin": "ast",
       "id": "js_interact_innercircuitof",
-      "community": 2,
+      "community": 3,
       "norm_label": "innercircuitof()"
     },
     {
@@ -1502,7 +1512,7 @@
       "source_location": "L813",
       "_origin": "ast",
       "id": "js_interact_innername",
-      "community": 2,
+      "community": 3,
       "norm_label": "innername()"
     },
     {
@@ -1512,7 +1522,7 @@
       "source_location": "L827",
       "_origin": "ast",
       "id": "js_interact_entercomponent",
-      "community": 2,
+      "community": 3,
       "norm_label": "entercomponent()"
     },
     {
@@ -1652,7 +1662,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "js_model_isaddr",
-      "community": 2,
+      "community": 3,
       "norm_label": "isaddr()"
     },
     {
@@ -1742,7 +1752,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 3,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1752,7 +1762,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 3,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1762,7 +1772,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1772,7 +1782,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1792,7 +1802,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "js_model_curview",
-      "community": 2,
+      "community": 3,
       "norm_label": "curview()"
     },
     {
@@ -1912,7 +1922,7 @@
       "source_location": "L286",
       "_origin": "ast",
       "id": "js_model_registerdef",
-      "community": 5,
+      "community": 3,
       "norm_label": "registerdef()"
     },
     {
@@ -1952,7 +1962,7 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "js_model_builtindefs",
-      "community": 3,
+      "community": 5,
       "norm_label": "builtindefs()"
     },
     {
@@ -1972,7 +1982,7 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "js_model_definuse",
-      "community": 3,
+      "community": 5,
       "norm_label": "definuse()"
     },
     {
@@ -2132,7 +2142,7 @@
       "source_location": "L645",
       "_origin": "ast",
       "id": "js_model_compbox",
-      "community": 2,
+      "community": 1,
       "norm_label": "compbox()"
     },
     {
@@ -2332,7 +2342,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "js_render_fitviewinto",
-      "community": 2,
+      "community": 1,
       "norm_label": "fitviewinto()"
     },
     {
@@ -2342,7 +2352,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "js_render_fitview",
-      "community": 2,
+      "community": 1,
       "norm_label": "fitview()"
     },
     {
@@ -2832,7 +2842,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 5,
+      "community": 3,
       "norm_label": "toast()"
     },
     {
@@ -2882,7 +2892,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "js_ui_updatepaletteselection",
-      "community": 5,
+      "community": 2,
       "norm_label": "updatepaletteselection()"
     },
     {
@@ -2932,7 +2942,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "js_ui_updatecrumbs",
-      "community": 5,
+      "community": 2,
       "norm_label": "updatecrumbs()"
     },
     {
@@ -3132,7 +3142,7 @@
       "source_location": "L662",
       "_origin": "ast",
       "id": "js_ui_buildfromformula",
-      "community": 5,
+      "community": 3,
       "norm_label": "buildfromformula()"
     },
     {
@@ -3152,7 +3162,7 @@
       "source_location": "L720",
       "_origin": "ast",
       "id": "js_ui_loadlocal",
-      "community": 5,
+      "community": 3,
       "norm_label": "loadlocal()"
     },
     {
@@ -3529,7 +3539,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L152",
+      "source_location": "L156",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3539,7 +3549,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L164",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3549,7 +3559,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L174",
+      "source_location": "L178",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -3604,7 +3614,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "components agent",
       "id": "agents_components_componentsagent"
     },
@@ -3670,7 +3680,7 @@
       "author": null,
       "contributor": null,
       "rationale": "DSL for declaring built-in chips declaratively inside registerBuiltinDefs(); abstracts away low-level wire/component manipulation",
-      "community": 14,
+      "community": 0,
       "norm_label": "definebuiltin dsl",
       "id": "agents_components_definebuiltin"
     },
@@ -3684,7 +3694,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Two cross-coupled NOR gates; g2 listed before g1 so cold-start relaxation settles to Q=0",
-      "community": 14,
+      "community": 0,
       "norm_label": "sr latch",
       "id": "agents_components_srlatch"
     },
@@ -3697,7 +3707,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "d latch",
       "id": "agents_components_dlatch"
     },
@@ -3711,7 +3721,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Master-slave architecture using two D Latches; rising-edge triggered",
-      "community": 14,
+      "community": 0,
       "norm_label": "d flip-flop",
       "id": "agents_components_dflipflop"
     },
@@ -3724,7 +3734,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "jk flip-flop",
       "id": "agents_components_jkflipflop"
     },
@@ -3737,7 +3747,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "t flip-flop",
       "id": "agents_components_tflipflop"
     },
@@ -3750,7 +3760,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "4-bit register",
       "id": "agents_components_4bitreg"
     },
@@ -3763,7 +3773,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "4-bit shift register",
       "id": "agents_components_4bitshift"
     },
@@ -3777,7 +3787,7 @@
       "author": null,
       "contributor": null,
       "rationale": "T Flip-Flops chained by Q' output so each stage clocks from previous stage's falling edge",
-      "community": 14,
+      "community": 0,
       "norm_label": "4-bit ripple counter",
       "id": "agents_components_4bitcounter"
     },
@@ -3790,7 +3800,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "74hc595 shift register ic",
       "id": "agents_components_74hc595"
     },
@@ -4352,7 +4362,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "logic lab app overview",
       "id": "readme_logiclab"
     },
@@ -4365,7 +4375,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "main html page (index.html)",
       "id": "index_mainpage"
     },
@@ -4378,7 +4388,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 0,
       "norm_label": "visual smoke test page (sim_view.html)",
       "id": "test_sim_view_visualtest"
     }
@@ -4682,9 +4692,9 @@
       "source_file": "js/analog/model.js",
       "source_location": "L293",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_model",
-      "target": "analog_model_anmoving",
-      "confidence_score": 1.0
+      "target": "analog_model_anmoving"
     },
     {
       "relation": "contains",
@@ -4813,9 +4823,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L364",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render_drawsymbol",
-      "target": "analog_render_anvcolor",
-      "confidence_score": 1.0
+      "target": "analog_render_anvcolor"
     },
     {
       "relation": "calls",
@@ -4891,6 +4901,16 @@
       "confidence_score": 1.0,
       "source": "analog_ui",
       "target": "analog_ui_an_prefix"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/analog/ui.js",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "analog_ui",
+      "target": "analog_ui_an_unit_rows",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -13043,9 +13063,9 @@
       "source_file": "js/ui.js",
       "source_location": "L801",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_exportsketch",
-      "confidence_score": 1.0
+      "target": "js_ui_exportsketch"
     },
     {
       "relation": "calls",
@@ -13095,9 +13115,9 @@
       "source_file": "js/ui.js",
       "source_location": "L815",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_onimportsketchfile",
-      "confidence_score": 1.0
+      "target": "js_ui_onimportsketchfile"
     },
     {
       "relation": "calls",
@@ -13241,9 +13261,9 @@
       "source_file": "js/ui.js",
       "source_location": "L787",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_sketchdeps",
-      "confidence_score": 1.0
+      "target": "js_ui_sketchdeps"
     },
     {
       "relation": "calls",
@@ -13252,9 +13272,9 @@
       "source_location": "L336",
       "weight": 1.0,
       "context": "call",
+      "confidence_score": 1.0,
       "source": "js_ui_syncpanelbuttons",
-      "target": "js_ui",
-      "confidence_score": 1.0
+      "target": "js_ui"
     },
     {
       "relation": "calls",
@@ -13382,9 +13402,9 @@
       "source_file": "js/ui.js",
       "source_location": "L803",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_exportsketch",
-      "target": "js_ui_toast",
-      "confidence_score": 1.0
+      "target": "js_ui_toast"
     },
     {
       "relation": "calls",
@@ -13580,9 +13600,9 @@
       "source_file": "js/ui.js",
       "source_location": "L267",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_setmode",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13613,9 +13633,9 @@
       "source_file": "js/ui.js",
       "source_location": "L365",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_closeboolpanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13624,9 +13644,9 @@
       "source_file": "js/ui.js",
       "source_location": "L354",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_closepanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13635,9 +13655,9 @@
       "source_file": "js/ui.js",
       "source_location": "L360",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_toggleboolpanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13646,9 +13666,9 @@
       "source_file": "js/ui.js",
       "source_location": "L347",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_togglepanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13657,9 +13677,9 @@
       "source_file": "js/ui.js",
       "source_location": "L555",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_toggletimeline",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13800,9 +13820,9 @@
       "source_file": "js/ui.js",
       "source_location": "L804",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_exportsketch",
-      "target": "js_ui_sketchdeps",
-      "confidence_score": 1.0
+      "target": "js_ui_sketchdeps"
     },
     {
       "relation": "contains",
@@ -14966,5 +14986,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "215adc91e3929bc8cefe46b0d8775e740aa740c1"
+  "built_at_commit": "bbe18d3ce3afd53e0586427c715c8eab9d22e73a"
 }
