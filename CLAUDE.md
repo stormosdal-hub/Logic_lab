@@ -180,7 +180,7 @@ These sub-agent definitions live in `.claude/agents/` and can be used as teammat
 
 ## Patterns for new features
 
-**New built-in chip:** add `defineBuiltin(...)` inside `registerBuiltinDefs()` in `builtins.js`. Add a test block in `test/smoke.js`. If the chip introduces a new palette category, update `buildPalette()` in `ui.js`.
+**New built-in chip:** add `defineBuiltin(...)` inside `registerBuiltinDefs()` in `builtins.js`. `A.w(from, to)` auto-routes; pass a third argument — `A.w("g2.0", "g1.1", [592, 136, 488])` — to hand-route it (alternating `[x, y, x, …]`, see `wireRoutePoints`). Auto-routing puts parallel runs on the same lanes, so tight layouts like the SR latch's cross-coupled pair need explicit routes to stay readable. Component **declaration order is load-bearing** for feedback chips: the SR latch lists its Q' gate first so a cold start settles to Q=0. Add a test block in `test/smoke.js`. If the chip introduces a new palette category, update `buildPalette()` in `ui.js`.
 
 **New visualization panel:** add a button in `index.html`, wire it in `initUI()` (`ui.js`), add a `renderXxxPanel()` function, include it in `togglePanel()`/`renderPanel()`.
 

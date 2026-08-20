@@ -1,7 +1,7 @@
 # Graph Report - logic-lab  (2026-08-20)
 
 ## Corpus Check
-- 23 files · ~80,776 words
+- 23 files · ~80,939 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `86b0a18c`
+- Built from commit: `0fc984db`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

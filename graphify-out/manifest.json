@@ -1,8 +1,8 @@
 {
   "js/builtins.js": {
-    "mtime": 1783200668.2701268,
-    "ast_hash": "52be0f45aeb6f5d944a7db0dd5f77f75",
-    "semantic_hash": "52be0f45aeb6f5d944a7db0dd5f77f75"
+    "mtime": 1787263112.5746582,
+    "ast_hash": "21d70804bc243aa47629a5f1fe598acb",
+    "semantic_hash": ""
   },
   "js/engine.js": {
     "mtime": 1784110310.753327,
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1787243513.9774911,
-    "ast_hash": "e79edb8d532cb82c50f808eaf8980c47",
+    "mtime": 1787249559.0255735,
+    "ast_hash": "c53b7267c717c1548fb2b2301ebb3786",
     "semantic_hash": ""
   },
   "README.md": {

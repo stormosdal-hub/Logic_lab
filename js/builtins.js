@@ -33,11 +33,16 @@ function defineBuiltin(name, short, cat, build) {
       if (fromSpec) A.w(fromSpec, key + ".0");
       return key;
     },
-    /* w("comp.outPin", "comp.inPin") — pin defaults to 0 */
-    w(from, to) {
+    /* w("comp.outPin", "comp.inPin", route?) — pin defaults to 0.
+       `route` is an optional hand-drawn path, alternating [x, y, x, …]
+       (see wireRoutePoints in model.js); without one the wire is auto-routed,
+       which stacks parallel runs on top of each other in tight layouts. */
+    w(from, to, route) {
       const [fc, fp] = from.split(".");
       const [tc, tp] = to.split(".");
-      wires.push({ from: { c: fc, p: fp ? +fp : 0 }, to: { c: tc, p: tp ? +tp : 0 } });
+      const wire = { from: { c: fc, p: fp ? +fp : 0 }, to: { c: tc, p: tp ? +tp : 0 } };
+      if (route && route.length) wire.route = route.slice();
+      wires.push(wire);
     },
   };
   build(A);
@@ -50,53 +55,60 @@ function registerBuiltinDefs() {
 
   /* SR latch from two cross-coupled NOR gates.
      g2 (the Q' gate) is listed first so the relaxation settles the
-     latch to Q=0 from a cold start / reset. */
+     latch to Q=0 from a cold start / reset — declaration order is load-bearing
+     here, so keep it even when re-laying the gates out.
+     The two feedback wires and the two inputs are hand-routed: auto-routing
+     puts the cross-coupled pair on the same lanes, which reads as one wire. */
   defineBuiltin("SR Latch", "SR", "ff", A => {
-    A.in("S", 40, 40);
-    A.in("R", 40, 184);
-    A.c("g2", "NOR", 200, 168);
-    A.c("g1", "NOR", 200, 32);
-    A.w("R.0", "g1.0");
-    A.w("g2.0", "g1.1");   // Q' feedback
-    A.w("g1.0", "g2.0");   // Q feedback
-    A.w("S.0", "g2.1");
-    A.out("Q", 376, 40, "g1.0");
-    A.out("Qn", 376, 176, "g2.0", "Q'");
+    A.in("S", 312, 8);
+    A.in("R", 312, 200);
+    A.c("g2", "NOR", 496, 160);
+    A.c("g1", "NOR", 496, 40);
+    A.w("R.0", "g1.0", [416]);
+    A.w("g2.0", "g1.1", [592, 136, 488]);   // Q' feedback
+    A.w("g1.0", "g2.0", [592, 112, 472]);   // Q feedback
+    A.w("S.0", "g2.1", [440]);
+    A.out("Q", 640, 40, "g1.0");
+    A.out("Qn", 640, 176, "g2.0", "Q'");
   });
 
-  /* Gated D latch: S = D·EN, R = D'·EN into an SR latch */
+  /* Gated D latch: S = D·EN, R = D'·EN into an SR latch.
+     D and EN each fan out to two gates, so their wires are hand-routed onto
+     separate lanes — auto-routing stacks the two runs from one pin. */
   defineBuiltin("D Latch", "D-L", "ff", A => {
-    A.in("D", 40, 48);
-    A.in("EN", 40, 192);
-    A.c("nd", "NOT", 128, 120);
-    A.w("D.0", "nd.0");
-    A.c("aS", "AND", 240, 40);
-    A.w("D.0", "aS.0");
-    A.w("EN.0", "aS.1");
-    A.c("aR", "AND", 240, 168);
+    A.in("D", 872, 80);
+    A.in("EN", 872, 224);
+    A.c("nd", "NOT", 1000, 176);
+    A.w("D.0", "nd.0", [984]);
+    A.c("aS", "AND", 1104, 80);
+    A.w("D.0", "aS.0", [976, 96, 1040]);
+    A.w("EN.0", "aS.1", [968]);
+    A.c("aR", "AND", 1104, 208);
     A.w("nd.0", "aR.0");
-    A.w("EN.0", "aR.1");
-    A.chip("sr", "SR Latch", 376, 96);
+    A.w("EN.0", "aR.1", [992, 240, 1072, 240, 1088]);
+    A.chip("sr", "SR Latch", 1224, 128);
     A.w("aS.0", "sr.0");   // S
     A.w("aR.0", "sr.1");   // R
-    A.out("Q", 536, 96, "sr.0");
-    A.out("Qn", 536, 176, "sr.1", "Q'");
+    A.out("Q", 1400, 104, "sr.0");
+    A.out("Qn", 1400, 192, "sr.1", "Q'");
   });
 
-  /* Positive-edge D flip-flop: master-slave of two D latches */
+  /* Positive-edge D flip-flop: master-slave of two D latches.
+     CLK fans out to the inverter and to the slave, so its long run to the slave
+     is hand-routed under the latches instead of sharing the inverter's lane. */
   defineBuiltin("D Flip-Flop", "D-FF", "ff", A => {
-    A.in("D", 40, 48);
-    A.in("CLK", 40, 200);
-    A.c("nc", "NOT", 120, 200);
+    A.in("D", 152, 112);
+    A.in("CLK", 152, 192);
+    A.c("nc", "NOT", 264, 144);
     A.w("CLK.0", "nc.0");
-    A.chip("m", "D Latch", 224, 40);    // master: enabled while CLK low
-    A.w("D.0", "m.0");
+    A.chip("m", "D Latch", 368, 120);   // master: enabled while CLK low
+    A.w("D.0", "m.0", [336]);
     A.w("nc.0", "m.1");
-    A.chip("s", "D Latch", 416, 40);    // slave: enabled while CLK high
+    A.chip("s", "D Latch", 536, 120);   // slave: enabled while CLK high
     A.w("m.0", "s.0");
-    A.w("CLK.0", "s.1");
-    A.out("Q", 608, 56, "s.0");
-    A.out("Qn", 608, 144, "s.1", "Q'");
+    A.w("CLK.0", "s.1", [376, 208, 504]);
+    A.out("Q", 696, 80, "s.0");
+    A.out("Qn", 696, 200, "s.1", "Q'");
   });
 
   /* JK flip-flop: D = J·Q' + K'·Q around a D flip-flop */

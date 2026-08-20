@@ -562,7 +562,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "js_engine_inputvals",
-      "community": 1,
+      "community": 4,
       "norm_label": "inputvals()"
     },
     {
@@ -572,7 +572,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_engine_resolvebit",
-      "community": 4,
+      "community": 1,
       "norm_label": "resolvebit()"
     },
     {
@@ -762,7 +762,7 @@
       "source_location": "L422",
       "_origin": "ast",
       "id": "js_engine_afterstructchange",
-      "community": 2,
+      "community": 3,
       "norm_label": "afterstructchange()"
     },
     {
@@ -892,7 +892,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 3,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -1002,7 +1002,7 @@
       "source_location": "L840",
       "_origin": "ast",
       "id": "js_engine_synthboolcircuit",
-      "community": 2,
+      "community": 3,
       "norm_label": "synthboolcircuit()"
     },
     {
@@ -1072,7 +1072,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_interact_currenttool",
-      "community": 5,
+      "community": 2,
       "norm_label": "currenttool()"
     },
     {
@@ -1112,7 +1112,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_interact_placetool",
-      "community": 2,
+      "community": 3,
       "norm_label": "placetool()"
     },
     {
@@ -1312,7 +1312,7 @@
       "source_location": "L502",
       "_origin": "ast",
       "id": "js_interact_addat",
-      "community": 2,
+      "community": 3,
       "norm_label": "addat()"
     },
     {
@@ -1322,7 +1322,7 @@
       "source_location": "L516",
       "_origin": "ast",
       "id": "js_interact_addchipat",
-      "community": 2,
+      "community": 3,
       "norm_label": "addchipat()"
     },
     {
@@ -1342,7 +1342,7 @@
       "source_location": "L546",
       "_origin": "ast",
       "id": "js_interact_rotatecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "rotatecomp()"
     },
     {
@@ -1382,7 +1382,7 @@
       "source_location": "L590",
       "_origin": "ast",
       "id": "js_interact_deleteselection",
-      "community": 2,
+      "community": 3,
       "norm_label": "deleteselection()"
     },
     {
@@ -1392,7 +1392,7 @@
       "source_location": "L601",
       "_origin": "ast",
       "id": "js_interact_dedupelabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "dedupelabel()"
     },
     {
@@ -1402,7 +1402,7 @@
       "source_location": "L609",
       "_origin": "ast",
       "id": "js_interact_pasteclipboard",
-      "community": 2,
+      "community": 3,
       "norm_label": "pasteclipboard()"
     },
     {
@@ -1482,7 +1482,7 @@
       "source_location": "L733",
       "_origin": "ast",
       "id": "js_interact_onuihit",
-      "community": 2,
+      "community": 3,
       "norm_label": "onuihit()"
     },
     {
@@ -1492,7 +1492,7 @@
       "source_location": "L758",
       "_origin": "ast",
       "id": "js_interact_dragwiresegment",
-      "community": 2,
+      "community": 3,
       "norm_label": "dragwiresegment()"
     },
     {
@@ -1632,7 +1632,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "js_model_snap",
-      "community": 2,
+      "community": 3,
       "norm_label": "snap()"
     },
     {
@@ -1652,7 +1652,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_model_isgate",
-      "community": 1,
+      "community": 3,
       "norm_label": "isgate()"
     },
     {
@@ -1682,7 +1682,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_model_addrwidth",
-      "community": 1,
+      "community": 3,
       "norm_label": "addrwidth()"
     },
     {
@@ -1692,7 +1692,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "js_model_clampbits",
-      "community": 2,
+      "community": 3,
       "norm_label": "clampbits()"
     },
     {
@@ -1702,7 +1702,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "js_model_isbus",
-      "community": 3,
+      "community": 1,
       "norm_label": "isbus()"
     },
     {
@@ -1752,7 +1752,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "js_model_touchcircuit",
-      "community": 2,
+      "community": 3,
       "norm_label": "touchcircuit()"
     },
     {
@@ -1762,7 +1762,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 3,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1772,7 +1772,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 3,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1782,7 +1782,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1792,7 +1792,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1802,7 +1802,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "js_model_settopcircuit",
-      "community": 3,
+      "community": 5,
       "norm_label": "settopcircuit()"
     },
     {
@@ -1822,7 +1822,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "js_model_curcircuit",
-      "community": 2,
+      "community": 3,
       "norm_label": "curcircuit()"
     },
     {
@@ -1832,7 +1832,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "js_model_attop",
-      "community": 5,
+      "community": 2,
       "norm_label": "attop()"
     },
     {
@@ -1852,7 +1852,7 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "js_model_numinputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numinputsof()"
     },
     {
@@ -1862,7 +1862,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "js_model_numoutputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numoutputsof()"
     },
     {
@@ -1892,7 +1892,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "js_model_makecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "makecomp()"
     },
     {
@@ -1992,7 +1992,7 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "js_model_definuse",
-      "community": 3,
+      "community": 5,
       "norm_label": "definuse()"
     },
     {
@@ -2022,7 +2022,7 @@
       "source_location": "L356",
       "_origin": "ast",
       "id": "js_model_removewire",
-      "community": 2,
+      "community": 3,
       "norm_label": "removewire()"
     },
     {
@@ -2032,7 +2032,7 @@
       "source_location": "L360",
       "_origin": "ast",
       "id": "js_model_removecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "removecomp()"
     },
     {
@@ -2042,7 +2042,7 @@
       "source_location": "L365",
       "_origin": "ast",
       "id": "js_model_setgateinputs",
-      "community": 2,
+      "community": 3,
       "norm_label": "setgateinputs()"
     },
     {
@@ -2052,7 +2052,7 @@
       "source_location": "L379",
       "_origin": "ast",
       "id": "js_model_setmatrixsize",
-      "community": 2,
+      "community": 3,
       "norm_label": "setmatrixsize()"
     },
     {
@@ -2062,7 +2062,7 @@
       "source_location": "L402",
       "_origin": "ast",
       "id": "js_model_setaddrsel",
-      "community": 1,
+      "community": 3,
       "norm_label": "setaddrsel()"
     },
     {
@@ -2092,7 +2092,7 @@
       "source_location": "L535",
       "_origin": "ast",
       "id": "js_model_setcompbits",
-      "community": 2,
+      "community": 3,
       "norm_label": "setcompbits()"
     },
     {
@@ -2102,7 +2102,7 @@
       "source_location": "L555",
       "_origin": "ast",
       "id": "js_model_nextlabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "nextlabel()"
     },
     {
@@ -2112,7 +2112,7 @@
       "source_location": "L569",
       "_origin": "ast",
       "id": "js_model_compsize",
-      "community": 1,
+      "community": 3,
       "norm_label": "compsize()"
     },
     {
@@ -2132,7 +2132,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "js_model_pinposlogical",
-      "community": 1,
+      "community": 3,
       "norm_label": "pinposlogical()"
     },
     {
@@ -2142,7 +2142,7 @@
       "source_location": "L637",
       "_origin": "ast",
       "id": "js_model_pinpos",
-      "community": 1,
+      "community": 3,
       "norm_label": "pinpos()"
     },
     {
@@ -2152,7 +2152,7 @@
       "source_location": "L645",
       "_origin": "ast",
       "id": "js_model_compbox",
-      "community": 1,
+      "community": 2,
       "norm_label": "compbox()"
     },
     {
@@ -2162,7 +2162,7 @@
       "source_location": "L658",
       "_origin": "ast",
       "id": "js_model_defaultwireroute",
-      "community": 1,
+      "community": 3,
       "norm_label": "defaultwireroute()"
     },
     {
@@ -2302,7 +2302,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "js_render_initcanvas",
-      "community": 2,
+      "community": 1,
       "norm_label": "initcanvas()"
     },
     {
@@ -2322,7 +2322,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "js_render_activecircuit",
-      "community": 1,
+      "community": 2,
       "norm_label": "activecircuit()"
     },
     {
@@ -2352,7 +2352,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "js_render_fitviewinto",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitviewinto()"
     },
     {
@@ -2362,7 +2362,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "js_render_fitview",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitview()"
     },
     {
@@ -2392,7 +2392,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "js_render_render",
-      "community": 2,
+      "community": 1,
       "norm_label": "render()"
     },
     {
@@ -2522,7 +2522,7 @@
       "source_location": "L442",
       "_origin": "ast",
       "id": "js_render_drawpins",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawpins()"
     },
     {
@@ -2552,7 +2552,7 @@
       "source_location": "L476",
       "_origin": "ast",
       "id": "js_render_drawcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawcomp()"
     },
     {
@@ -2582,7 +2582,7 @@
       "source_location": "L535",
       "_origin": "ast",
       "id": "js_render_drawgatecomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawgatecomp()"
     },
     {
@@ -2662,7 +2662,7 @@
       "source_location": "L759",
       "_origin": "ast",
       "id": "js_render_drawchipcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawchipcomp()"
     },
     {
@@ -2682,7 +2682,7 @@
       "source_location": "L808",
       "_origin": "ast",
       "id": "js_render_addrinlabel",
-      "community": 1,
+      "community": 3,
       "norm_label": "addrinlabel()"
     },
     {
@@ -2702,7 +2702,7 @@
       "source_location": "L823",
       "_origin": "ast",
       "id": "js_render_drawaddrcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawaddrcomp()"
     },
     {
@@ -2772,7 +2772,7 @@
       "source_location": "L1044",
       "_origin": "ast",
       "id": "js_render_hitpin",
-      "community": 1,
+      "community": 2,
       "norm_label": "hitpin()"
     },
     {
@@ -2812,7 +2812,7 @@
       "source_location": "L1115",
       "_origin": "ast",
       "id": "js_render_painttoolicon",
-      "community": 1,
+      "community": 5,
       "norm_label": "painttoolicon()"
     },
     {
@@ -2852,7 +2852,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 2,
+      "community": 5,
       "norm_label": "toast()"
     },
     {
@@ -2889,7 +2889,7 @@
       "label": "initPaletteDrag()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L139",
+      "source_location": "L149",
       "_origin": "ast",
       "id": "js_ui_initpalettedrag",
       "community": 5,
@@ -2899,17 +2899,47 @@
       "label": "updatePaletteSelection()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L160",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "js_ui_updatepaletteselection",
-      "community": 5,
+      "community": 2,
       "norm_label": "updatepaletteselection()"
+    },
+    {
+      "label": "loadLibraryDefs()",
+      "file_type": "code",
+      "source_file": "js/ui.js",
+      "source_location": "L182",
+      "_origin": "ast",
+      "id": "js_ui_loadlibrarydefs",
+      "community": 5,
+      "norm_label": "loadlibrarydefs()"
+    },
+    {
+      "label": "libraryDefs()",
+      "file_type": "code",
+      "source_file": "js/ui.js",
+      "source_location": "L197",
+      "_origin": "ast",
+      "id": "js_ui_librarydefs",
+      "community": 5,
+      "norm_label": "librarydefs()"
+    },
+    {
+      "label": "userDefs()",
+      "file_type": "code",
+      "source_file": "js/ui.js",
+      "source_location": "L198",
+      "_origin": "ast",
+      "id": "js_ui_userdefs",
+      "community": 5,
+      "norm_label": "userdefs()"
     },
     {
       "label": "deleteCustomDef()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L166",
+      "source_location": "L200",
       "_origin": "ast",
       "id": "js_ui_deletecustomdef",
       "community": 5,
@@ -2919,7 +2949,7 @@
       "label": "initUI()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L177",
+      "source_location": "L215",
       "_origin": "ast",
       "id": "js_ui_initui",
       "community": 5,
@@ -2929,7 +2959,7 @@
       "label": "setMode()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L253",
+      "source_location": "L291",
       "_origin": "ast",
       "id": "js_ui_setmode",
       "community": 5,
@@ -2939,7 +2969,7 @@
       "label": "updateSimUI()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L276",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "js_ui_updatesimui",
       "community": 4,
@@ -2949,7 +2979,7 @@
       "label": "updateCrumbs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L301",
+      "source_location": "L339",
       "_origin": "ast",
       "id": "js_ui_updatecrumbs",
       "community": 5,
@@ -2959,7 +2989,7 @@
       "label": "syncPanelButtons()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L335",
+      "source_location": "L373",
       "_origin": "ast",
       "id": "js_ui_syncpanelbuttons",
       "community": 5,
@@ -2969,7 +2999,7 @@
       "label": "togglePanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L343",
+      "source_location": "L381",
       "_origin": "ast",
       "id": "js_ui_togglepanel",
       "community": 5,
@@ -2979,7 +3009,7 @@
       "label": "closePanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L349",
+      "source_location": "L387",
       "_origin": "ast",
       "id": "js_ui_closepanel",
       "community": 5,
@@ -2989,7 +3019,7 @@
       "label": "toggleBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L356",
+      "source_location": "L394",
       "_origin": "ast",
       "id": "js_ui_toggleboolpanel",
       "community": 5,
@@ -2999,7 +3029,7 @@
       "label": "closeBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L362",
+      "source_location": "L400",
       "_origin": "ast",
       "id": "js_ui_closeboolpanel",
       "community": 5,
@@ -3009,7 +3039,7 @@
       "label": "refreshLivePanels()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L367",
+      "source_location": "L405",
       "_origin": "ast",
       "id": "js_ui_refreshlivepanels",
       "community": 5,
@@ -3019,7 +3049,7 @@
       "label": "renderPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L375",
+      "source_location": "L413",
       "_origin": "ast",
       "id": "js_ui_renderpanel",
       "community": 5,
@@ -3029,7 +3059,7 @@
       "label": "renderInputsPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L386",
+      "source_location": "L424",
       "_origin": "ast",
       "id": "js_ui_renderinputspanel",
       "community": 5,
@@ -3039,7 +3069,7 @@
       "label": "renderBoolPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L429",
+      "source_location": "L467",
       "_origin": "ast",
       "id": "js_ui_renderboolpanel",
       "community": 5,
@@ -3049,7 +3079,7 @@
       "label": "releaseMomentaryInputs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L460",
+      "source_location": "L498",
       "_origin": "ast",
       "id": "js_ui_releasemomentaryinputs",
       "community": 5,
@@ -3059,7 +3089,7 @@
       "label": "renderTTPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L469",
+      "source_location": "L507",
       "_origin": "ast",
       "id": "js_ui_renderttpanel",
       "community": 5,
@@ -3069,7 +3099,7 @@
       "label": "showExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L520",
+      "source_location": "L558",
       "_origin": "ast",
       "id": "js_ui_showexprpopup",
       "community": 4,
@@ -3079,7 +3109,7 @@
       "label": "refreshExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L531",
+      "source_location": "L569",
       "_origin": "ast",
       "id": "js_ui_refreshexprpopup",
       "community": 4,
@@ -3089,7 +3119,7 @@
       "label": "closeExprPopup()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L538",
+      "source_location": "L576",
       "_origin": "ast",
       "id": "js_ui_closeexprpopup",
       "community": 2,
@@ -3099,7 +3129,7 @@
       "label": "toggleTimeline()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L547",
+      "source_location": "L585",
       "_origin": "ast",
       "id": "js_ui_toggletimeline",
       "community": 5,
@@ -3109,7 +3139,7 @@
       "label": "renderTimeline()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L558",
+      "source_location": "L596",
       "_origin": "ast",
       "id": "js_ui_rendertimeline",
       "community": 5,
@@ -3119,7 +3149,7 @@
       "label": "createIC()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L630",
+      "source_location": "L668",
       "_origin": "ast",
       "id": "js_ui_createic",
       "community": 5,
@@ -3129,17 +3159,17 @@
       "label": "openFormulaPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L652",
+      "source_location": "L690",
       "_origin": "ast",
       "id": "js_ui_openformulapanel",
-      "community": 2,
+      "community": 5,
       "norm_label": "openformulapanel()"
     },
     {
       "label": "closeFormulaPanel()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L660",
+      "source_location": "L698",
       "_origin": "ast",
       "id": "js_ui_closeformulapanel",
       "community": 5,
@@ -3149,17 +3179,17 @@
       "label": "buildFromFormula()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L662",
+      "source_location": "L700",
       "_origin": "ast",
       "id": "js_ui_buildfromformula",
-      "community": 2,
+      "community": 3,
       "norm_label": "buildfromformula()"
     },
     {
       "label": "saveLocal()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L705",
+      "source_location": "L743",
       "_origin": "ast",
       "id": "js_ui_savelocal",
       "community": 5,
@@ -3169,7 +3199,7 @@
       "label": "loadLocal()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L720",
+      "source_location": "L760",
       "_origin": "ast",
       "id": "js_ui_loadlocal",
       "community": 5,
@@ -3179,7 +3209,7 @@
       "label": "exportDefs()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L740",
+      "source_location": "L780",
       "_origin": "ast",
       "id": "js_ui_exportdefs",
       "community": 5,
@@ -3189,7 +3219,7 @@
       "label": "onImportFile()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L759",
+      "source_location": "L799",
       "_origin": "ast",
       "id": "js_ui_onimportfile",
       "community": 5,
@@ -3199,7 +3229,7 @@
       "label": "sketchDeps()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L787",
+      "source_location": "L828",
       "_origin": "ast",
       "id": "js_ui_sketchdeps",
       "community": 5,
@@ -3209,7 +3239,7 @@
       "label": "exportSketch()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L801",
+      "source_location": "L842",
       "_origin": "ast",
       "id": "js_ui_exportsketch",
       "community": 5,
@@ -3219,11 +3249,21 @@
       "label": "onImportSketchFile()",
       "file_type": "code",
       "source_file": "js/ui.js",
-      "source_location": "L815",
+      "source_location": "L856",
       "_origin": "ast",
       "id": "js_ui_onimportsketchfile",
       "community": 5,
       "norm_label": "onimportsketchfile()"
+    },
+    {
+      "label": "library.js",
+      "file_type": "code",
+      "source_file": "library/library.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "library_library",
+      "community": 18,
+      "norm_label": "library.js"
     },
     {
       "label": "analog.js",
@@ -3386,6 +3426,66 @@
       "norm_label": "chain()"
     },
     {
+      "label": "build-library.mjs",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_build_library",
+      "community": 14,
+      "norm_label": "build-library.mjs"
+    },
+    {
+      "label": "root",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "tools_build_library_root",
+      "community": 14,
+      "norm_label": "root"
+    },
+    {
+      "label": "out",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "tools_build_library_out",
+      "community": 14,
+      "norm_label": "out"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "tools_build_library_files",
+      "community": 14,
+      "norm_label": "files"
+    },
+    {
+      "label": "defs",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "tools_build_library_defs",
+      "community": 14,
+      "norm_label": "defs"
+    },
+    {
+      "label": "seen",
+      "file_type": "code",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "tools_build_library_seen",
+      "community": 14,
+      "norm_label": "seen"
+    },
+    {
       "label": "ARCHITECTURE.md",
       "file_type": "document",
       "source_file": "ARCHITECTURE.md",
@@ -3529,7 +3629,7 @@
       "label": "Architecture",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "claude_architecture",
       "community": 17,
@@ -3539,7 +3639,7 @@
       "label": "Analog simulator (second tab)",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L98",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "claude_analog_simulator_second_tab",
       "community": 17,
@@ -3549,7 +3649,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L166",
+      "source_location": "L169",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3559,7 +3659,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L178",
+      "source_location": "L181",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3569,7 +3669,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L188",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -3614,6 +3714,56 @@
       "id": "logic_simulator_web_app_readme_highlights",
       "community": 9,
       "norm_label": "highlights"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "library/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "library_readme",
+      "community": 16,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Always-loaded components",
+      "file_type": "document",
+      "source_file": "library/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "library_readme_always_loaded_components",
+      "community": 16,
+      "norm_label": "always-loaded components"
+    },
+    {
+      "label": "How to add one",
+      "file_type": "document",
+      "source_file": "library/README.md",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "library_readme_how_to_add_one",
+      "community": 16,
+      "norm_label": "how to add one"
+    },
+    {
+      "label": "Why the extra command",
+      "file_type": "document",
+      "source_file": "library/README.md",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "library_readme_why_the_extra_command",
+      "community": 16,
+      "norm_label": "why the extra command"
+    },
+    {
+      "label": "Notes",
+      "file_type": "document",
+      "source_file": "library/README.md",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "library_readme_notes",
+      "community": 16,
+      "norm_label": "notes"
     },
     {
       "label": "Components Agent",
@@ -4938,9 +5088,9 @@
       "source_file": "js/analog/ui.js",
       "source_location": "L883",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_ui",
-      "target": "analog_ui_andrawtrace",
-      "confidence_score": 1.0
+      "target": "analog_ui_andrawtrace"
     },
     {
       "relation": "contains",
@@ -4978,9 +5128,9 @@
       "source_file": "js/analog/ui.js",
       "source_location": "L938",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_ui",
-      "target": "analog_ui_antraceat",
-      "confidence_score": 1.0
+      "target": "analog_ui_antraceat"
     },
     {
       "relation": "calls",
@@ -5000,9 +5150,9 @@
       "source_file": "js/analog/ui.js",
       "source_location": "L924",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_ui_andrawtrace",
-      "target": "analog_ui_antraceat",
-      "confidence_score": 1.0
+      "target": "analog_ui_antraceat"
     },
     {
       "relation": "contains",
@@ -10918,6 +11068,17 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "js/ui.js",
+      "source_location": "L189",
+      "weight": 1.0,
+      "source": "js_ui_loadlibrarydefs",
+      "target": "js_model_registerdef"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/ui.js",
       "source_location": "L604",
       "weight": 1.0,
       "source": "js_ui_loadlocal",
@@ -11032,6 +11193,17 @@
       "weight": 1.0,
       "source": "js_ui_deletecustomdef",
       "target": "js_model_definuse"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "js/model.js",
+      "source_location": "L476",
+      "weight": 1.0,
+      "source": "js_model_buildaddrdata",
+      "target": "tools_build_library_out"
     },
     {
       "relation": "calls",
@@ -13124,6 +13296,26 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/ui.js",
+      "source_location": "L197",
+      "weight": 1.0,
+      "source": "js_ui",
+      "target": "js_ui_librarydefs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
+      "source_location": "L182",
+      "weight": 1.0,
+      "source": "js_ui",
+      "target": "js_ui_loadlibrarydefs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
       "source_location": "L596",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -13383,6 +13575,16 @@
       "target": "js_ui"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "js_ui",
+      "target": "js_ui_userdefs",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -13497,11 +13699,33 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "js/ui.js",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "js_ui_buildpalette",
+      "target": "js_ui_librarydefs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
       "source_location": "L137",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "js_ui_buildpalette",
       "target": "js_ui_updatepaletteselection"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "js_ui_buildpalette",
+      "target": "js_ui_userdefs",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -13557,6 +13781,17 @@
       "confidence_score": 1.0,
       "source": "js_ui_initui",
       "target": "js_ui_initpalettedrag"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "js/ui.js",
+      "source_location": "L750",
+      "weight": 1.0,
+      "source": "js_ui_savelocal",
+      "target": "js_ui_userdefs",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -13998,6 +14233,56 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "tools_build_library",
+      "target": "tools_build_library_defs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "tools_build_library",
+      "target": "tools_build_library_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "tools_build_library",
+      "target": "tools_build_library_out",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "tools_build_library",
+      "target": "tools_build_library_root",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/build-library.mjs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "tools_build_library",
+      "target": "tools_build_library_seen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "ARCHITECTURE.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -14194,6 +14479,46 @@
       "confidence_score": 1.0,
       "source": "logic_simulator_web_app_readme_logic_lab",
       "target": "logic_simulator_web_app_readme_run_it"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "library/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "library_readme",
+      "target": "library_readme_always_loaded_components",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "library/README.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "library_readme_always_loaded_components",
+      "target": "library_readme_how_to_add_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "library/README.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "library_readme_always_loaded_components",
+      "target": "library_readme_notes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "library/README.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "library_readme_always_loaded_components",
+      "target": "library_readme_why_the_extra_command",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -15017,5 +15342,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "bbe18d3ce3afd53e0586427c715c8eab9d22e73a"
+  "built_at_commit": "86b0a18c69dcd5b654a92101277c0cdd7e9fd5b4"
 }

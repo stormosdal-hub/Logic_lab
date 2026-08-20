@@ -499,7 +499,7 @@
       "label": "registerBuiltinDefs()",
       "file_type": "code",
       "source_file": "js/builtins.js",
-      "source_location": "L49",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "js_builtins_registerbuiltindefs",
       "community": 5,
@@ -13298,9 +13298,9 @@
       "source_file": "js/ui.js",
       "source_location": "L197",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_librarydefs",
-      "confidence_score": 1.0
+      "target": "js_ui_librarydefs"
     },
     {
       "relation": "contains",
@@ -13308,9 +13308,9 @@
       "source_file": "js/ui.js",
       "source_location": "L182",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_loadlibrarydefs",
-      "confidence_score": 1.0
+      "target": "js_ui_loadlibrarydefs"
     },
     {
       "relation": "contains",
@@ -13580,9 +13580,9 @@
       "source_file": "js/ui.js",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_userdefs",
-      "confidence_score": 1.0
+      "target": "js_ui_userdefs"
     },
     {
       "relation": "calls",
@@ -13701,9 +13701,9 @@
       "source_file": "js/ui.js",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_buildpalette",
-      "target": "js_ui_librarydefs",
-      "confidence_score": 1.0
+      "target": "js_ui_librarydefs"
     },
     {
       "relation": "calls",
@@ -13723,9 +13723,9 @@
       "source_file": "js/ui.js",
       "source_location": "L80",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_buildpalette",
-      "target": "js_ui_userdefs",
-      "confidence_score": 1.0
+      "target": "js_ui_userdefs"
     },
     {
       "relation": "calls",
@@ -13789,9 +13789,9 @@
       "source_file": "js/ui.js",
       "source_location": "L750",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_savelocal",
-      "target": "js_ui_userdefs",
-      "confidence_score": 1.0
+      "target": "js_ui_userdefs"
     },
     {
       "relation": "calls",
@@ -14236,9 +14236,9 @@
       "source_file": "tools/build-library.mjs",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_build_library",
-      "target": "tools_build_library_defs",
-      "confidence_score": 1.0
+      "target": "tools_build_library_defs"
     },
     {
       "relation": "contains",
@@ -14246,9 +14246,9 @@
       "source_file": "tools/build-library.mjs",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_build_library",
-      "target": "tools_build_library_files",
-      "confidence_score": 1.0
+      "target": "tools_build_library_files"
     },
     {
       "relation": "contains",
@@ -14256,9 +14256,9 @@
       "source_file": "tools/build-library.mjs",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_build_library",
-      "target": "tools_build_library_out",
-      "confidence_score": 1.0
+      "target": "tools_build_library_out"
     },
     {
       "relation": "contains",
@@ -14266,9 +14266,9 @@
       "source_file": "tools/build-library.mjs",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_build_library",
-      "target": "tools_build_library_root",
-      "confidence_score": 1.0
+      "target": "tools_build_library_root"
     },
     {
       "relation": "contains",
@@ -14276,9 +14276,9 @@
       "source_file": "tools/build-library.mjs",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tools_build_library",
-      "target": "tools_build_library_seen",
-      "confidence_score": 1.0
+      "target": "tools_build_library_seen"
     },
     {
       "relation": "contains",
@@ -14486,9 +14486,9 @@
       "source_file": "library/README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "library_readme",
-      "target": "library_readme_always_loaded_components",
-      "confidence_score": 1.0
+      "target": "library_readme_always_loaded_components"
     },
     {
       "relation": "contains",
@@ -14496,9 +14496,9 @@
       "source_file": "library/README.md",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "library_readme_always_loaded_components",
-      "target": "library_readme_how_to_add_one",
-      "confidence_score": 1.0
+      "target": "library_readme_how_to_add_one"
     },
     {
       "relation": "contains",
@@ -14506,9 +14506,9 @@
       "source_file": "library/README.md",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "library_readme_always_loaded_components",
-      "target": "library_readme_notes",
-      "confidence_score": 1.0
+      "target": "library_readme_notes"
     },
     {
       "relation": "contains",
@@ -14516,9 +14516,9 @@
       "source_file": "library/README.md",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "library_readme_always_loaded_components",
-      "target": "library_readme_why_the_extra_command",
-      "confidence_score": 1.0
+      "target": "library_readme_why_the_extra_command"
     },
     {
       "relation": "references",
@@ -15342,5 +15342,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "86b0a18c69dcd5b654a92101277c0cdd7e9fd5b4"
+  "built_at_commit": "0fc984dba499ad124ffe0a16793dff340fa5d7c2"
 }
