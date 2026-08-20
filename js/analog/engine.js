@@ -20,7 +20,15 @@ if (typeof Analog === "undefined") { var Analog = {}; }
 Analog.Sim = { active: false, running: false, result: null };
 
 const _VT = 0.025852;   // thermal voltage kT/q at ~300 K
-const _SW_RON = 1e-3, _SW_ROFF = 1e9;   // closed / open contact resistance (switches, relay contacts)
+/* Closed / open contact resistance (switches, changeover contacts, relay contacts,
+   blown fuses). An open contact is genuinely infinite, not a large finite value:
+   `1/_SW_ROFF` stamps nothing and `V/_SW_ROFF` reports exactly zero current, so an
+   open switch neither passes a trickle nor drags the node beyond it up toward the
+   supply. That is only safe because `_GND_LEAK` below now anchors whatever the open
+   contact cuts adrift — a finite _SW_ROFF used to be what kept those nodes in the
+   matrix, and at 1 GΩ it was 100× stronger than the ground leak, so it won the
+   divider and left a dangling node reading ~99 % of the supply. */
+const _SW_RON = 1e-3, _SW_ROFF = Infinity;
 /* A 100 GΩ leak from every node to the datum (SPICE's GMIN). Any section with no
    galvanic path to ground makes the nodal matrix singular, which would otherwise
    take the *whole* sheet down: an unwired part someone has just dropped, a DPDT's
@@ -434,6 +442,22 @@ Analog.wireCurrents = function (circ, res) {
       out.set(w, key(w.from.c, w.from.t) === k ? f : -f);
     }
   }
+
+  /* Below the ground leak, a current is noise rather than signal. `_GND_LEAK`
+     sits on every node, so it can bleed at most GND_LEAK·Vmax per node into the
+     datum — and that return arrives through a real wire, which would otherwise
+     read a phantom trickle. It matters most when the sheet is *dead* (every
+     switch open): the flow animation scales speed against the busiest wire, so
+     without this the only current left — the leak — becomes the reference and
+     the dots march at full speed through an open switch. Anything this small is
+     also a circuit the leak has already corrupted (>1 GΩ), so zero is the more
+     honest answer either way. */
+  let vmax = 0;
+  for (const c of circ.comps)
+    for (let t = 0, n = Analog.numTerminals(c); t < n; t++)
+      vmax = Math.max(vmax, Math.abs(res.volt(c.id, t)));
+  const noise = _GND_LEAK * vmax * ((res.nodes ? res.nodes.count : 0) + 1);
+  for (const [w, i] of out) if (Math.abs(i) <= noise) out.set(w, 0);
   return out;
 };
 

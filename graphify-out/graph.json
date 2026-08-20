@@ -59,7 +59,7 @@
       "label": "_sqPhase()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L34",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "analog_engine_sqphase",
       "community": 22,
@@ -69,7 +69,7 @@
       "label": "_zenerVz()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L38",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "analog_engine_zenervz",
       "community": 22,
@@ -79,7 +79,7 @@
       "label": "_spdtR()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L43",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "analog_engine_spdtr",
       "community": 22,
@@ -89,7 +89,7 @@
       "label": "_spdtPoles()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L48",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "analog_engine_spdtpoles",
       "community": 22,
@@ -99,7 +99,7 @@
       "label": "_potR()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L56",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "analog_engine_potr",
       "community": 22,
@@ -109,7 +109,7 @@
       "label": "_anLimitJ()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L65",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "analog_engine_anlimitj",
       "community": 22,
@@ -119,7 +119,7 @@
       "label": "_anSolve()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L79",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "analog_engine_ansolve",
       "community": 22,
@@ -129,7 +129,7 @@
       "label": "_anBuild()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L108",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "analog_engine_anbuild",
       "community": 22,
@@ -139,7 +139,7 @@
       "label": "_anSolveMode()",
       "file_type": "code",
       "source_file": "js/analog/engine.js",
-      "source_location": "L257",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "analog_engine_ansolvemode",
       "community": 22,
@@ -3529,7 +3529,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L152",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3539,7 +3539,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L164",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3549,7 +3549,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L174",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -4682,9 +4682,9 @@
       "source_file": "js/analog/model.js",
       "source_location": "L293",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_model",
-      "target": "analog_model_anmoving",
-      "confidence_score": 1.0
+      "target": "analog_model_anmoving"
     },
     {
       "relation": "contains",
@@ -4813,9 +4813,9 @@
       "source_file": "js/analog/render.js",
       "source_location": "L364",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "analog_render_drawsymbol",
-      "target": "analog_render_anvcolor",
-      "confidence_score": 1.0
+      "target": "analog_render_anvcolor"
     },
     {
       "relation": "calls",
@@ -13043,9 +13043,9 @@
       "source_file": "js/ui.js",
       "source_location": "L801",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_exportsketch",
-      "confidence_score": 1.0
+      "target": "js_ui_exportsketch"
     },
     {
       "relation": "calls",
@@ -13095,9 +13095,9 @@
       "source_file": "js/ui.js",
       "source_location": "L815",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_onimportsketchfile",
-      "confidence_score": 1.0
+      "target": "js_ui_onimportsketchfile"
     },
     {
       "relation": "calls",
@@ -13241,9 +13241,9 @@
       "source_file": "js/ui.js",
       "source_location": "L787",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui",
-      "target": "js_ui_sketchdeps",
-      "confidence_score": 1.0
+      "target": "js_ui_sketchdeps"
     },
     {
       "relation": "calls",
@@ -13252,9 +13252,9 @@
       "source_location": "L336",
       "weight": 1.0,
       "context": "call",
+      "confidence_score": 1.0,
       "source": "js_ui_syncpanelbuttons",
-      "target": "js_ui",
-      "confidence_score": 1.0
+      "target": "js_ui"
     },
     {
       "relation": "calls",
@@ -13382,9 +13382,9 @@
       "source_file": "js/ui.js",
       "source_location": "L803",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_exportsketch",
-      "target": "js_ui_toast",
-      "confidence_score": 1.0
+      "target": "js_ui_toast"
     },
     {
       "relation": "calls",
@@ -13580,9 +13580,9 @@
       "source_file": "js/ui.js",
       "source_location": "L267",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_setmode",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13613,9 +13613,9 @@
       "source_file": "js/ui.js",
       "source_location": "L365",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_closeboolpanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13624,9 +13624,9 @@
       "source_file": "js/ui.js",
       "source_location": "L354",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_closepanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13635,9 +13635,9 @@
       "source_file": "js/ui.js",
       "source_location": "L360",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_toggleboolpanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13646,9 +13646,9 @@
       "source_file": "js/ui.js",
       "source_location": "L347",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_togglepanel",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13657,9 +13657,9 @@
       "source_file": "js/ui.js",
       "source_location": "L555",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_toggletimeline",
-      "target": "js_ui_syncpanelbuttons",
-      "confidence_score": 1.0
+      "target": "js_ui_syncpanelbuttons"
     },
     {
       "relation": "calls",
@@ -13800,9 +13800,9 @@
       "source_file": "js/ui.js",
       "source_location": "L804",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "js_ui_exportsketch",
-      "target": "js_ui_sketchdeps",
-      "confidence_score": 1.0
+      "target": "js_ui_sketchdeps"
     },
     {
       "relation": "contains",
@@ -14966,5 +14966,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "215adc91e3929bc8cefe46b0d8775e740aa740c1"
+  "built_at_commit": "573d8ba019fb8f94735fe8f5a7df2f177a5063a3"
 }

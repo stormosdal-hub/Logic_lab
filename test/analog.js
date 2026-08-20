@@ -1044,5 +1044,155 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   }
 }
 
+/* ---- 40. An open contact is really open (no leak, no phantom flow) ---- */
+{
+  // 12 V — switch — 1 kΩ — gnd : the only path runs through the switch
+  const build = () => {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const sw = A.makeComp("SW", 100, 0);
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, sw, r, g);
+    A.addWire(c, v, 0, sw, 0); A.addWire(c, sw, 1, r, 0);
+    A.addWire(c, r, 1, g, 0); A.addWire(c, v, 1, g, 0);
+    return { c, v, sw, r, g };
+  };
+
+  const off = build();                       // `closed` defaults to false
+  const so = A.solveDC(off.c);
+  check("open sw: solves", so.ok);
+  check("open sw: carries exactly no current", so.current(off.sw) === 0);
+  check("open sw: series load carries exactly no current", so.current(off.r) === 0);
+  check("open sw: load sees 0 V", so.volt(off.r.id, 0) === 0);
+  // the whole supply stands across the open contact — it isn't leaking away
+  check("open sw: full supply across the contact",
+    near(so.volt(off.sw.id, 0) - so.volt(off.sw.id, 1), 12, 1e-9));
+  // and no wire carries a phantom trickle for the flow animation to scale against
+  const wc = A.wireCurrents(off.c, so);
+  check("open sw: every wire reads exactly zero", [...wc.values()].every(i => i === 0));
+
+  const on = build();                        // same circuit, contact closed
+  on.sw.closed = true;
+  const sc = A.solveDC(on.c);
+  check("closed sw: 12 mA flows", near(sc.current(on.r), 0.012, 1e-6));
+  check("closed sw: wires carry it", [...A.wireCurrents(on.c, sc).values()].some(i => Math.abs(i) > 0.011));
+
+  // a dangling node behind an open switch must not be dragged toward the supply
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const sw = A.makeComp("SW", 100, 0);
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, sw, g);
+    A.addWire(c, v, 0, sw, 0); A.addWire(c, v, 1, g, 0);
+    const s = A.solveDC(c);
+    check("open sw: dangling node behind it stays dead", s.volt(sw.id, 1) === 0);
+  }
+
+  // changeover: the contact NOT selected is dead, and throwing swaps them
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const sp = A.makeComp("SPDT", 100, 0);
+    const rnc = A.makeComp("RES", 200, -60, { value: 1000 });
+    const rno = A.makeComp("RES", 200, 60, { value: 2000 });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, sp, rnc, rno, g);
+    A.addWire(c, v, 0, sp, 0);
+    A.addWire(c, sp, 1, rnc, 0); A.addWire(c, rnc, 1, g, 0);
+    A.addWire(c, sp, 2, rno, 0); A.addWire(c, rno, 1, g, 0);
+    A.addWire(c, v, 1, g, 0);
+    const rest = A.solveDC(c);
+    check("spdt: NC branch conducts at rest", near(rest.current(rnc), 0.012, 1e-6));
+    check("spdt: NO branch is exactly dead at rest", rest.current(rno) === 0);
+    check("spdt: unselected NO contact sits at 0 V", rest.volt(sp.id, 2) === 0);
+    sp.closed = true;
+    const thrown = A.solveDC(c);
+    check("spdt: throwing energises NO", near(thrown.current(rno), 0.006, 1e-6));
+    check("spdt: and NC goes exactly dead", thrown.current(rnc) === 0);
+  }
+
+  // a de-energised relay contact and a blown fuse are open in the same way
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const k = A.makeComp("RELAY", 100, 0);
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, k, r, g);
+    A.addWire(c, v, 0, k, 2); A.addWire(c, k, 3, r, 0);   // load through the contact
+    A.addWire(c, r, 1, g, 0); A.addWire(c, v, 1, g, 0);   // coil left unwired
+    const s = A.solveDC(c);
+    check("relay: open contact passes nothing", s.current(r) === 0);
+    check("relay: load behind it sees 0 V", s.volt(r.id, 0) === 0);
+  }
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const f = A.makeComp("FUSE", 100, 0, { value: 0.001 });   // 1 mA rating, 12 mA load
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, f, r, g);
+    A.addWire(c, v, 0, f, 0); A.addWire(c, f, 1, r, 0);
+    A.addWire(c, r, 1, g, 0); A.addWire(c, v, 1, g, 0);
+    const s = A.solveDC(c);
+    check("fuse: blows on overload", !!f._blown);
+    check("fuse: blown fuse passes nothing", s.current(r) === 0);
+  }
+
+  // one branch on, one off: the off branch is exactly dead, the on one exact
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const s1 = A.makeComp("SW", 100, -60, { closed: true });
+    const s2 = A.makeComp("SW", 100, 60);
+    const r1 = A.makeComp("RES", 200, -60, { value: 1000 });
+    const r2 = A.makeComp("RES", 200, 60, { value: 1000 });
+    const g = A.makeComp("GND", 300, 0);
+    c.comps.push(v, s1, s2, r1, r2, g);
+    A.addWire(c, v, 0, s1, 0); A.addWire(c, s1, 1, r1, 0); A.addWire(c, r1, 1, g, 0);
+    A.addWire(c, v, 0, s2, 0); A.addWire(c, s2, 1, r2, 0); A.addWire(c, r2, 1, g, 0);
+    A.addWire(c, v, 1, g, 0);
+    const s = A.solveDC(c);
+    check("mixed: live branch exact", near(s.current(r1), 0.012, 1e-6));   // 1 mΩ of closed contact
+    check("mixed: dead branch exactly zero", s.current(r2) === 0);
+  }
+
+  // the noise floor must not swallow a legitimately small current
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 10 });
+    const r = A.makeComp("RES", 100, 0, { value: 1e6 });      // 1 MΩ → 10 µA
+    const g = A.makeComp("GND", 200, 0);
+    c.comps.push(v, r, g);
+    A.addWire(c, v, 0, r, 0); A.addWire(c, r, 1, g, 0); A.addWire(c, v, 1, g, 0);
+    const s = A.solveDC(c);
+    check("noise floor: 10 µA survives", near(s.current(r), 1e-5, 1e-12));
+    check("noise floor: wires still report it",
+      [...A.wireCurrents(c, s).values()].filter(i => near(Math.abs(i), 1e-5, 1e-12)).length >= 2);
+  }
+
+  // transient too: an open switch charges nothing
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 12 });
+    const sw = A.makeComp("SW", 100, 0);
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    const cap = A.makeComp("CAP", 300, 0, { value: 1e-6 });
+    const g = A.makeComp("GND", 400, 0);
+    c.comps.push(v, sw, r, cap, g);
+    A.addWire(c, v, 0, sw, 0); A.addWire(c, sw, 1, r, 0); A.addWire(c, r, 1, cap, 0);
+    A.addWire(c, cap, 1, g, 0); A.addWire(c, v, 1, g, 0);
+    A.initTransient(c);
+    let st;
+    for (let i = 1; i <= 200; i++) st = A.stepTransient(c, 1e-5, i * 1e-5);
+    check("open sw (transient): cap never charges", Math.abs(cap._vc) < 1e-12);
+    check("open sw (transient): no current flows", st.current(r) === 0);
+    check("open sw (transient): wires stay still",
+      [...A.wireCurrents(c, st).values()].every(i => i === 0));
+  }
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);
