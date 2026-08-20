@@ -122,7 +122,10 @@ function _anDown(e) {
   const term = Analog.hitTerminal(w.x, w.y);
   if (term) {
     const tc = Analog.compById(App.circ, term.c);
-    App.wiring = { c: term.c, t: term.t, h0: Analog.terminalDir(tc, term.t).x !== 0, route: [], x: w.x, y: w.y };
+    // a junction has no lead to leave along, so its first leg follows the pointer
+    const free = Analog.isJunction(tc);
+    App.wiring = { c: term.c, t: term.t, h0: free ? true : Analog.terminalDir(tc, term.t).x !== 0,
+      route: [], x: w.x, y: w.y, free, tap: null };
     Analog.requestRender();
     return;
   }
@@ -187,11 +190,21 @@ function _anMove(e) {
   }
   if (App.wiring) {
     App.hover = Analog.hitTerminal(w.x, w.y);
+    App.wiring.tap = null;
     if (App.hover) {                                   // magnet onto the terminal
       const hp = Analog.terminalPos(Analog.compById(App.circ, App.hover.c), App.hover.t);
       App.wiring.x = hp.x; App.wiring.y = hp.y;
     } else {
-      App.wiring.x = Analog.snap(w.x); App.wiring.y = Analog.snap(w.y);
+      // over another wire → magnet onto it; releasing taps it with a junction
+      const hs = Analog.hitWireSeg(w.x, w.y);
+      const tp = hs && Analog.tapPoint(App.circ, hs.w, hs.seg, w.x, w.y);
+      if (tp) { App.wiring.tap = hs; App.wiring.x = tp.x; App.wiring.y = tp.y; }
+      else { App.wiring.x = Analog.snap(w.x); App.wiring.y = Analog.snap(w.y); }
+    }
+    // starting at a junction, the first leg goes whichever way you pull
+    if (App.wiring.free && !App.wiring.route.length) {
+      const A = Analog.terminalPos(Analog.compById(App.circ, App.wiring.c), App.wiring.t);
+      App.wiring.h0 = Math.abs(App.wiring.x - A.x) >= Math.abs(App.wiring.y - A.y);
     }
     Analog.requestRender(); return;
   }
@@ -235,15 +248,21 @@ function _anUp(e) {
   if (App.wiring) {
     const m = Analog.mousePos(e), w = Analog.screenToWorld(m.x, m.y);
     const t = Analog.hitTerminal(w.x, w.y);
-    if (t && !(t.c === App.wiring.c && t.t === App.wiring.t)) {
+    // release over another wire → tap it: split it and land on a new junction
+    const tap = !t && App.wiring.tap;
+    const jt = tap && Analog.tapPoint(App.circ, tap.w, tap.seg, w.x, w.y);
+    const j = jt && App.circ.wires.includes(tap.w)
+      ? Analog.splitWireAt(App.circ, tap.w, tap.seg, jt) : null;
+    const end = j ? { c: j.id, t: 0 } : t;
+    if (end && !(end.c === App.wiring.c && end.t === App.wiring.t)) {
       // release on another terminal → finish the wire with the routed bends
       const nw = Analog.addWire(App.circ, Analog.compById(App.circ, App.wiring.c), App.wiring.t,
-        Analog.compById(App.circ, t.c), t.t);
-      if (App.wiring.route.length) { nw.route = App.wiring.route; nw.h0 = App.wiring.h0; }
+        Analog.compById(App.circ, end.c), end.t);
+      if (App.wiring.route.length || App.wiring.free) { nw.route = App.wiring.route; nw.h0 = App.wiring.h0; }
       App.wiring = null;
       Analog.snapshot();
       Analog.resolve();
-    } else if (!t) {
+    } else if (!end) {
       // release on empty space → plant a bend and keep drawing (Esc / right-click cancels)
       const horiz = (App.wiring.route.length % 2 === 0) === App.wiring.h0;
       App.wiring.route.push(horiz ? Analog.snap(w.x) : Analog.snap(w.y));
@@ -278,8 +297,8 @@ function _anContext(e) {
   if (App.tool) { App.tool = null; Analog.updatePaletteSel(); return; }
   const c = Analog.hitComp(w.x, w.y);
   if (c) { App.selection = [c]; Analog.requestRender(); Analog.showCtxMenu(c, e.clientX, e.clientY); return; }
-  const wr = Analog.hitWire(w.x, w.y);
-  if (wr) { Analog.showWireMenu(wr, e.clientX, e.clientY); return; }
+  const hs = Analog.hitWireSeg(w.x, w.y);
+  if (hs) { Analog.showWireMenu(hs.w, e.clientX, e.clientY, hs.seg, w.x, w.y); return; }
   // empty sheet: pick a part straight out of the menu, dropped where you clicked
   if (App.mode === "edit") Analog.showAddMenu(w.x, w.y, e.clientX, e.clientY);
 }

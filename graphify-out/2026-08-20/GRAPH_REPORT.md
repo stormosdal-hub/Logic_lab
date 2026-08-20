@@ -1,16 +1,16 @@
-# Graph Report - logic-lab  (2026-08-20)
+# Graph Report - logic-lab  (2026-07-21)
 
 ## Corpus Check
-- 20 files · ~73,500 words
+- 20 files · ~70,528 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 414 nodes · 994 edges · 23 communities (19 shown, 4 thin omitted)
-- Extraction: 71% EXTRACTED · 29% INFERRED · 0% AMBIGUOUS · INFERRED: 284 edges (avg confidence: 0.8)
+- 409 nodes · 978 edges · 23 communities (19 shown, 4 thin omitted)
+- Extraction: 71% EXTRACTED · 29% INFERRED · 0% AMBIGUOUS · INFERRED: 282 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `215adc91`
+- Built from commit: `39674ebb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,7 +37,7 @@
 - [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `$()` - 42 edges
+1. `$()` - 38 edges
 2. `requestRender()` - 22 edges
 3. `compSize()` - 21 edges
 4. `settle()` - 19 edges
@@ -45,8 +45,8 @@
 6. `curCircuit()` - 18 edges
 7. `pinPos()` - 18 edges
 8. `touchCircuit()` - 16 edges
-9. `toast()` - 15 edges
-10. `roundRect()` - 14 edges
+9. `roundRect()` - 14 edges
+10. `toast()` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Orthogonal Wire Routing` --semantically_similar_to--> `Wire Routing Math (defaultWireRoute)`  [INFERRED] [semantically similar]
@@ -57,8 +57,8 @@
   js/ui.js → js/engine.js
 - `drawSelection()` --calls--> `isBus()`  [INFERRED]
   js/render.js → js/model.js
-- `loadLocal()` --calls--> `setTopCircuit()`  [INFERRED]
-  js/ui.js → js/model.js
+- `afterSimChange() Post-Simulation Hook` --conceptually_related_to--> `Canvas Setup (initCanvas / RAF loop)`  [INFERRED]
+  CLAUDE.md → .claude/agents/renderer.md
 
 ## Import Cycles
 - None detected.
@@ -76,23 +76,23 @@ Nodes (38): Canvas Setup (initCanvas / RAF loop), Color Scheme (COL), Component 
 
 ### Community 1 - "Component Data Model"
 Cohesion: 0.09
-Nodes (60): busValue(), matrixLit(), addrWidth(), compSize(), defaultWireRoute(), isGate(), numInputsOf(), numOutputsOf() (+52 more)
+Nodes (64): busValue(), inputVals(), matrixLit(), addrWidth(), compBox(), compSize(), isGate(), numInputsOf() (+56 more)
 
 ### Community 2 - "Interaction & Navigation"
 Cohesion: 0.10
-Nodes (51): buildMenuLevel(), compMenuItems(), dragWireSegment(), dropPaletteItem(), enterComponent(), goToLevel(), hideContextMenu(), initInteractions() (+43 more)
+Nodes (51): buildMenuLevel(), compMenuItems(), copySelection(), currentTool(), dropPaletteItem(), enterComponent(), goToLevel(), hideContextMenu() (+43 more)
 
 ### Community 3 - "Edit Operations & Wiring"
 Cohesion: 0.09
-Nodes (47): afterStructChange(), exprTreeForOutputPin(), addAt(), addChipAt(), copySelection(), dedupeLabel(), deleteSelection(), onUIHit() (+39 more)
+Nodes (49): defineBuiltin(), registerBuiltinDefs(), afterStructChange(), synthBoolCircuit(), addAt(), addChipAt(), dedupeLabel(), deleteSelection() (+41 more)
 
 ### Community 4 - "Simulation Engine"
-Cohesion: 0.09
-Nodes (47): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+39 more)
+Cohesion: 0.08
+Nodes (50): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+42 more)
 
 ### Community 5 - "Boolean Expressions & Timeline"
-Cohesion: 0.09
-Nodes (45): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), currentTool(), createDefFromCircuit(), customDefs() (+37 more)
+Cohesion: 0.11
+Nodes (33): timelineSignals(), topOutputExprs(), busValsToHex(), builtinDefs(), createDefFromCircuit(), customDefs(), defInUse(), serializeCircuit() (+25 more)
 
 ### Community 6 - "MCP Package Config"
 Cohesion: 0.20
@@ -127,8 +127,8 @@ Cohesion: 0.18
 Nodes (13): _anBuild(), _anSolve(), _anSolveMode(), _potR(), _spdtPoles(), _spdtR(), _sqPhase(), _zenerVz() (+5 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.26
-Nodes (9): _anVColor(), _drawComp(), _drawLabels(), _drawProbe(), _drawSymbol(), _iconComp(), _probeLines(), _symbolBounds() (+1 more)
+Cohesion: 0.24
+Nodes (8): _drawComp(), _drawLabels(), _drawProbe(), _drawSymbol(), _iconComp(), _probeLines(), _symbolBounds(), _symBounds
 
 ### Community 25 - "Community 25"
 Cohesion: 0.29
@@ -142,11 +142,11 @@ Nodes (4): AN_PALETTE, AN_PREFIX, _anMenuLevel(), _anShowMenu()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Simulation Engine`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Edit Operations & Wiring`, `Simulation Engine`?**
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Edit Operations & Wiring`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **Why does `afterStructChange()` connect `Edit Operations & Wiring` to `Interaction & Navigation`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
+- **Why does `afterStructChange()` connect `Edit Operations & Wiring` to `Interaction & Navigation`, `Simulation Engine`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `$()` (e.g. with `hideContextMenu()` and `showContextMenu()`) actually correct?**
   _`$()` has 2 INFERRED edges - model-reasoned connections that need verification._

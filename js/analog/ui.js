@@ -46,6 +46,7 @@ const AN_PALETTE = [
     { type: "RELAY", label: "Relay (NO)" },
   ]},
   { group: "Reference & meters", items: [
+    { type: "JUNCTION", label: "Junction" },
     { type: "GND", label: "Ground" },
     { type: "VM", label: "Voltmeter" },
     { type: "AM", label: "Ammeter" },
@@ -452,6 +453,14 @@ Analog.afterStruct = function () {
 Analog.showCtxMenu = function (c, sx, sy) {
   const App = Analog.App;
   const items = [];
+  // a junction is just a connection point — nothing to rename, rotate or value-edit
+  if (Analog.isJunction(c)) {
+    items.push({ label: "🗑 Delete junction", danger: true, fn: () => {
+      Analog.removeComp(App.circ, c); App.selection = []; Analog.snapshot(); Analog.afterStruct();
+    } });
+    _anShowMenu(items, sx, sy);
+    return;
+  }
   if (["RES", "POT", "CAP", "IND", "LAMP", "FUSE", "DCV", "ACV", "SQV", "ISRC", "ZENER", "NPN", "PNP", "RELAY"].includes(c.type))
     items.push({ label: "✎ Change value…", fn: () => Analog.editValue(c) });
   if (c.type === "POT") items.push({ label: "⇹ Wiper position…", fn: () => {
@@ -499,8 +508,16 @@ Analog.showAddMenu = function (wx, wy, sx, sy) {
     })),
   })), sx, sy);
 };
-Analog.showWireMenu = function (w, sx, sy) {
+Analog.showWireMenu = function (w, sx, sy, seg, wx, wy) {
+  const App = Analog.App;
   const items = [];
+  if (App.mode === "edit" && seg != null) items.push({ label: "⊕ Add junction here", fn: () => {
+    const p = Analog.tapPoint(App.circ, w, seg, wx, wy);
+    const j = p && Analog.splitWireAt(App.circ, w, seg, p);
+    if (!j) return;
+    App.selection = [j];
+    Analog.snapshot(); Analog.afterStruct();
+  } });
   if (w.route != null && w.route.length)
     items.push({ label: "⟲ Straighten", fn: () => { delete w.route; delete w.h0; Analog.snapshot(); Analog.requestRender(); } });
   items.push({ label: "🗑 Delete wire", danger: true, fn: () => { Analog.removeWire(Analog.App.circ, w); Analog.snapshot(); Analog.afterStruct(); } });

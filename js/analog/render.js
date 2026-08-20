@@ -86,11 +86,13 @@ Analog.render = function () {
   // wires (orthogonal polylines)
   const paths = [];
   g.lineWidth = 3; g.lineCap = "round"; g.lineJoin = "round";
+  const tapping = App.wiring && App.wiring.tap;   // wire about to be tapped with a junction
   for (const w of App.circ.wires) {
     const pts = Analog.wirePath(App.circ, w);
     paths.push(pts);
     if (pts.length < 2) continue;
-    g.strokeStyle = sim && res && res.ok ? _anVColor(res.volt(w.from.c, w.from.t)) : "#8aa0c0";
+    g.strokeStyle = tapping && tapping.w === w ? "#ffd166"
+      : sim && res && res.ok ? _anVColor(res.volt(w.from.c, w.from.t)) : "#8aa0c0";
     g.beginPath();
     g.moveTo(pts[0].x, pts[0].y);
     for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
@@ -149,6 +151,8 @@ Analog.render = function () {
     // bend handles
     g.fillStyle = "#ffd166";
     for (let i = 1; i < pts.length; i++) { g.beginPath(); g.arc(pts[i].x, pts[i].y, 2.5, 0, 7); g.fill(); }
+    // over another wire: preview the junction that releasing here would drop in
+    if (W2.tap) { g.beginPath(); g.arc(W2.x, W2.y, 5.5, 0, 7); g.fill(); }
   }
 
   // hover probe (sim mode): live values in a tooltip near the cursor
@@ -288,6 +292,7 @@ function _probeLines(App, res, p) {
   const V = (a, b) => res.volt(c.id, a) - res.volt(c.id, b);
   const I = res.current(c);
   if (c.type === "GND") return ["0 V"];
+  if (def.junction) return [Analog.fmt(res.volt(c.id, 0), "V")];
   if (Analog.isMeter(c)) return [def.name + ": " + Analog.fmt(res.meter(c), def.unit)];
   if (def.bjt) return ["Ic " + Analog.fmt(I, "A"), "Vce " + Analog.fmt(V(0, 2), "V"), "Vbe " + Analog.fmt(V(1, 2), "V")];
   if (def.relay) return ["coil " + Analog.fmt(Math.abs(V(0, 1)) / Math.max(c.value, 1e-3), "A"),
@@ -348,7 +353,17 @@ function _drawSymbol(g, c, sim, res) {
   g.lineWidth = 2.5; g.strokeStyle = "#cdd8ea"; g.fillStyle = AN_BG;
   g.lineCap = "round";
 
-  if (c.type === "RES") {
+  if (def.junction) {
+    // the schematic connection blob. On a tile it needs the tapped wire around it
+    // to read as a junction at all (and to give the ink-bounds framing something
+    // to work with — a lone dot would be blown up to fill the tile).
+    if (c._icon) {
+      g.strokeStyle = "#8aa0c0";
+      g.beginPath(); g.moveTo(-16, 0); g.lineTo(16, 0); g.moveTo(0, 0); g.lineTo(0, 16); g.stroke();
+    }
+    g.fillStyle = sim && res && res.ok ? _anVColor(res.volt(c.id, 0)) : "#cdd8ea";
+    g.beginPath(); g.arc(0, 0, 5, 0, 7); g.fill();
+  } else if (c.type === "RES") {
     g.beginPath(); g.moveTo(-34, 0); g.lineTo(-24, 0); g.moveTo(24, 0); g.lineTo(34, 0); g.stroke();
     g.beginPath(); g.rect(-24, -9, 48, 18); g.fillStyle = "#182338"; g.fill(); g.stroke();
   } else if (c.type === "POT") {

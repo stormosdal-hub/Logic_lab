@@ -324,6 +324,7 @@ function _anSolveMode(circ, mode, dt, time) {
     const def = Analog.TYPES[c.type] || {};
     const i = cur.get(c) || 0;
     if (c.type === "GND") continue;
+    if (def.junction) { setT(c, 0, 0); continue; }   // a tap: whatever flows in flows out
     if (def.pot) {
       const { raw, rwb } = _potR(c);
       const iaw = (termV(c.id, 0) - termV(c.id, 1)) / raw, iwb = (termV(c.id, 1) - termV(c.id, 2)) / rwb;

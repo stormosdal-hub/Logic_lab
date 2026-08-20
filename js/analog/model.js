@@ -33,6 +33,11 @@ Analog.TYPES = {
   SQV: { name: "Square Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 5,    unit: "V", freq: 60, reactive: true, square: true, termNames: ["+", "−"] },
   // ideal DC current source: `value` amps out of terminal 0 (+) through the circuit
   ISRC: { name: "Current Source", terminals: [{ x: 0, y: -34 }, { x: 0, y: 34 }], value: 0.01, unit: "A", isrc: true, termNames: ["+ (out)", "−"] },
+  // A junction (connection dot): a tap point on a wire, drawn as the schematic
+  // blob. Electrically nothing — it stamps no element — but it is a real terminal
+  // that any number of wires may meet at, so union-find merges them into one node.
+  // Dropping a wire on another wire splits that wire and drops one of these in.
+  JUNCTION: { name: "Junction", terminals: [{ x: 0, y: 0 }], value: 0, unit: "", junction: true },
   GND: { name: "Ground",       terminals: [{ x: 0, y: -22 }],                  value: 0,     unit: "" },
   VM:  { name: "Voltmeter",    terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "V", meter: true, termNames: ["+", "−"] },
   AM:  { name: "Ammeter",      terminals: [{ x: -34, y: 0 }, { x: 34, y: 0 }], value: 0,     unit: "A", meter: true, termNames: ["+", "−"] },
@@ -72,6 +77,8 @@ Analog.isMeter = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c
 Analog.isScope = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c.type].scope); };
 /* a manual switch/push-button the user can open & close by clicking in sim */
 Analog.isSwitch = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c.type].switchable); };
+/* a bare connection point on a wire — no element, just a shared terminal */
+Analog.isJunction = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c.type].junction); };
 /* a device is nonlinear if it needs Newton-Raphson iteration (diode/LED/transistor) */
 Analog.isNonlinear = function (c) { return !!(Analog.TYPES[c.type] && Analog.TYPES[c.type].nonlinear); };
 /* a circuit needs time-stepping if it has any capacitor, inductor, or AC source */
@@ -148,6 +155,22 @@ Analog.addWire = function (circ, fromComp, fromTerm, toComp, toTerm) {
 };
 
 Analog.removeComp = function (circ, c) {
+  // Removing a junction that only joins two wires splices them back into one,
+  // following the same path — undoing a tap shouldn't cut the connection.
+  const att = Analog.isJunction(c) ? circ.wires.filter(w => w.from.c === c.id || w.to.c === c.id) : [];
+  if (att.length === 2) {
+    const [w1, w2] = att;
+    const far = w => (w.from.c === c.id ? w.to : w.from);
+    let p1 = Analog.wirePath(circ, w1), p2 = Analog.wirePath(circ, w2);
+    if (w1.from.c === c.id) p1 = p1.slice().reverse();   // orient: junction last
+    if (w2.to.c === c.id) p2 = p2.slice().reverse();     // orient: junction first
+    const a = far(w1), b = far(w2);
+    const { h0, route } = Analog.pathToRoute(p1.concat(p2));
+    circ.comps = circ.comps.filter(x => x !== c);
+    circ.wires = circ.wires.filter(w => w !== w1 && w !== w2);
+    circ.wires.push({ id: Analog.uid(), from: { c: a.c, t: a.t }, to: { c: b.c, t: b.t }, h0, route });
+    return;
+  }
   circ.comps = circ.comps.filter(x => x !== c);
   circ.wires = circ.wires.filter(w => w.from.c !== c.id && w.to.c !== c.id);
 };
@@ -177,7 +200,10 @@ Analog.terminalDir = function (c, t) {
 Analog.defaultRoute = function (circ, w) {
   const ca = Analog.compById(circ, w.from.c), cb = Analog.compById(circ, w.to.c);
   const A = Analog.terminalPos(ca, w.from.t), B = Analog.terminalPos(cb, w.to.t);
-  const h0 = Analog.terminalDir(ca, w.from.t).x !== 0;
+  // a junction has no lead to leave along, so it starts toward wherever B is
+  const h0 = Analog.isJunction(ca)
+    ? (A.y === B.y || (A.x !== B.x && Math.abs(B.x - A.x) >= Math.abs(B.y - A.y)))
+    : Analog.terminalDir(ca, w.from.t).x !== 0;
   if (h0 ? A.y === B.y : A.x === B.x) return { h0, route: [] };
   return { h0, route: [Analog.snap(h0 ? (A.x + B.x) / 2 : (A.y + B.y) / 2)] };
 };
@@ -257,6 +283,65 @@ Analog.grabWireSeg = function (circ, w, segIdx) {
   return { idx: w.route.length - 2, horiz: s.horiz };
 };
 
+/* ---- junctions: tapping a wire part-way along ----
+   A wire runs terminal-to-terminal, so joining one part-way means splitting it
+   in two and putting a JUNCTION between the halves — a real terminal that any
+   number of wires can meet at, which union-find then merges into one node.
+   The halves inherit the original geometry, so the wire doesn't visibly move. */
+
+/* The moving (lateral) coordinate a segment ends at — one route scalar. */
+function _anMoving(s) { return s.horiz ? s.bx : s.by; }
+
+/* Where a tap at (wx, wy) lands on segment `segIdx` of `w`: snapped along the
+   segment's own axis and clamped to it, so the junction sits exactly on the wire. */
+Analog.tapPoint = function (circ, w, segIdx, wx, wy) {
+  const s = Analog.wireSegs(circ, w)[segIdx];
+  if (!s) return null;
+  const clamp = (v, a, b) => Math.max(Math.min(a, b), Math.min(Math.max(a, b), v));
+  return s.horiz ? { x: clamp(Analog.snap(wx), s.ax, s.bx), y: s.ay }
+    : { x: s.ax, y: clamp(Analog.snap(wy), s.ay, s.by) };
+};
+
+/* Split `w` at point S on segment `segIdx`, inserting a junction there. Returns
+   the new junction component (already added to the circuit).
+
+   Both halves get explicit routes copied out of the original's segments, so the
+   drawn path doesn't move: the first half replays the segments before the split
+   and closes onto S, the second half starts at S, finishes the segment it broke,
+   then replays the rest. (`wireSegs` always alternates axes starting from h0, so
+   slicing its scalars preserves that invariant.) */
+Analog.splitWireAt = function (circ, w, segIdx, S) {
+  const segs = Analog.wireSegs(circ, w);
+  const s = segs[segIdx];
+  if (!s) return null;
+  const j = Analog.makeComp("JUNCTION", S.x, S.y);
+  circ.comps.push(j);
+  circ.wires = circ.wires.filter(x => x !== w);
+  circ.wires.push(
+    { id: Analog.uid(), from: { c: w.from.c, t: w.from.t }, to: { c: j.id, t: 0 },
+      h0: segs[0].horiz, route: segs.slice(0, segIdx).map(_anMoving) },
+    { id: Analog.uid(), from: { c: j.id, t: 0 }, to: { c: w.to.c, t: w.to.t },
+      h0: s.horiz, route: segs.slice(segIdx, segs.length - 1).map(_anMoving) });
+  return j;
+};
+
+/* Turn a polyline back into (h0, route). Duplicate and collinear points are
+   dropped first so the segments strictly alternate axes, which is what the route
+   encoding assumes; every segment but the last then contributes one scalar. */
+Analog.pathToRoute = function (pts) {
+  const p = [];
+  for (const q of pts) { const l = p[p.length - 1]; if (!l || l.x !== q.x || l.y !== q.y) p.push(q); }
+  for (let i = 1; i < p.length - 1; i++)
+    if ((p[i - 1].x === p[i].x && p[i].x === p[i + 1].x) ||
+        (p[i - 1].y === p[i].y && p[i].y === p[i + 1].y)) { p.splice(i, 1); i--; }
+  if (p.length < 2) return { h0: true, route: [] };
+  const h0 = p[0].y === p[1].y;
+  const route = [];
+  for (let i = 0; i + 2 < p.length; i++)
+    route.push(((i % 2 === 0) === h0) ? p[i + 1].x : p[i + 1].y);
+  return { h0, route };
+};
+
 /* ---- serialization (save / load / undo history / copy-paste) ----
    Persist only user-editable fields — runtime state (`_vc`, `_il`, `_on`,
    `_blown`, `_trace`) is rebuilt when a simulation starts. */
@@ -276,7 +361,9 @@ Analog.serializeCircuit = function (circ, only) {
     .filter(w => ids.has(w.from.c) && ids.has(w.to.c))
     .map(w => {
       const o = { from: { c: w.from.c, t: w.from.t }, to: { c: w.to.c, t: w.to.t } };
-      if (w.route != null && w.route.length) { o.route = w.route.slice(); o.h0 = !!w.h0; }
+      // an empty route still pins the first direction (a split wire's first half
+      // often has one), so keep it — only a missing route means "auto"
+      if (w.route != null) { o.route = w.route.slice(); o.h0 = !!w.h0; }
       return o;
     });
   return { v: 1, comps, wires };
@@ -299,7 +386,7 @@ Analog.instantiateData = function (data, dx = 0, dy = 0) {
     if (!a || !b) continue;
     if (w.from.t >= Analog.numTerminals(a) || w.to.t >= Analog.numTerminals(b)) continue;
     const nw = { id: Analog.uid(), from: { c: a.id, t: w.from.t }, to: { c: b.id, t: w.to.t } };
-    if (w.route != null && w.route.length) {
+    if (w.route != null) {
       // route scalars are absolute axis coordinates — offset X entries by dx, Y by dy
       nw.route = w.route.map((v, i) => v + (((i % 2 === 0) === !!w.h0) ? dx : dy));
       nw.h0 = !!w.h0;

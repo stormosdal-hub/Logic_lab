@@ -925,5 +925,124 @@ const near = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
   check("floating: shorted source still errors", !A.solveDC(sc).ok);
 }
 
+/* ---- 39. Junctions: tapping a wire part-way along ---- */
+{
+  const pstr = (c, w) => A.wirePath(c, w).map(p => p.x + "," + p.y).join(" ");
+
+  // --- geometry: splitting a wire doesn't move it, and un-splitting restores it ---
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 10 });
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    c.comps.push(v, r);
+    const w = A.addWire(c, v, 0, r, 0);
+    const before = pstr(c, w);
+    const segs = A.wireSegs(c, w);
+    const mid = Math.floor(segs.length / 2);
+    const p = A.tapPoint(c, w, mid, 80, -20);
+    const j = A.splitWireAt(c, w, mid, p);
+    check("junction: split inserts a junction", !!j && j.type === "JUNCTION");
+    check("junction: split replaces the wire with two", c.wires.length === 2);
+    const halves = c.wires.map(x => pstr(c, x));
+    check("junction: sits on the wire it split", halves[0].endsWith(p.x + "," + p.y));
+    check("junction: halves meet at the junction", halves[1].startsWith(p.x + "," + p.y));
+    // the two halves together retrace the original polyline
+    const joined = A.pathToRoute(A.wirePath(c, c.wires[0]).concat(A.wirePath(c, c.wires[1])));
+    const probe = { id: "x", from: c.wires[0].from, to: c.wires[1].to, h0: joined.h0, route: joined.route };
+    check("junction: split keeps the drawn path", pstr(c, probe) === before);
+    // deleting it splices the halves back into the original single wire
+    A.removeComp(c, j);
+    check("junction: delete merges the two halves", c.wires.length === 1);
+    check("junction: merged wire follows the old path", pstr(c, c.wires[0]) === before);
+    check("junction: comp is gone", !c.comps.some(x => x.type === "JUNCTION"));
+  }
+
+  // --- electrical: a tapped wire is the same node, so a parallel R behaves ---
+  const build = tapped => {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 10 });
+    const r1 = A.makeComp("RES", 200, 0, { value: 1000 });
+    const r2 = A.makeComp("RES", 200, 120, { value: 2000 });
+    const g = A.makeComp("GND", 400, 200);
+    c.comps.push(v, r1, r2, g);
+    const w = A.addWire(c, v, 0, r1, 0);
+    A.addWire(c, r1, 1, g, 0);
+    A.addWire(c, r2, 1, g, 0);
+    A.addWire(c, v, 1, g, 0);
+    let j = null;
+    if (tapped) {
+      const segs = A.wireSegs(c, w);
+      const k = Math.floor(segs.length / 2);
+      j = A.splitWireAt(c, w, k, A.tapPoint(c, w, k, 80, -20));
+      A.addWire(c, j, 0, r2, 0);          // parallel branch hangs off the tap
+    } else {
+      A.addWire(c, v, 0, r2, 0);          // ...or straight off the source terminal
+    }
+    return { c, v, r1, r2, g, j };
+  };
+
+  const direct = build(false), tapped = build(true);
+  const sd = A.solveDC(direct.c), st = A.solveDC(tapped.c);
+  check("junction: tapped circuit solves", st.ok);
+  check("junction: 1k branch = 10 mA", near(st.current(tapped.r1), 0.01, 1e-9));
+  check("junction: 2k branch = 5 mA", near(st.current(tapped.r2), 0.005, 1e-9));
+  check("junction: matches wiring straight to the terminal",
+    near(st.current(tapped.r1), sd.current(direct.r1), 1e-9) &&
+    near(st.current(tapped.r2), sd.current(direct.r2), 1e-9));
+  check("junction: adds no voltage drop",
+    near(st.volt(tapped.j.id, 0), st.volt(tapped.v.id, 0), 1e-9));
+
+  // node extraction really merges the three terminals meeting at the tap
+  {
+    const n = A.buildNodes(tapped.c);
+    check("junction: one node with the source and both loads",
+      n.nodeAt(tapped.j.id, 0) === n.nodeAt(tapped.v.id, 0) &&
+      n.nodeAt(tapped.j.id, 0) === n.nodeAt(tapped.r1.id, 0) &&
+      n.nodeAt(tapped.j.id, 0) === n.nodeAt(tapped.r2.id, 0));
+  }
+
+  // --- flow: the junction passes current straight through (KCL at the tap) ---
+  {
+    const cur = A.wireCurrents(tapped.c, st);
+    const at = tapped.c.wires.filter(w => w.from.c === tapped.j.id || w.to.c === tapped.j.id);
+    check("junction: three wires meet at the tap", at.length === 3);
+    let net = 0;
+    for (const w of at) net += (w.to.c === tapped.j.id ? 1 : -1) * (cur.get(w) || 0);
+    check("junction: currents balance at the tap", Math.abs(net) < 1e-9);
+    const feed = at.find(w => w.from.c === tapped.v.id || w.to.c === tapped.v.id);
+    check("junction: feed wire carries both branches", near(Math.abs(cur.get(feed)), 0.015, 1e-9));
+  }
+
+  // --- a tapped sheet survives save/load, empty-but-explicit routes included ---
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0, { value: 10 });
+    const r = A.makeComp("RES", 200, 0, { value: 1000 });
+    c.comps.push(v, r);
+    const w = A.addWire(c, v, 0, r, 0);
+    const j = A.splitWireAt(c, w, 0, A.tapPoint(c, w, 0, 0, -20));
+    check("junction: split on the first segment leaves an empty route",
+      c.wires.some(x => x.route != null && x.route.length === 0));
+    const before = c.wires.map(x => pstr(c, x)).sort();
+    const back = A.deserializeCircuit(JSON.parse(JSON.stringify(A.serializeCircuit(c))));
+    check("junction: survives serialization", back.comps.filter(x => x.type === "JUNCTION").length === 1);
+    check("junction: geometry survives serialization",
+      JSON.stringify(back.wires.map(x => pstr(back, x)).sort()) === JSON.stringify(before));
+    check("junction: split really happened", !!j && c.wires.length === 2);
+  }
+
+  // --- a junction joining three or more wires is deleted outright, not merged ---
+  {
+    const c = A.newCircuit();
+    const v = A.makeComp("DCV", 0, 0), r1 = A.makeComp("RES", 200, 0), r2 = A.makeComp("RES", 200, 120);
+    c.comps.push(v, r1, r2);
+    const w = A.addWire(c, v, 0, r1, 0);
+    const j = A.splitWireAt(c, w, 1, A.tapPoint(c, w, 1, 80, -20));
+    A.addWire(c, j, 0, r2, 0);
+    A.removeComp(c, j);
+    check("junction: 3-way tap deletes rather than merging", c.wires.length === 0);
+  }
+}
+
 console.log("\n" + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);
