@@ -142,18 +142,21 @@ function registerBuiltinDefs() {
     A.w("ff.1", "Qn.0", [744]);
   });
 
-  /* T flip-flop: D = T XOR Q */
+  /* T flip-flop: D = T XOR Q.
+     The Q feedback is hand-routed over the top (y=392) so it doesn't cut back
+     through the middle of the chip; like the JK it takes the XOR's upper input
+     and T the lower one, so the lane drops straight in (XOR commutes). */
   defineBuiltin("T Flip-Flop", "T-FF", "ff", A => {
-    A.in("T", 40, 48);
-    A.in("CLK", 40, 192);
-    A.c("x1", "XOR", 184, 56);
-    A.w("T.0", "x1.0");
-    A.chip("ff", "D Flip-Flop", 320, 72);
+    A.in("T", 880, 424);
+    A.in("CLK", 880, 472);
+    A.c("x1", "XOR", 1016, 408);
+    A.w("T.0", "x1.1");
+    A.chip("ff", "D Flip-Flop", 1120, 416);
     A.w("x1.0", "ff.0");
     A.w("CLK.0", "ff.1");
-    A.w("ff.0", "x1.1");   // Q feedback
-    A.out("Q", 520, 72, "ff.0");
-    A.out("Qn", 520, 168, "ff.1", "Q'");
+    A.w("ff.0", "x1.0", [1232, 392, 984]);   // Q feedback, over the top
+    A.out("Q", 1288, 392, "ff.0");
+    A.out("Qn", 1288, 480, "ff.1", "Q'");
   });
 
   /* 4-bit parallel register: four D flip-flops on a shared clock */
