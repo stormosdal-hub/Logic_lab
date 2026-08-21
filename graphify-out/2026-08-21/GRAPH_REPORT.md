@@ -1,16 +1,16 @@
-# Graph Report - logic-lab  (2026-08-21)
+# Graph Report - logic-lab  (2026-08-20)
 
 ## Corpus Check
-- 23 files · ~82,353 words
+- 23 files · ~80,939 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 432 nodes · 1016 edges · 25 communities (21 shown, 4 thin omitted)
+- 431 nodes · 1014 edges · 26 communities (22 shown, 4 thin omitted)
 - Extraction: 72% EXTRACTED · 28% INFERRED · 0% AMBIGUOUS · INFERRED: 286 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1afeee13`
+- Built from commit: `0fc984db`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -29,6 +29,7 @@
 - [[_COMMUNITY_Bus & Junction Logic|Bus & Junction Logic]]
 - [[_COMMUNITY_Address Components|Address Components]]
 - [[_COMMUNITY_LED Matrix|LED Matrix]]
+- [[_COMMUNITY_Community 14|Community 14]]
 - [[_COMMUNITY_Community 16|Community 16]]
 - [[_COMMUNITY_Community 17|Community 17]]
 - [[_COMMUNITY_Community 20|Community 20]]
@@ -54,12 +55,12 @@
   CLAUDE.md → .claude/agents/sim-engine.md
 - `_anBuild()` --calls--> `A`  [INFERRED]
   js/analog/engine.js → test/analog.js
+- `buildAddrData()` --calls--> `out`  [INFERRED]
+  js/model.js → tools/build-library.mjs
 - `releaseMomentaryInputs()` --calls--> `toggleInput()`  [INFERRED]
   js/ui.js → js/engine.js
 - `onCanvasDown()` --calls--> `hitUI()`  [INFERRED]
   js/interact.js → js/render.js
-- `drawSelection()` --calls--> `isBus()`  [INFERRED]
-  js/render.js → js/model.js
 
 ## Import Cycles
 - None detected.
@@ -69,31 +70,31 @@
 - **Headless Node.js Test Architecture (no DOM)** — claude_puremodules, agents_qa_vmtestrunner, agents_qa_qaagent [EXTRACTED 1.00]
 - **Simulation Settlement Pipeline** — claude_gaussseidelsim, agents_sim_engine_passcircuit, agents_sim_engine_simobject [EXTRACTED 1.00]
 
-## Communities (25 total, 4 thin omitted)
+## Communities (26 total, 4 thin omitted)
 
 ### Community 0 - "Chip Definitions & Builtins"
 Cohesion: 0.08
 Nodes (38): Canvas Setup (initCanvas / RAF loop), Color Scheme (COL), Component Drawing (drawComp), Wire Rendering (drawWire), Hit Testing (hitPin / hitComp / hitWire), Palette Icons (paintToolIcon), Renderer Agent, uiHits Array (+30 more)
 
 ### Community 1 - "Component Data Model"
-Cohesion: 0.08
-Nodes (66): busValue(), matrixLit(), addrWidth(), compBox(), compById(), compSize(), defaultWireRoute(), isGate() (+58 more)
+Cohesion: 0.09
+Nodes (48): busValue(), matrixLit(), resolveBit(), isBus(), pinBits(), wireRoutePoints(), activeView(), ADDR_TITLE (+40 more)
 
 ### Community 2 - "Interaction & Navigation"
 Cohesion: 0.09
-Nodes (59): afterStructChange(), addAt(), addChipAt(), buildMenuLevel(), compMenuItems(), copySelection(), currentTool(), dedupeLabel() (+51 more)
+Nodes (53): buildMenuLevel(), compMenuItems(), copySelection(), currentTool(), dropPaletteItem(), enterComponent(), goToLevel(), hideContextMenu() (+45 more)
 
 ### Community 3 - "Edit Operations & Wiring"
-Cohesion: 0.08
-Nodes (42): exprTreeForOutputPin(), synthBoolCircuit(), enterComponent(), innerCircuitOf(), innerName(), onUIHit(), seedDemo(), ADDR_TYPES (+34 more)
+Cohesion: 0.10
+Nodes (53): afterStructChange(), synthBoolCircuit(), addAt(), addChipAt(), dedupeLabel(), deleteSelection(), dragWireSegment(), onUIHit() (+45 more)
 
 ### Community 4 - "Simulation Engine"
 Cohesion: 0.09
-Nodes (46): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+38 more)
+Nodes (50): afterSimChange(), applyTTRow(), bitEq(), BOOL_OPS, busConflict(), clockTick(), collectCircuits(), computeTruthTable() (+42 more)
 
 ### Community 5 - "Boolean Expressions & Timeline"
 Cohesion: 0.08
-Nodes (46): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), builtinDefs(), createDefFromCircuit(), customDefs() (+38 more)
+Nodes (49): defineBuiltin(), registerBuiltinDefs(), timelineSignals(), topOutputExprs(), busValsToHex(), builtinDefs(), createDefFromCircuit(), customDefs() (+41 more)
 
 ### Community 6 - "MCP Package Config"
 Cohesion: 0.20
@@ -114,6 +115,10 @@ Nodes (3): Highlights, ⚡ Logic Lab, Run it
 ### Community 10 - "Community 10"
 Cohesion: 0.23
 Nodes (14): 4-bit Ripple Counter, 4-bit Register, 4-bit Shift Register, 74HC595 Shift Register IC, Components Agent, defineBuiltin DSL, D Flip-Flop, D Latch (+6 more)
+
+### Community 14 - "Community 14"
+Cohesion: 0.33
+Nodes (5): defs, files, out, root, seen
 
 ### Community 16 - "Community 16"
 Cohesion: 0.40
@@ -147,10 +152,12 @@ Nodes (7): AN_PALETTE, AN_PREFIX, AN_UNIT_ROWS, _anDrawTrace(), _anMenuLevel(), 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Simulation Engine`?**
+- **Why does `$()` connect `Boolean Expressions & Timeline` to `Interaction & Navigation`, `Edit Operations & Wiring`, `Simulation Engine`?**
   _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **Why does `requestRender()` connect `Interaction & Navigation` to `Component Data Model`, `Edit Operations & Wiring`, `Simulation Engine`, `Boolean Expressions & Timeline`?**
   _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `buildAddrData()` connect `Edit Operations & Wiring` to `Community 14`?**
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `$()` (e.g. with `hideContextMenu()` and `showContextMenu()`) actually correct?**
   _`$()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 17 inferred relationships involving `requestRender()` (e.g. with `afterStructChange()` and `dragWireSegment()`) actually correct?**
@@ -159,5 +166,3 @@ _Questions this graph is uniquely positioned to answer:_
   _`compSize()` has 15 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `settle()` (e.g. with `compById()` and `editWideInput()`) actually correct?**
   _`settle()` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 11 inferred relationships involving `onCanvasDown()` (e.g. with `atTop()` and `canEdit()`) actually correct?**
-  _`onCanvasDown()` has 11 INFERRED edges - model-reasoned connections that need verification._

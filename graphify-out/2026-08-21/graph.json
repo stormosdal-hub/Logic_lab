@@ -572,7 +572,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_engine_resolvebit",
-      "community": 4,
+      "community": 1,
       "norm_label": "resolvebit()"
     },
     {
@@ -762,7 +762,7 @@
       "source_location": "L422",
       "_origin": "ast",
       "id": "js_engine_afterstructchange",
-      "community": 2,
+      "community": 3,
       "norm_label": "afterstructchange()"
     },
     {
@@ -892,7 +892,7 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "js_engine_exprtreeforoutputpin",
-      "community": 3,
+      "community": 4,
       "norm_label": "exprtreeforoutputpin()"
     },
     {
@@ -1112,7 +1112,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_interact_placetool",
-      "community": 2,
+      "community": 3,
       "norm_label": "placetool()"
     },
     {
@@ -1312,7 +1312,7 @@
       "source_location": "L502",
       "_origin": "ast",
       "id": "js_interact_addat",
-      "community": 2,
+      "community": 3,
       "norm_label": "addat()"
     },
     {
@@ -1322,7 +1322,7 @@
       "source_location": "L516",
       "_origin": "ast",
       "id": "js_interact_addchipat",
-      "community": 2,
+      "community": 3,
       "norm_label": "addchipat()"
     },
     {
@@ -1342,7 +1342,7 @@
       "source_location": "L546",
       "_origin": "ast",
       "id": "js_interact_rotatecomp",
-      "community": 2,
+      "community": 3,
       "norm_label": "rotatecomp()"
     },
     {
@@ -1382,7 +1382,7 @@
       "source_location": "L590",
       "_origin": "ast",
       "id": "js_interact_deleteselection",
-      "community": 2,
+      "community": 3,
       "norm_label": "deleteselection()"
     },
     {
@@ -1392,7 +1392,7 @@
       "source_location": "L601",
       "_origin": "ast",
       "id": "js_interact_dedupelabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "dedupelabel()"
     },
     {
@@ -1402,7 +1402,7 @@
       "source_location": "L609",
       "_origin": "ast",
       "id": "js_interact_pasteclipboard",
-      "community": 2,
+      "community": 3,
       "norm_label": "pasteclipboard()"
     },
     {
@@ -1492,7 +1492,7 @@
       "source_location": "L758",
       "_origin": "ast",
       "id": "js_interact_dragwiresegment",
-      "community": 2,
+      "community": 3,
       "norm_label": "dragwiresegment()"
     },
     {
@@ -1512,7 +1512,7 @@
       "source_location": "L800",
       "_origin": "ast",
       "id": "js_interact_innercircuitof",
-      "community": 3,
+      "community": 2,
       "norm_label": "innercircuitof()"
     },
     {
@@ -1522,7 +1522,7 @@
       "source_location": "L813",
       "_origin": "ast",
       "id": "js_interact_innername",
-      "community": 3,
+      "community": 2,
       "norm_label": "innername()"
     },
     {
@@ -1532,7 +1532,7 @@
       "source_location": "L827",
       "_origin": "ast",
       "id": "js_interact_entercomponent",
-      "community": 3,
+      "community": 2,
       "norm_label": "entercomponent()"
     },
     {
@@ -1632,7 +1632,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "js_model_snap",
-      "community": 2,
+      "community": 3,
       "norm_label": "snap()"
     },
     {
@@ -1652,7 +1652,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "js_model_isgate",
-      "community": 1,
+      "community": 3,
       "norm_label": "isgate()"
     },
     {
@@ -1672,7 +1672,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "js_model_isaddr",
-      "community": 3,
+      "community": 2,
       "norm_label": "isaddr()"
     },
     {
@@ -1682,7 +1682,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "js_model_addrwidth",
-      "community": 1,
+      "community": 3,
       "norm_label": "addrwidth()"
     },
     {
@@ -1702,7 +1702,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "js_model_isbus",
-      "community": 3,
+      "community": 1,
       "norm_label": "isbus()"
     },
     {
@@ -1762,7 +1762,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "js_model_getmaps",
-      "community": 3,
+      "community": 4,
       "norm_label": "getmaps()"
     },
     {
@@ -1772,7 +1772,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "js_model_compbyid",
-      "community": 1,
+      "community": 4,
       "norm_label": "compbyid()"
     },
     {
@@ -1782,7 +1782,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "js_model_wiresto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wiresto()"
     },
     {
@@ -1792,7 +1792,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "js_model_wireto",
-      "community": 3,
+      "community": 4,
       "norm_label": "wireto()"
     },
     {
@@ -1812,7 +1812,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "js_model_curview",
-      "community": 3,
+      "community": 2,
       "norm_label": "curview()"
     },
     {
@@ -1822,7 +1822,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "js_model_curcircuit",
-      "community": 2,
+      "community": 3,
       "norm_label": "curcircuit()"
     },
     {
@@ -1852,7 +1852,7 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "js_model_numinputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numinputsof()"
     },
     {
@@ -1862,7 +1862,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "js_model_numoutputsof",
-      "community": 1,
+      "community": 3,
       "norm_label": "numoutputsof()"
     },
     {
@@ -2066,20 +2066,10 @@
       "norm_label": "setaddrsel()"
     },
     {
-      "label": "gateH()",
-      "file_type": "code",
-      "source_file": "js/model.js",
-      "source_location": "L426",
-      "_origin": "ast",
-      "id": "js_model_gateh",
-      "community": 3,
-      "norm_label": "gateh()"
-    },
-    {
       "label": "buildAddrData()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L428",
+      "source_location": "L422",
       "_origin": "ast",
       "id": "js_model_buildaddrdata",
       "community": 3,
@@ -2089,7 +2079,7 @@
       "label": "synthAddrCircuit()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L607",
+      "source_location": "L528",
       "_origin": "ast",
       "id": "js_model_synthaddrcircuit",
       "community": 3,
@@ -2099,7 +2089,7 @@
       "label": "setCompBits()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L614",
+      "source_location": "L535",
       "_origin": "ast",
       "id": "js_model_setcompbits",
       "community": 3,
@@ -2109,27 +2099,27 @@
       "label": "nextLabel()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L634",
+      "source_location": "L555",
       "_origin": "ast",
       "id": "js_model_nextlabel",
-      "community": 2,
+      "community": 3,
       "norm_label": "nextlabel()"
     },
     {
       "label": "compSize()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L648",
+      "source_location": "L569",
       "_origin": "ast",
       "id": "js_model_compsize",
-      "community": 1,
+      "community": 3,
       "norm_label": "compsize()"
     },
     {
       "label": "rotateAround()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L682",
+      "source_location": "L603",
       "_origin": "ast",
       "id": "js_model_rotatearound",
       "community": 3,
@@ -2139,47 +2129,47 @@
       "label": "pinPosLogical()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L692",
+      "source_location": "L613",
       "_origin": "ast",
       "id": "js_model_pinposlogical",
-      "community": 1,
+      "community": 3,
       "norm_label": "pinposlogical()"
     },
     {
       "label": "pinPos()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L716",
+      "source_location": "L637",
       "_origin": "ast",
       "id": "js_model_pinpos",
-      "community": 1,
+      "community": 3,
       "norm_label": "pinpos()"
     },
     {
       "label": "compBox()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L724",
+      "source_location": "L645",
       "_origin": "ast",
       "id": "js_model_compbox",
-      "community": 1,
+      "community": 2,
       "norm_label": "compbox()"
     },
     {
       "label": "defaultWireRoute()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L737",
+      "source_location": "L658",
       "_origin": "ast",
       "id": "js_model_defaultwireroute",
-      "community": 1,
+      "community": 3,
       "norm_label": "defaultwireroute()"
     },
     {
       "label": "wireRoutePoints()",
       "file_type": "code",
       "source_file": "js/model.js",
-      "source_location": "L743",
+      "source_location": "L664",
       "_origin": "ast",
       "id": "js_model_wireroutepoints",
       "community": 1,
@@ -2362,7 +2352,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "js_render_fitviewinto",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitviewinto()"
     },
     {
@@ -2372,7 +2362,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "js_render_fitview",
-      "community": 1,
+      "community": 2,
       "norm_label": "fitview()"
     },
     {
@@ -2532,7 +2522,7 @@
       "source_location": "L442",
       "_origin": "ast",
       "id": "js_render_drawpins",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawpins()"
     },
     {
@@ -2562,7 +2552,7 @@
       "source_location": "L476",
       "_origin": "ast",
       "id": "js_render_drawcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawcomp()"
     },
     {
@@ -2592,7 +2582,7 @@
       "source_location": "L535",
       "_origin": "ast",
       "id": "js_render_drawgatecomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawgatecomp()"
     },
     {
@@ -2672,7 +2662,7 @@
       "source_location": "L759",
       "_origin": "ast",
       "id": "js_render_drawchipcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawchipcomp()"
     },
     {
@@ -2692,7 +2682,7 @@
       "source_location": "L808",
       "_origin": "ast",
       "id": "js_render_addrinlabel",
-      "community": 1,
+      "community": 3,
       "norm_label": "addrinlabel()"
     },
     {
@@ -2712,7 +2702,7 @@
       "source_location": "L823",
       "_origin": "ast",
       "id": "js_render_drawaddrcomp",
-      "community": 1,
+      "community": 3,
       "norm_label": "drawaddrcomp()"
     },
     {
@@ -2782,7 +2772,7 @@
       "source_location": "L1044",
       "_origin": "ast",
       "id": "js_render_hitpin",
-      "community": 1,
+      "community": 2,
       "norm_label": "hitpin()"
     },
     {
@@ -2822,7 +2812,7 @@
       "source_location": "L1115",
       "_origin": "ast",
       "id": "js_render_painttoolicon",
-      "community": 1,
+      "community": 5,
       "norm_label": "painttoolicon()"
     },
     {
@@ -2862,7 +2852,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "js_ui_toast",
-      "community": 2,
+      "community": 5,
       "norm_label": "toast()"
     },
     {
@@ -3172,7 +3162,7 @@
       "source_location": "L690",
       "_origin": "ast",
       "id": "js_ui_openformulapanel",
-      "community": 2,
+      "community": 5,
       "norm_label": "openformulapanel()"
     },
     {
@@ -3192,7 +3182,7 @@
       "source_location": "L700",
       "_origin": "ast",
       "id": "js_ui_buildfromformula",
-      "community": 2,
+      "community": 3,
       "norm_label": "buildfromformula()"
     },
     {
@@ -3442,7 +3432,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_build_library",
-      "community": 3,
+      "community": 14,
       "norm_label": "build-library.mjs"
     },
     {
@@ -3452,7 +3442,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tools_build_library_root",
-      "community": 3,
+      "community": 14,
       "norm_label": "root"
     },
     {
@@ -3462,7 +3452,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tools_build_library_out",
-      "community": 3,
+      "community": 14,
       "norm_label": "out"
     },
     {
@@ -3472,7 +3462,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "tools_build_library_files",
-      "community": 3,
+      "community": 14,
       "norm_label": "files"
     },
     {
@@ -3482,7 +3472,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "tools_build_library_defs",
-      "community": 3,
+      "community": 14,
       "norm_label": "defs"
     },
     {
@@ -3492,7 +3482,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tools_build_library_seen",
-      "community": 3,
+      "community": 14,
       "norm_label": "seen"
     },
     {
@@ -3649,7 +3639,7 @@
       "label": "Analog simulator (second tab)",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L103",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "claude_analog_simulator_second_tab",
       "community": 17,
@@ -3659,7 +3649,7 @@
       "label": "Custom agent types available",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L171",
+      "source_location": "L169",
       "_origin": "ast",
       "id": "claude_custom_agent_types_available",
       "community": 17,
@@ -3669,7 +3659,7 @@
       "label": "Patterns for new features",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L183",
+      "source_location": "L181",
       "_origin": "ast",
       "id": "claude_patterns_for_new_features",
       "community": 17,
@@ -3679,7 +3669,7 @@
       "label": "Key invariants",
       "file_type": "document",
       "source_file": "CLAUDE.md",
-      "source_location": "L193",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "claude_key_invariants",
       "community": 17,
@@ -9855,16 +9845,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "js/model.js",
-      "source_location": "L426",
-      "weight": 1.0,
-      "source": "js_model",
-      "target": "js_model_gateh",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
       "source_location": "L80",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11213,17 +11193,6 @@
       "weight": 1.0,
       "source": "js_ui_deletecustomdef",
       "target": "js_model_definuse"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "js/model.js",
-      "source_location": "L513",
-      "weight": 1.0,
-      "source": "js_model_buildaddrdata",
-      "target": "js_model_gateh",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15373,5 +15342,5 @@
       "source_file": ".claude/agents/sim-engine.md"
     }
   ],
-  "built_at_commit": "1afeee136066881c2d2c915f4ad2873cff7c2b3d"
+  "built_at_commit": "0fc984dba499ad124ffe0a16793dff340fa5d7c2"
 }

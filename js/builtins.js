@@ -216,49 +216,56 @@ function registerBuiltinDefs() {
   });
 
   /* D latch with asynchronous active-low clear:
-     S = D·EN·CLR',  R = D'·EN + (CLR')'  — CLR'=0 forces Q=0. */
+     S = D·EN·CLR',  R = D'·EN + (CLR')'  — CLR'=0 forces Q=0.
+     Each input drives two gates, so it leaves on its own vertical rail. The
+     rails run left-to-right in the same order as the pins they feed run top to
+     bottom, which is what keeps them from crossing each other; the inverters sit
+     clear of that corridor rather than in the middle of it. */
   defineBuiltin("D Latch (CLR)", "D-L c", "ff", A => {
-    A.in("D", 40, 40);
-    A.in("EN", 40, 144);
-    A.in("CLRn", 40, 248, "CLR'");
-    A.c("nd", "NOT", 128, 72);
-    A.w("D.0", "nd.0");
-    A.c("nclr", "NOT", 128, 248);
-    A.w("CLRn.0", "nclr.0");
-    A.c("aS", "AND", 248, 32, { n: 3 });
-    A.w("D.0", "aS.0");
-    A.w("EN.0", "aS.1");
-    A.w("CLRn.0", "aS.2");
-    A.c("aR", "AND", 248, 144);
-    A.w("nd.0", "aR.0");
-    A.w("EN.0", "aR.1");
-    A.c("oR", "OR", 360, 184);
-    A.w("aR.0", "oR.0");
-    A.w("nclr.0", "oR.1");
-    A.chip("sr", "SR Latch", 472, 88);
-    A.w("aS.0", "sr.0");
-    A.w("oR.0", "sr.1");
-    A.out("Q", 632, 88, "sr.0");
-    A.out("Qn", 632, 176, "sr.1", "Q'");
+    A.c("nd", "NOT", 240, 20);
+    A.in("D", 40, 100);
+    A.in("EN", 40, 200);
+    A.in("CLRn", 40, 300, "CLR'");
+    A.c("nclr", "NOT", 240, 380);
+    A.w("D.0", "nd.0", [140]);
+    A.w("CLRn.0", "nclr.0", [188]);
+    A.c("aS", "AND", 420, 84, { n: 3 });    // pins at y = 100 / 116 / 132
+    A.w("D.0", "aS.0", [140]);
+    A.w("EN.0", "aS.1", [164]);
+    A.w("CLRn.0", "aS.2", [188]);
+    A.c("aR", "AND", 420, 220);             // pins at y ≈ 235 / 251
+    A.w("nd.0", "aR.0", [372]);
+    A.w("EN.0", "aR.1", [164]);
+    A.c("oR", "OR", 600, 330);
+    A.w("aR.0", "oR.0", [548]);
+    A.w("nclr.0", "oR.1", [396]);
+    A.chip("sr", "SR Latch", 780, 120);
+    A.w("aS.0", "sr.0", [700]);
+    A.w("oR.0", "sr.1", [722]);
+    A.out("Q", 940, 127, "sr.0");
+    A.out("Qn", 940, 210, "sr.1", "Q'");
   });
 
-  /* Positive-edge D flip-flop with asynchronous active-low clear */
+  /* Positive-edge D flip-flop with asynchronous active-low clear.
+     CLK and CLR' each feed both latches; their runs to the *slave* would cut
+     straight through the master, so they drop to their own clear lane below the
+     latches first and come back up between the two. */
   defineBuiltin("D Flip-Flop (CLR)", "D-FF c", "ff", A => {
-    A.in("D", 40, 48);
-    A.in("CLK", 40, 192);
-    A.in("CLRn", 40, 312, "CLR'");
-    A.c("nc", "NOT", 120, 192);
-    A.w("CLK.0", "nc.0");
-    A.chip("m", "D Latch (CLR)", 224, 40);
-    A.w("D.0", "m.0");
-    A.w("nc.0", "m.1");
-    A.w("CLRn.0", "m.2");
-    A.chip("s", "D Latch (CLR)", 424, 40);
-    A.w("m.0", "s.0");
-    A.w("CLK.0", "s.1");
-    A.w("CLRn.0", "s.2");
-    A.out("Q", 624, 56, "s.0");
-    A.out("Qn", 624, 152, "s.1", "Q'");
+    A.in("D", 40, 40);
+    A.in("CLK", 40, 300);
+    A.in("CLRn", 40, 420, "CLR'");
+    A.c("nc", "NOT", 240, 294);
+    A.w("CLK.0", "nc.0", [164]);
+    A.chip("m", "D Latch (CLR)", 420, 40);   // pins at y = 63 / 86 / 109
+    A.w("D.0", "m.0", [140]);
+    A.w("nc.0", "m.1", [372]);
+    A.w("CLRn.0", "m.2", [188]);
+    A.chip("s", "D Latch (CLR)", 640, 40);
+    A.w("m.0", "s.0", [578]);
+    A.w("CLK.0", "s.1", [164, 200, 600]);
+    A.w("CLRn.0", "s.2", [188, 230, 620]);
+    A.out("Q", 860, 55, "s.0");
+    A.out("Qn", 860, 140, "s.1", "Q'");
   });
 
   /* 74HC595 — 8-bit serial-in shift register with output storage
@@ -273,27 +280,35 @@ function registerBuiltinDefs() {
      For normal operation tie MR' to High (1) and leave OE'
      unconnected (or tie to Low). */
   defineBuiltin("74HC595", "74HC595", "reg", A => {
+    const ROW = 150;                       // vertical pitch of the eight stages
+    const rSH = 260, rMR = 282, rST = 304, rOE = 326;   // fan-out rails
     A.in("DS", 40, 40);
-    A.in("SHCP", 40, 128);
-    A.in("STCP", 40, 216);
-    A.in("OEn", 40, 304, "OE'");
-    A.in("MRn", 40, 392, "MR'");
-    A.c("noe", "NOT", 128, 304);
+    A.in("SHCP", 40, 110);
+    A.in("STCP", 40, 180);
+    A.in("OEn", 40, 250, "OE'");
+    A.in("MRn", 40, 320, "MR'");
+    A.c("noe", "NOT", 150, 244);
     A.w("OEn.0", "noe.0");
     for (let i = 0; i < 8; i++) {
-      const y = 40 + i * 120;
-      A.chip("sf" + i, "D Flip-Flop (CLR)", 256, y);       // shift stage
-      A.w(i ? "sf" + (i - 1) + ".0" : "DS.0", "sf" + i + ".0");
-      A.w("SHCP.0", "sf" + i + ".1");
-      A.w("MRn.0", "sf" + i + ".2");
-      A.chip("st" + i, "D Flip-Flop", 496, y + 8);         // storage stage
-      A.w("sf" + i + ".0", "st" + i + ".0");
-      A.w("STCP.0", "st" + i + ".1");
-      A.c("a" + i, "AND", 716, y + 16);                    // output gate
+      const y = 40 + i * ROW;
+      A.chip("sf" + i, "D Flip-Flop (CLR)", 400, y);       // shift stage
+      A.w(i ? "sf" + (i - 1) + ".0" : "DS.0", "sf" + i + ".0", i ? undefined : [200]);
+      A.w("SHCP.0", "sf" + i + ".1", [rSH]);
+      A.w("MRn.0", "sf" + i + ".2", [rMR]);
+      A.chip("st" + i, "D Flip-Flop", 640, y + 8);         // storage stage
+      A.w("sf" + i + ".0", "st" + i + ".0", [578]);
+      // the storage clock and the output enable have to get past the stages to
+      // their left, so they cross in the clear gap above each row rather than
+      // straight through it
+      A.w("STCP.0", "st" + i + ".1", [rST, y - 34, 600]);
+      A.c("a" + i, "AND", 860, y + 16);                    // output gate
       A.w("st" + i + ".0", "a" + i + ".0");
-      A.w("noe.0", "a" + i + ".1");
-      A.out("Q" + i, 824, y + 24, "a" + i + ".0");
+      A.w("noe.0", "a" + i + ".1", [rOE, y - 18, 820]);
+      A.out("Q" + i, 1000, y + 23, "a" + i + ".0");
     }
-    A.out("Q7S", 824, 40 + 8 * 120, "sf7.0");
+    // the cascade output leaves from stage 7 and would otherwise cut across the
+    // storage stage beside it, so it drops below the whole column first
+    A.out("Q7S", 1000, 40 + 8 * ROW);
+    A.w("sf7.0", "Q7S.0", [560, 40 + 8 * ROW + 16]);
   });
 }

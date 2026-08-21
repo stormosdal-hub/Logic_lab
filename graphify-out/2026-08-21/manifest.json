@@ -1,7 +1,7 @@
 {
   "js/builtins.js": {
-    "mtime": 1787322141.2694192,
-    "ast_hash": "28c8071305c1477fd2d683c28b627f1c",
+    "mtime": 1787307413.5426848,
+    "ast_hash": "48c8f6a4e3d820285e31e329814b7d56",
     "semantic_hash": ""
   },
   "js/engine.js": {
@@ -20,8 +20,8 @@
     "semantic_hash": ""
   },
   "js/model.js": {
-    "mtime": 1787322205.1063697,
-    "ast_hash": "9877368a4f70a64ad3ceec598677d8bd",
+    "mtime": 1783215026.0783691,
+    "ast_hash": "b66e7666613e991dda44f76fd8f84884",
     "semantic_hash": ""
   },
   "js/render.js": {
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1787322387.5272293,
-    "ast_hash": "274ab0267dcb560878de7ddc2eeca230",
+    "mtime": 1787249559.0255735,
+    "ast_hash": "c53b7267c717c1548fb2b2301ebb3786",
     "semantic_hash": ""
   },
   "README.md": {

@@ -419,21 +419,48 @@ function setAddrSel(circ, c, sel) {
    exactly — MUX ins are [D0..D(N-1), S0..S(sel-1)], etc. — so the synthesised
    circuit is verified against evalAddr in the test suite. Returns plain data
    ({components, wires, inputs, outputs}); synthAddrCircuit turns it live. */
+const A_LANE = 22;   // spacing between neighbouring fan-out rails
+const A_GAP  = 48;   // clearance between a bundle of rails and the next column
+const A_ROW  = 72;   // vertical pitch of the minterm / output rows
+const A_GW   = 76;   // gate width (see compSize)
+const gateH  = n => Math.max(44, n * 18 + 10);
+
 function buildAddrData(type, sel) {
   const N = 1 << sel;
   const comps = [], wires = [], inputs = [], outputs = [];
   let k = 0;
   const add = (t, x, y, o) => { const c = Object.assign({ id: "s" + (k++), type: t, x, y }, o || {}); comps.push(c); return c.id; };
-  const IN  = (x, y, label) => { const id = add("IN",  x, y, { label }); return id; };
-  const OUT = (x, y, label) => { const id = add("OUT", x, y, { label }); return id; };
-  const NOT = (x, y, src)   => { const g = add("NOT", x, y); wires.push({ from: { c: src.c, p: src.p }, to: { c: g, p: 0 } }); return { c: g, p: 0 }; };
-  const W = (s, tc, tp) => wires.push({ from: { c: s.c, p: s.p }, to: { c: tc, p: tp } });
+  const IN  = (x, y, label) => add("IN",  x, y, { label });
+  const OUT = (x, y, label) => add("OUT", x, y, { label });
+
+  /* A pin that drives several gates gets a `rail`: a vertical lane every branch
+     leaves along, so they read as one trunk with taps instead of each branch
+     picking the same automatic mid-X and stacking into a single line. Rails are
+     what make a decoder's select lines legible. */
+  const W = (s, tc, tp, route) => {
+    const w = { from: { c: s.c, p: s.p }, to: { c: tc, p: tp } };
+    const r = route !== undefined ? route : (s.rail != null ? [s.rail] : null);
+    if (r) w.route = r;
+    wires.push(w);
+  };
+  const NOT = (x, y, src) => { const g = add("NOT", x, y); W(src, g, 0); return { c: g, p: 0 }; };
+
+  /* Feeding several sources into one gate is the mirror of a fan-out: without
+     help every wire picks the same automatic mid-X and they stack. A source
+     already on a rail keeps it (that trunk is the point); the rest get their
+     own approach lane just left of the gate. */
+  const feed = (srcs, g, x) => srcs.forEach((s, i) => {
+    const lane = x - 24 - (srcs.length - 1 - i) * A_LANE;
+    // `via` sends a long run down a clear horizontal lane instead of straight
+    // across at the destination's own height, where it would cut through gates
+    W(s, g, i, s.via != null ? [s.rail, s.via, lane] : s.rail != null ? undefined : [lane]);
+  });
 
   // AND the given source pins (>=1). One literal → passed straight through.
   const andOf = (srcs, x, y) => {
     if (srcs.length === 1) return srcs[0];
     const g = add("AND", x, y, { numInputs: srcs.length });
-    srcs.forEach((s, i) => W(s, g, i));
+    feed(srcs, g, x);
     return { c: g, p: 0 };
   };
   // Reduce sources with `op` (OR/XOR) into one pin, as a tree of <=8-in gates.
@@ -446,78 +473,130 @@ function buildAddrData(type, sel) {
         const chunk = layer.slice(i, i + 8);
         if (chunk.length === 1) { next.push(chunk[0]); continue; }
         const g = add(op, col, y + next.length * 64, { numInputs: chunk.length });
-        chunk.forEach((s, j) => W(s, g, j));
+        feed(chunk, g, col);
         next.push({ c: g, p: 0 });
       }
       layer = next; col += 150;
     }
     return layer[0];
   };
-  // select lines + their complements (used by MUX/DEMUX/DEC)
+  /* Select lines and their complements, each on its own rail. Returns the x the
+     next column may start at, so the layout widens with `sel` instead of the
+     rails piling into the gates. */
   const selPins = (x0, y0) => {
     const S = [], nS = [];
-    for (let j = 0; j < sel; j++) { const id = IN(x0, y0 + j * 72, "S" + j); S.push({ c: id, p: 0 }); inputs.push(id); }
-    for (let j = 0; j < sel; j++) nS.push(NOT(x0 + 120, y0 + j * 72, S[j]));
-    return { S, nS };
+    for (let j = 0; j < sel; j++) {
+      const id = IN(x0, y0 + j * A_ROW, "S" + j);
+      S.push({ c: id, p: 0, rail: x0 + 72 + 24 + j * A_LANE });
+      inputs.push(id);
+    }
+    const notX = x0 + 72 + 24 + sel * A_LANE + A_GAP;
+    for (let j = 0; j < sel; j++) {
+      const g = NOT(notX, y0 + j * A_ROW - 6, S[j]);       // −6 lines the pins up
+      nS.push({ c: g.c, p: 0, rail: notX + A_GW + 24 + j * A_LANE });
+    }
+    // rows placed below `belowY` can run straight out to their gates without
+    // cutting through the inverters that sit in this header band
+    return { S, nS, nextX: notX + A_GW + 24 + sel * A_LANE + A_GAP,
+             belowY: y0 + (sel - 1) * A_ROW + 44 + 40 };
   };
   const litFor = (S, nS, minterm, j) => ((minterm >> j) & 1) ? S[j] : nS[j];
+  // centre an OUT on the pin feeding it
+  const outAt = (x, y, label, h) => OUT(x, y + (h || 32) / 2 - 16, label);
 
   if (type === "MUX") {
     const D = [];
-    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 64, "D" + i); D.push({ c: id, p: 0 }); inputs.push(id); }
-    const { S, nS } = selPins(40, 60 + N * 64);
+    const { S, nS, nextX } = (() => {
+      for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 64, "D" + i); D.push({ c: id, p: 0 }); inputs.push(id); }
+      return selPins(40, 100 + N * 64);
+    })();
+    const gh = gateH(sel + 1), andX = nextX;
     const terms = [];
     for (let i = 0; i < N; i++) {
       const lits = [D[i]];
       for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
-      terms.push(andOf(lits, 320, 40 + i * 64));
+      terms.push(andOf(lits, andX, 40 + i * A_ROW));
     }
-    const y = treeOf("OR", terms, 520, 40);
-    const o = OUT(900, 40 + (N - 1) * 32, "Y"); if (y) W(y, o, 0); outputs.push(o);
+    const treeX = andX + A_GW + 120;
+    const y = treeOf("OR", terms, treeX, 40);
+    const o = outAt(treeX + 160, 40 + (N - 1) * A_ROW / 2, "Y", gateH(Math.min(N, 8)));
+    if (y) W(y, o, 0);
+    outputs.push(o);
   } else if (type === "DEMUX") {
-    const dId = IN(40, 40, "D"); const D = { c: dId, p: 0 }; inputs.push(dId);
-    const { S, nS } = selPins(40, 140);
+    const dId = IN(40, 40, "D"); inputs.push(dId);
+    const { S, nS, nextX, belowY } = selPins(40, 140);
+    const D = { c: dId, p: 0, rail: 40 + 72 + 24 + sel * A_LANE + 22 };
+    const gh = gateH(sel + 1), andX = nextX;
     for (let i = 0; i < N; i++) {
       const lits = [D];
       for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
-      const m = andOf(lits, 340, 40 + i * 72);
-      const o = OUT(560, 40 + i * 72, "Y" + i); W(m, o, 0); outputs.push(o);
+      const m = andOf(lits, andX, belowY + i * A_ROW);
+      const o = outAt(andX + A_GW + 140, belowY + i * A_ROW, "Y" + i, gh); W(m, o, 0); outputs.push(o);
     }
   } else if (type === "DEC" || type === "BDEC") {
-    const { S, nS } = selPins(40, 40);
+    const { S, nS, nextX, belowY } = selPins(40, 40);
+    const gh = gateH(sel), andX = nextX;
     for (let i = 0; i < N; i++) {
       const lits = [];
       for (let j = 0; j < sel; j++) lits.push(litFor(S, nS, i, j));
-      const m = andOf(lits, 340, 40 + i * 72);
-      const o = OUT(560, 40 + i * 72, "Y" + i); W(m, o, 0); outputs.push(o);
+      const m = andOf(lits, andX, belowY + i * A_ROW);
+      const o = outAt(andX + A_GW + 140, belowY + i * A_ROW, "Y" + i, sel > 1 ? gh : 32);
+      W(m, o, 0); outputs.push(o);
     }
   } else if (type === "ENC") {
-    const I = [];
-    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 60, "I" + i); I.push({ c: id, p: 0 }); inputs.push(id); }
-    // cum[i] = OR(I[i..N-1]); higher[i] = cum[i+1]. h[i] = I[i] AND NOT higher[i].
+    /* Priority encoder. cum[i] = OR(I[i..N-1]) is a chain running upward, so
+       each link reaches back one row — the automatic loop route already keeps
+       those on their own y band. Everything else fans out, so it gets a rail. */
+    const I = [], ROW = 84, orX = 40 + 72 + 24 + N * A_LANE + A_GAP;
+    for (let i = 0; i < N; i++) {
+      const id = IN(40, 40 + i * ROW, "I" + i);
+      I.push({ c: id, p: 0, rail: 40 + 72 + 24 + i * A_LANE });
+      inputs.push(id);
+    }
     const cum = new Array(N); cum[N - 1] = I[N - 1];
     for (let i = N - 2; i >= 0; i--) {
-      const g = add("OR", 200, 40 + i * 60, { numInputs: 2 });
-      W(I[i], g, 0); W(cum[i + 1], g, 1); cum[i] = { c: g, p: 0 };
+      const g = add("OR", orX, 40 + i * ROW, { numInputs: 2 });
+      W(I[i], g, 0); W(cum[i + 1], g, 1);
+      cum[i] = { c: g, p: 0 };
     }
-    const h = new Array(N); h[N - 1] = I[N - 1];
+    // each cum feeds a NOT one column right; give it a rail so that branch is
+    // clear of the chain link that also leaves the same pin
+    const notX = orX + A_GW + 24 + N * A_LANE + A_GAP;
+    const andX = notX + A_GW + 24 + N * A_LANE + A_GAP;
+    const h = new Array(N);
+    // I[N-1] is its own h term and has to reach the output trees on the far
+    // right; send it along a lane below every row rather than through them
+    h[N - 1] = Object.assign({}, I[N - 1], { via: 40 + N * ROW + 24 });
     for (let i = 0; i < N - 1; i++) {
-      const ng = NOT(340, 40 + i * 60, cum[i + 1]);
-      const ag = add("AND", 460, 40 + i * 60, { numInputs: 2 });
-      W(I[i], ag, 0); W(ng, ag, 1); h[i] = { c: ag, p: 0 };
+      const src = cum[i + 1];
+      const ng = { c: add("NOT", notX, 40 + i * ROW - 6), p: 0 };
+      W(src, ng.c, 0, [orX + A_GW + 24 + (i + 1) * A_LANE]);
+      const ag = add("AND", andX, 40 + i * ROW - 4, { numInputs: 2 });
+      // I[i] shares a row with that row's OR and NOT, so it takes the gap above
+      W(I[i], ag, 0, [I[i].rail, 40 + i * ROW - 20, andX - 24]);
+      W({ c: ng.c, p: 0 }, ag, 1);
+      h[i] = { c: ag, p: 0 };
     }
+    const treeX = andX + A_GW + 120;
     for (let b = 0; b < sel; b++) {
       const srcs = []; for (let i = 0; i < N; i++) if ((i >> b) & 1) srcs.push(h[i]);
-      const r = treeOf("OR", srcs, 620, 40 + b * 90);
-      const o = OUT(880, 40 + b * 90, "A" + b); if (r) W(r, o, 0); outputs.push(o);
+      const r = treeOf("OR", srcs, treeX, 40 + b * (N * ROW / sel));
+      const o = outAt(treeX + 200, 40 + b * (N * ROW / sel), "A" + b, gateH(Math.min(N, 8)));
+      if (r) W(r, o, 0); outputs.push(o);
     }
   } else if (type === "BENC") {
     const I = [];
-    for (let i = 0; i < N; i++) { const id = IN(40, 40 + i * 60, "I" + i); I.push({ c: id, p: 0 }); inputs.push(id); }
+    for (let i = 0; i < N; i++) {
+      const id = IN(40, 40 + i * 60, "I" + i);
+      I.push({ c: id, p: 0, rail: 40 + 72 + 24 + i * A_LANE });
+      inputs.push(id);
+    }
+    const treeX = 40 + 72 + 24 + N * A_LANE + A_GAP;
     for (let b = 0; b < sel; b++) {
       const srcs = []; for (let i = 0; i < N; i++) if ((i >> b) & 1) srcs.push(I[i]);
-      const r = treeOf("XOR", srcs, 320, 40 + b * 90);
-      const o = OUT(600, 40 + b * 90, "A" + b); if (r) W(r, o, 0); outputs.push(o);
+      const r = treeOf("XOR", srcs, treeX, 40 + b * (N * 60 / sel));
+      const o = outAt(treeX + 320, 40 + b * (N * 60 / sel), "A" + b, gateH(Math.min(N, 8)));
+      if (r) W(r, o, 0); outputs.push(o);
     }
   }
   return { components: comps, wires, inputs, outputs };
