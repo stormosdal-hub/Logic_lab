@@ -111,27 +111,36 @@ function registerBuiltinDefs() {
     A.out("Qn", 696, 200, "s.1", "Q'");
   });
 
-  /* JK flip-flop: D = J·Q' + K'·Q around a D flip-flop */
+  /* JK flip-flop: D = J·Q' + K'·Q around a D flip-flop.
+     The two feedback wires are the whole difficulty here: they run from the
+     flip-flop's outputs on the right all the way back to the AND gates on the
+     left. Auto-routing sends both across the middle of the sheet, where they
+     graze the D-FF body and collide with the gate inputs. Instead each gets a
+     lane clear of the circuit — Q' over the top (y=24), Q under the bottom
+     (y=470) — mirroring the way the loop is drawn in a textbook.
+     The feedback takes each AND's UPPER input and J/K' the lower one, so the
+     lane drops straight in without crossing the input wire (AND commutes). */
   defineBuiltin("JK Flip-Flop", "JK-FF", "ff", A => {
-    A.in("J", 40, 32);
-    A.in("CLK", 40, 152);
-    A.in("K", 40, 264);
-    A.c("nk", "NOT", 120, 264);
+    A.in("J", 40, 80);
+    A.in("CLK", 40, 280);
+    A.in("K", 40, 400);
+    A.c("nk", "NOT", 200, 394);
     A.w("K.0", "nk.0");
-    A.c("a1", "AND", 224, 32);
-    A.w("J.0", "a1.0");
-    A.c("a2", "AND", 224, 240);
+    A.c("a1", "AND", 360, 64);
+    A.w("J.0", "a1.1");
+    A.c("a2", "AND", 360, 384);
     A.w("nk.0", "a2.0");
-    A.c("o1", "OR", 328, 136);
-    A.w("a1.0", "o1.0");
-    A.w("a2.0", "o1.1");
-    A.chip("ff", "D Flip-Flop", 432, 112);
-    A.w("o1.0", "ff.0");
-    A.w("CLK.0", "ff.1");
-    A.w("ff.1", "a1.1");   // Q' feedback
-    A.w("ff.0", "a2.1");   // Q feedback
-    A.out("Q", 632, 112, "ff.0");
-    A.out("Qn", 632, 208, "ff.1", "Q'");
+    A.c("o1", "OR", 520, 224);
+    A.w("a1.0", "o1.0", [470]);
+    A.w("a2.0", "o1.1", [490]);
+    A.chip("ff", "D Flip-Flop", 680, 212);
+    A.w("o1.0", "ff.0", [620]);
+    A.w("CLK.0", "ff.1", [640]);
+    A.w("ff.1", "a1.0", [860, 24, 336]);    // Q' feedback, over the top
+    A.w("ff.0", "a2.1", [830, 470, 336]);   // Q  feedback, under the bottom
+    A.out("Q", 880, 220, "ff.0");
+    A.out("Qn", 880, 320, null, "Q'");
+    A.w("ff.1", "Qn.0", [800]);
   });
 
   /* T flip-flop: D = T XOR Q */
